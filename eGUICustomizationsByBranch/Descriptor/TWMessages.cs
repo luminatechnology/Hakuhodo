@@ -14,7 +14,7 @@ namespace eGUICustomizations.Descriptor
         public const string NetAmtNegError = "Net Amount Cannot Be Negative.";
         public const string TaxAmtNegError = "Tax Amount Cannot Be Negative.";
         public const string TaxAmtIsWrong  = "The Tax Amount Might Be Wrong, Please Double Check.";
-        public const string GUINbrExisted  = "The GUI Issue/Receipt Number {0} Already Exists.";
+        public const string GUINbrExisted  = "The GUI Issue/Receipt Number {0} Already Exists In GUI Transactions.";
         public const string CNIsNotFound   = "The Original GUI Number Cannot Be Found For Credit Note.";
         public const string ManHasReleased = "Manual GUI Transaction Has Been Released.";
         public const string GUINbrIsMandat = "GUI Number Cannot Be Empty.";
@@ -23,7 +23,7 @@ namespace eGUICustomizations.Descriptor
         public const string NoInvTaxDtls   = "No Tax Details, Please Double Check.";
         public const string DeleteInfo     = "Deleted By {0}";
         public const string TaxNbrLenNot8  = "Tax ID Number Must Be 8 Characters.";
-        public const string TaxNbrWarning  = "Tax ID Number May Be Wrong, Please Check Again.";
+        public const string TaxNbrWarning  = "Tax ID Number Might Be Wrong, Please Check Again.";
         public const string NoPlasticBag   = "No Plastic Bag Pecified On GUI Preferences.";
         public const string StatusNotUsed  = "The GUI <{0}> Status Isn't [Used].";
         public const string FmtCodeIncort  = "The GUI <{0}> Format Code Isn't [31] Or [35].";

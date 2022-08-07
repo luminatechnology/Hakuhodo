@@ -11,6 +11,7 @@ using PX.Objects.CS;
 using PX.Objects.SO;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
+using PX.CS.Contracts.Interfaces;
 
 namespace eGUICustomizations.Graph
 {
@@ -95,20 +96,21 @@ namespace eGUICustomizations.Graph
                     // 買受人公司名稱
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員編號
-                    (string phone, string email, string attention) = graph.GetBillingInfo(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
-                    lines += graph.GetMemberNbr(graph, register?.CustomerID, new string[] { gUITrans.CustVend, phone }) + verticalBar;
+                    (string Phone, string Email, string Attention) = graph.GetBillingInfo(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
+                    lines += graph.GetMemberNbr(graph, register?.CustomerID, new string[] { gUITrans.CustVend, Phone }) + verticalBar;
                     // 會員姓名
-                    lines += string.IsNullOrEmpty(gUITrans.TaxNbr) ? attention : gUITrans.GUITitle + verticalBar;
+                    lines += ((string.IsNullOrEmpty(gUITrans.TaxNbr) ? Attention : gUITrans.GUITitle) ?? string.Empty) + verticalBar;
                     // 會員郵遞區號
-                    lines += verticalBar;
+                    (string AddressLine, string PostalCode) = graph.GetBillingAddress(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
+                    lines += (PostalCode ?? string.Empty) + verticalBar;
                     // 會員地址
-                    lines += (string.IsNullOrEmpty(gUITrans.TaxNbr) ? graph.GetBillingAddress(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend) : string.Empty) + verticalBar;
+                    lines += (string.IsNullOrEmpty(gUITrans.TaxNbr) ? AddressLine : string.Empty) + verticalBar;
                     // 會員電話
                     lines += verticalBar;
                     // 會員行動電話
-                    lines += phone + verticalBar;
+                    lines += Phone + verticalBar;
                     // 會員電子郵件
-                    lines += email + verticalBar;
+                    lines += Email + verticalBar;
                     // 紅利點數折扣金額
                     lines += verticalBar;
                     // 索取紙本發票                       
@@ -130,7 +132,7 @@ namespace eGUICustomizations.Graph
                     // 載具顯碼id1(明碼)
                     lines += gUITrans.CarrierID + verticalBar;
                     // 載具隱碼id2(內碼)
-                    lines += verticalBar;
+                    lines += gUITrans.CarrierID + verticalBar;
                     // 發票號碼
                     lines += gUITrans.GUINbr + verticalBar;
                     // 隨機碼
@@ -303,39 +305,39 @@ namespace eGUICustomizations.Graph
         #endregion
 
         #region Methods
-        private string GetBillingAddress(PXGraph graph, string docType, string refNbr, string customer)
+        private (string addressLine, string postalCode) GetBillingAddress(PXGraph graph, string docType, string refNbr, string customer)
         {
-            string addressLine = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
-                                                      .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst?.AddressLine1;
+            IAddressBase address = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
+                                                        .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst;
 
-            if (string.IsNullOrEmpty(addressLine) )
+            if (address == null)
             {
-                addressLine = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
-                                                   .InnerJoin<ARAdjust>.On<ARAdjust.adjdDocType.IsEqual<ARInvoice.docType>
-                                                                           .And<ARAdjust.adjdRefNbr.IsEqual<ARInvoice.refNbr>>>
-                                                   .Where<ARAdjust.adjgDocType.IsEqual<@P.AsString>
-                                                          .And<ARAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
-                                                   .SelectSingleBound(graph, null, docType, refNbr).TopFirst?.AddressLine1;
+                address = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
+                                                .InnerJoin<ARAdjust>.On<ARAdjust.adjdDocType.IsEqual<ARInvoice.docType>
+                                                                        .And<ARAdjust.adjdRefNbr.IsEqual<ARInvoice.refNbr>>>
+                                                .Where<ARAdjust.adjgDocType.IsEqual<@P.AsString>
+                                                        .And<ARAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
+                                                .SelectSingleBound(graph, null, docType, refNbr).TopFirst;
             }
 
-            if (string.IsNullOrEmpty(addressLine))
+            if (address == null)
             {
-                addressLine = SelectFrom<SOAddress>.InnerJoin<SOOrder>.On<SOOrder.billAddressID.IsEqual<SOAddress.addressID>>
-                                                   .InnerJoin<SOAdjust>.On<SOAdjust.adjdOrderType.IsEqual<SOOrder.orderType>
-                                                                           .And<SOAdjust.adjdOrderNbr.IsEqual<SOOrder.orderNbr>>>
-                                                   .Where<SOAdjust.adjgDocType.IsEqual<@P.AsString>
-                                                          .And<SOAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
-                                                   .SelectSingleBound(graph, null, docType, refNbr).TopFirst?.AddressLine1;
-            }
+                address = SelectFrom<SOAddress>.InnerJoin<SOOrder>.On<SOOrder.billAddressID.IsEqual<SOAddress.addressID>>
+                                                .InnerJoin<SOAdjust>.On<SOAdjust.adjdOrderType.IsEqual<SOOrder.orderType>
+                                                                        .And<SOAdjust.adjdOrderNbr.IsEqual<SOOrder.orderNbr>>>
+                                                .Where<SOAdjust.adjgDocType.IsEqual<@P.AsString>
+                                                        .And<SOAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
+                                                .SelectSingleBound(graph, null, docType, refNbr).TopFirst;
+        }
 
-            if (string.IsNullOrEmpty(addressLine))
+            if (address == null)
             {
-                addressLine = SelectFrom<Address>.InnerJoin<Customer>.On<Customer.defBillAddressID.IsEqual<Address.addressID>>
+                address = SelectFrom<Address>.InnerJoin<Customer>.On<Customer.defBillAddressID.IsEqual<Address.addressID>>
                                                  .Where<Customer.acctCD.IsEqual<@P.AsString>>.View
-                                                 .SelectSingleBound(graph, null, customer).TopFirst?.AddressLine1;
+                                                 .SelectSingleBound(graph, null, customer).TopFirst;
             }
 
-            return addressLine;
+            return (address.AddressLine1, address.PostalCode);
         }
 
         private (string phone, string email, string attention) GetBillingInfo(PXGraph graph, string docType, string refNbr, string customer)

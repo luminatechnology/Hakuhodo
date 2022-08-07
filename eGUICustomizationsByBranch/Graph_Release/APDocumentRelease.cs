@@ -54,7 +54,7 @@ namespace PX.Objects.AP
                             VATCode       = row.VATInCode,
                             GUINbr        = row.GUINbr,
                             GUIStatus     = TWNStringList.TWNGUIStatus.Used,
-                            BranchID      = doc.BranchID,
+                            BranchID      = row.BranchID,
                             GUIDirection  = TWNStringList.TWNGUIDirection.Receipt,
                             GUIDate       = row.GUIDate,
                             GUITitle      = vendor?.AcctName,

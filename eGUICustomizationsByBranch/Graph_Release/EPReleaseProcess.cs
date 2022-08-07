@@ -43,7 +43,7 @@ namespace PX.Objects.EP
                             VATCode       = manualGUIExp.VATInCode,
                             GUINbr        = manualGUIExp.GUINbr,
                             GUIStatus     = TWNStringList.TWNGUIStatus.Used,
-                            BranchID      = claim.BranchID,
+                            BranchID      = manualGUIExp.BranchID,
                             GUIDirection  = TWNStringList.TWNGUIDirection.Receipt,
                             GUIDate       = manualGUIExp.GUIDate,
                             GUITitle      = vendor.AcctName,

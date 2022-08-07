@@ -2,10 +2,12 @@
 using PX.Data;
 using PX.Objects.AP;
 using PX.Objects.AR;
+using PX.Objects.CR;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.TX;
 using eGUICustomizations.Descriptor;
+using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {
@@ -151,13 +153,8 @@ namespace eGUICustomizations.DAC
             public OurTaxNbrNameAtt() : base(OurTaxNbrName) { }
         }
 
-        [TaxNbrVerify(8, IsUnicode = true, InputMask = "")]
-        [PXUIField(DisplayName = "Our Tax Nbr")]
-        [PXDefault(typeof(Search2<CSAnswers.value, InnerJoin<Vendor, On<Vendor.noteID, Equal<CSAnswers.refNoteID>,
-                                                                       And<CSAnswers.attributeID, Equal<OurTaxNbrNameAtt>>>>,
-                                                   Where<Vendor.bAccountID, Equal<Current<vendorID>>>>),
-                   PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXFormula(typeof(Default<vendorID>))]
+        [TaxNbrVerify(8, IsUnicode = true)]
+        [PXUIField(DisplayName = "Our Tax Nbr.")]
         public virtual string OurTaxNbr { get; set; }
         public abstract class ourTaxNbr : PX.Data.BQL.BqlString.Field<ourTaxNbr> { }
         #endregion
@@ -204,6 +201,12 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Remark")]
         public virtual string Remark { get; set; }
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }
+        #endregion
+
+        #region BranchID
+        [Branch(useDefaulting: false)]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
         #region CreatedByID

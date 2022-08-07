@@ -1,12 +1,13 @@
 using System;
 using PX.Data;
 using PX.Objects.AP;
-using PX.Objects.CS;
 using PX.Objects.CR;
+using PX.Objects.CS;
+using PX.Objects.GL;
 using PX.Objects.EP;
 using PX.Objects.TX;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
+using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {
@@ -16,30 +17,30 @@ namespace eGUICustomizations.DAC
     {
         #region RefNbr
         [PXDBString(15, IsUnicode = true)]
-        [PXDBDefault(typeof(EPExpenseClaim.refNbr), 
+        [PXDBDefault(typeof(EPExpenseClaim.refNbr),
                      PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXParent(typeof(Select<EPExpenseClaim, 
+        [PXParent(typeof(Select<EPExpenseClaim,
                                 Where<EPExpenseClaim.refNbr, Equal<Current<refNbr>>>>))]
         [PXUIField(Visible = false)]
         public virtual string RefNbr { get; set; }
         public abstract class refNbr : PX.Data.BQL.BqlString.Field<refNbr> { }
         #endregion
-    
+
         #region Status
         [PXDBString(1, IsUnicode = true)]
         [PXUIField(DisplayName = "Status", Enabled = false)]
-        [TWNGUIManualStatus.List]
-        [PXDefault(TWNGUIManualStatus.Open)]  
+        [TWNStringList.TWNGUIManualStatus.List]
+        [PXDefault(TWNStringList.TWNGUIManualStatus.Open)]
         public virtual string Status { get; set; }
         public abstract class status : PX.Data.BQL.BqlString.Field<status> { }
         #endregion
-    
+
         #region VendorID
-        [VendorActive()]  
+        [VendorActive()]
         public virtual int? VendorID { get; set; }
         public abstract class vendorID : PX.Data.BQL.BqlString.Field<vendorID> { }
         #endregion
-    
+
         #region VATInCode
         [PXDBString(2, IsUnicode = true)]
         [PXUIField(DisplayName = "VAT In Code")]
@@ -53,7 +54,7 @@ namespace eGUICustomizations.DAC
         public virtual string VATInCode { get; set; }
         public abstract class vATInCode : PX.Data.BQL.BqlString.Field<vATInCode> { }
         #endregion
-    
+
         #region GUINbr
         [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr")]
@@ -61,53 +62,53 @@ namespace eGUICustomizations.DAC
         public virtual string GUINbr { get; set; }
         public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }
         #endregion
-    
+
         #region GUIDate
         [PXDBDate()]
         [PXUIField(DisplayName = "GUI Date")]
         public virtual DateTime? GUIDate { get; set; }
         public abstract class gUIDate : PX.Data.BQL.BqlDateTime.Field<gUIDate> { }
         #endregion
-    
+
         #region TaxZoneID
         [PXDBString(10, IsUnicode = true)]
         [PXUIField(DisplayName = "Tax Zone")]
-        [PXDefault(typeof(EPExpenseClaim.taxZoneID), 
+        [PXDefault(typeof(EPExpenseClaim.taxZoneID),
                    PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXSelector(typeof(Search3<TaxZone.taxZoneID, 
-                                   OrderBy<Asc<TaxZone.taxZoneID>>>), 
+        [PXSelector(typeof(Search3<TaxZone.taxZoneID,
+                                   OrderBy<Asc<TaxZone.taxZoneID>>>),
                     CacheGlobal = true)]
-        [PX.Data.EP.PXFieldDescription]  
+        [PX.Data.EP.PXFieldDescription]
         public virtual string TaxZoneID { get; set; }
         public abstract class taxZoneID : PX.Data.BQL.BqlString.Field<taxZoneID> { }
         #endregion
-    
+
         #region TaxCategoryID
         [PXDBString(10, IsUnicode = true)]
         [PXUIField(DisplayName = "Tax Category")]
-        [PXDefault(typeof(EPExpenseClaimDetails.taxCategoryID), 
+        [PXDefault(typeof(EPExpenseClaimDetails.taxCategoryID),
                    PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXSelector(typeof(TaxCategory.taxCategoryID), 
+        [PXSelector(typeof(TaxCategory.taxCategoryID),
                     DescriptionField = typeof(TaxCategory.descr))]
-        [PXRestrictor(typeof(Where<TaxCategory.active, Equal<True>>), 
-                      PX.Objects.TX.Messages.InactiveTaxCategory, 
+        [PXRestrictor(typeof(Where<TaxCategory.active, Equal<True>>),
+                      PX.Objects.TX.Messages.InactiveTaxCategory,
                       typeof(TaxCategory.taxCategoryID))]
         public virtual string TaxCategoryID { get; set; }
         public abstract class taxCategoryID : PX.Data.BQL.BqlString.Field<taxCategoryID> { }
         #endregion
-    
+
         #region TaxID
         [PXDBString(30, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Tax ID")]
-        [PXSelector(typeof(Tax.taxID), 
-                    DescriptionField = typeof(Tax.descr), 
-                    DirtyRead = true)]  
+        [PXSelector(typeof(Tax.taxID),
+                    DescriptionField = typeof(Tax.descr),
+                    DirtyRead = true)]
         [PXDefault(typeof(Search<TaxZoneDet.taxID,
                                  Where<TaxZoneDet.taxZoneID, Equal<Current<TWNManualGUIExpense.taxZoneID>>>>))]
         public virtual string TaxID { get; set; }
         public abstract class taxID : PX.Data.BQL.BqlString.Field<taxID> { }
         #endregion
-    
+
         #region TaxNbr
         [TaxNbrVerify(8, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Tax Nbr")]
@@ -119,24 +120,19 @@ namespace eGUICustomizations.DAC
         public virtual string TaxNbr { get; set; }
         public abstract class taxNbr : PX.Data.BQL.BqlString.Field<taxNbr> { }
         #endregion
-    
+
         #region OurTaxNbr
-        [TaxNbrVerify(8, IsUnicode = true, InputMask = "")]
-        [PXUIField(DisplayName = "Our Tax Nbr")]
-        [PXDefault(typeof(Search<CSAnswers.value,
-                                 Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-                                       And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.OurTaxNbrNameAtt>>>>),
-                   PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXFormula(typeof(Default<vendorID>))]
+        [TaxNbrVerify(8, IsUnicode = true)]
+        [PXUIField(DisplayName = "Our Tax Nbr.")]
         public virtual string OurTaxNbr { get; set; }
         public abstract class ourTaxNbr : PX.Data.BQL.BqlString.Field<ourTaxNbr> { }
         #endregion
-    
+
         #region Deduction
         [PXDBString(2, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Deduction")]
         [PXSelector(typeof(Search<CSAttributeDetail.valueID,
-                                  Where<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.DeductionNameAtt>>>), 
+                                  Where<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.DeductionNameAtt>>>),
                     typeof(CSAttributeDetail.description))]
         [PXDefault(typeof(Search<CSAnswers.value,
                                  Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
@@ -148,7 +144,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region NetAmt
-        [PXDBDecimal(0)]
+        [TWTaxAmountCalc(0, typeof(taxID), typeof(netAmt), typeof(taxAmt))]
         [PXDefault(TypeCode.Decimal, "0.0")]
         [PXUIField(DisplayName = "Net Amt")]
         public virtual decimal? NetAmt { get; set; }
@@ -156,7 +152,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region TaxAmt
-        [PXDBDecimal(0)]
+        [TWTaxAmount(0)]
         [PXDefault(TypeCode.Decimal, "0.0")]
         [PXUIField(DisplayName = "Tax Amt")]
         public virtual decimal? TaxAmt { get; set; }
@@ -168,6 +164,12 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Remark")]
         public virtual string Remark { get; set; }
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }
+        #endregion
+
+        #region BranchID
+        [Branch(useDefaulting: false)]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
         #region CreatedByID

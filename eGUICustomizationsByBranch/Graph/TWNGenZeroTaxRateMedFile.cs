@@ -76,7 +76,7 @@ namespace eGUICustomizations.Graph
                             // Tax ID
                             lines =  gUIPreferences.OurTaxNbr;
                             // Country No
-                            lines += gUIPreferences.ZeroTaxTaxCntry;
+                            lines += gUIPreferences.ZeroTaxCntry;
                             // Tax Registration ID
                             lines += gUIPreferences.TaxRegistrationID;
                             // Tax Filling Date

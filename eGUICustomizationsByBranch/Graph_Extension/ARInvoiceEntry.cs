@@ -4,6 +4,7 @@ using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
+using PX.Objects.CR;
 using PX.Objects.CS;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
@@ -161,6 +162,7 @@ namespace PX.Objects.AR
                 }
 
                 e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, vATInCode);
+                e.Cache.SetValue<ARRegisterExt.usrOurTaxNbr>(row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, row.BranchID));
             }
         }
 

@@ -1,0 +1,9 @@
+﻿<Table TableName="BAccount">
+    <Column TableName="BAccount" ColumnName="UsrTaxRegistrationID" ColumnType="string" AllowNull="True" MaxLength="9" DecimalPrecision="2" DecimalLength="9" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrOurTaxNbr" ColumnType="string" AllowNull="True" MaxLength="8" DecimalPrecision="2" DecimalLength="8" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrZeroTaxTaxCntry" ColumnType="string" AllowNull="True" MaxLength="1" DecimalPrecision="2" DecimalLength="1" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrCompanyName" ColumnType="string" AllowNull="True" MaxLength="255" DecimalPrecision="2" DecimalLength="255" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrAddressLine" ColumnType="string" AllowNull="True" MaxLength="50" DecimalPrecision="2" DecimalLength="50" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrAESKey" ColumnType="string" AllowNull="True" MaxLength="32" DecimalPrecision="2" DecimalLength="32" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrWHTTaxAuthority" ColumnType="string" AllowNull="True" MaxLength="3" DecimalPrecision="2" DecimalLength="3" IsNewColumn="True" IsUnicode="True" />
+</Table>

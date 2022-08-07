@@ -43,13 +43,20 @@
     <Reference Include="PX.Data">
       <HintPath>..\..\..\..\Bin\PX.Data.dll</HintPath>
     </Reference>
+    <Reference Include="PX.Data.BQL.Fluent">
+      <HintPath>..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
+    </Reference>
     <Reference Include="PX.Objects">
       <HintPath>..\..\..\..\Bin\PX.Objects.DLL</HintPath>
+    </Reference>
+    <Reference Include="PX.SiteMap">
+      <HintPath>..\..\..\..\Bin\PX.SiteMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +113,7 @@
     <Compile Include="Graph_Release\CAReleaseProcess.cs" />
     <Compile Include="Graph_Release\EPReleaseProcess.cs" />
     <Compile Include="Graph_Release\TWNReleaseProcess.cs" />
+    <Compile Include="DAC_Extension\BAccountExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
 using PX.Data;
-using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
-using PX.Objects.TX;
+using PX.Objects.CR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 
@@ -36,7 +35,7 @@ namespace PX.Objects.EP
 
             if (Base.ExpenseClaimCurrent.Current != null)
             {
-                decimal taxSum = 0;
+                decimal? taxSum = null;
 
                 foreach (TWNManualGUIExpense row in manGUIExpense.Select())
                 {
@@ -47,10 +46,10 @@ namespace PX.Objects.EP
                         e.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(e.Row, row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
                     }
 
-                    taxSum += row.TaxAmt.Value;
+                    taxSum = (taxSum ?? 0m) + row.TaxAmt.Value;
                 }
 
-                if (!taxSum.Equals(Base.ExpenseClaimCurrent.Current.TaxTotal))
+                if (taxSum != null && taxSum != Base.ExpenseClaimCurrent.Current.TaxTotal)
                 {
                     throw new PXException(TWMessages.ChkTotalGUIAmt);
                 }
@@ -65,38 +64,11 @@ namespace PX.Objects.EP
             e.NewValue = row.VendorID == null ? "1" : e.NewValue;
         }
 
-        protected virtual void _(Events.FieldDefaulting<TWNManualGUIExpense.ourTaxNbr> e)
+        protected virtual void _(Events.FieldUpdated<TWNManualGUIExpense.branchID> e)
         {
             var row = (TWNManualGUIExpense)e.Row;
 
-            TWNGUIPreferences preferences = SelectFrom<TWNGUIPreferences>.View.Select(Base);
-
-            e.NewValue = row.VendorID == null ? preferences.OurTaxNbr : e.NewValue;
-        }
-
-        protected virtual void _(Events.FieldVerifying<TWNManualGUIExpense.gUINbr> e)
-        {
-            var row = (TWNManualGUIExpense)e.Row;
-
-            tWNGUIValidation.CheckGUINbrExisted(Base, (string)e.NewValue, row.VATInCode);
-        }
-
-        protected virtual void _(Events.FieldVerifying<TWNManualGUIExpense.taxAmt> e)
-        {
-            var row = (TWNManualGUIExpense)e.Row;
-
-            e.Cache.RaiseExceptionHandling<TWNManualGUIExpense.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
-        }
-
-        protected virtual void _(Events.FieldUpdated<TWNManualGUIExpense.netAmt> e)
-        {         
-            var row = (TWNManualGUIExpense)e.Row;
-
-            foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-                                                               .And<TaxRev.taxType.IsEqual<TaxRev.taxType>>>.View.Select(Base, row.TaxID, "P")) // P = Group type (Input)
-            {
-                row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate);
-            }
+            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
         }
         #endregion
     }

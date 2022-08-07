@@ -52,11 +52,6 @@ namespace PX.Objects.AR
 
         [TaxNbrVerify(8, IsUnicode = true)]
         [PXUIField(DisplayName = "Our Tax Nbr.")]
-        [PXDefault(typeof(Search2<CSAnswers.value, InnerJoin<Customer, On<Customer.noteID, Equal<CSAnswers.refNoteID>>>,
-                                                   Where<Customer.bAccountID, Equal<Current<ARRegister.customerID>>,
-                                                         And<CSAnswers.attributeID, Equal<OurTaxNbrNameAtt>>>>),
-                   PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXFormula(typeof(Default<ARInvoice.customerID>))]      
         public virtual string UsrOurTaxNbr { get; set; }
         public abstract class usrOurTaxNbr : IBqlField { }
         #endregion
@@ -80,8 +75,9 @@ namespace PX.Objects.AR
                                                            And<TWNGUITrans.gUIStatus,Equal<TWNStringList.TWNGUIStatus.used>,
                                                                And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
                                                                    And<TWNGUITrans.netAmtRemain, Greater<decimal0>,
-                                                                       And<Where<TWNGUITrans.gUIFormatcode, NotEqual<VATOut33Att>,
-                                                                                 And<TWNGUITrans.gUIFormatcode, NotEqual<VATOut34Att>>>>>>>>>),
+                                                                       And2<Where<TWNGUITrans.gUIFormatcode, NotEqual<VATOut33Att>,
+                                                                                 And<TWNGUITrans.gUIFormatcode, NotEqual<VATOut34Att>>>,
+                                                                            And<TWNGUITrans.branchID, Equal<Current<ARRegister.branchID>>>>>>>>>),
                     typeof(TWNGUITrans.gUIFormatcode),
                     typeof(TWNGUITrans.gUINbr),
                     typeof(TWNGUITrans.orderNbr),

@@ -16,6 +16,7 @@ namespace eGUICustomizations.DAC
         #region GUI3CopiesNumbering
         [PXDBString(10, IsUnicode = true)]
         [PXUIField(DisplayName = "3 Copies e-GUI Numbering Sequence", Visibility = PXUIVisibility.Visible)]
+        [PXDefault()]
         [PXSelector(typeof(Numbering.numberingID), DescriptionField = typeof(Numbering.descr))]
         public virtual string GUI3CopiesNumbering { get; set; }
         public abstract class gUI3CopiesNumbering : PX.Data.BQL.BqlString.Field<gUI3CopiesNumbering> { }
@@ -75,11 +76,11 @@ namespace eGUICustomizations.DAC
         public abstract class ourTaxNbr : PX.Data.BQL.BqlString.Field<ourTaxNbr> { }
         #endregion
     
-        #region ZeroTaxTaxCntry
+        #region ZeroTaxCntry
         [PXDBString(1, IsFixed = true, IsUnicode = true)]
         [PXUIField(DisplayName = "Zero Tax County")]
-        public virtual string ZeroTaxTaxCntry { get; set; }
-        public abstract class zeroTaxTaxCntry : PX.Data.BQL.BqlString.Field<zeroTaxTaxCntry> { }
+        public virtual string ZeroTaxCntry { get; set; }
+        public abstract class zeroTaxCntry : PX.Data.BQL.BqlString.Field<zeroTaxCntry> { }
         #endregion
 
         #region UserName

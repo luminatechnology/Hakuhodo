@@ -3,12 +3,14 @@ using PX.Data;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AP;
 using PX.Objects.CA;
-using PX.Objects.CS;
 using PX.Objects.CR;
+using PX.Objects.CS;
+using PX.Objects.GL;
 using PX.Objects.TX;
 using PX.Data.ReferentialIntegrity.Attributes;
 using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Descriptor.TWNStringList;
+using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {
@@ -129,12 +131,7 @@ namespace eGUICustomizations.DAC
 
         #region OurTaxNbr
         [TaxNbrVerify(8, IsUnicode = true)]
-        [PXUIField(DisplayName = "Our Tax Nbr")]
-        [PXDefault(typeof(Search<CSAnswers.value,
-                                 Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-                                       And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.OurTaxNbrNameAtt>>>>),
-                   PersistingCheck = PXPersistingCheck.Nothing)]
-        [PXFormula(typeof(Default<vendorID>))]
+        [PXUIField(DisplayName = "Our Tax Nbr.")]
         public string OurTaxNbr { get; set; }
         public abstract class ourTaxNbr : PX.Data.BQL.BqlString.Field<ourTaxNbr> { }
         #endregion
@@ -155,7 +152,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region NetAmt
-        [TWNetAmount(0)]
+        [TWTaxAmountCalc(0, typeof(taxID), typeof(netAmt), typeof(taxAmt))]
         [PXDefault(TypeCode.Decimal, "0.0")]
         [PXUIField(DisplayName = "Net Amt")]
         public virtual decimal? NetAmt { get; set; }
@@ -163,7 +160,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region TaxAmt
-        [PXDBDecimal(0)]
+        [TWTaxAmount(0)]
         [PXDefault(TypeCode.Decimal, "0.0")]
         [PXUIField(DisplayName = "Tax Amt")]
         public virtual decimal? TaxAmt { get; set; }
@@ -175,6 +172,12 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Remark")]
         public virtual string Remark { get; set; }
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }
+        #endregion
+
+        #region BranchID
+        [Branch(useDefaulting: false)]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
         #region CreatedByID

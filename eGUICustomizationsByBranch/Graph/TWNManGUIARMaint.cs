@@ -149,6 +149,48 @@ namespace eGUICustomizations.Graph
             }
         }
 
+        protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.customerID> e)
+        {
+            var row = (TWNManualGUIAR)e.Row;
+
+            PXResult<Location> result = SelectFrom<Location>.InnerJoin<Customer>.On<Location.bAccountID.IsEqual<Customer.bAccountID>
+                                                                                    .And<Location.locationID.IsEqual<Customer.defLocationID>>>
+                                                            .InnerJoin<TaxZone>.On<TaxZone.taxZoneID.IsEqual<Location.cTaxZoneID>>
+                                                            .InnerJoin<TaxZoneDet>.On<TaxZoneDet.taxZoneID.IsEqual<Location.cTaxZoneID>>
+                                                            .Where<Customer.bAccountID.IsEqual<@P.AsInt>>.View.Select(this, row.CustomerID);
+            if (result != null)
+            {
+                row.TaxZoneID = result.GetItem<Location>().CTaxZoneID;
+                row.TaxCategoryID = result.GetItem<TaxZone>().DfltTaxCategoryID;
+                row.TaxID = result.GetItem<TaxZoneDet>().TaxID;
+
+                foreach (CSAnswers cS in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.ReadOnly.Select(this, result.GetItem<Customer>().NoteID))
+                {
+                    switch (cS.AttributeID)
+                    {
+                        case ARRegisterExt.VATOUTFRMTName:
+                            row.VatOutCode = cS.Value;
+                            break;
+
+                        case ARRegisterExt.OurTaxNbrName:
+                            row.OurTaxNbr = cS.Value;
+                            break;
+
+                        case ARRegisterExt.TaxNbrName:
+                            row.TaxNbr = cS.Value;
+                            break;
+                    }
+                }
+            }
+        }
+
+        protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.branchID> e)
+        {
+            var row = (TWNManualGUIAR)e.Row;
+
+            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
+        }
+
         //protected virtual void _(Events.FieldVerifying<TWNManualGUIAR.gUINbr> e)
         //{
         //    var row = (TWNManualGUIAR)e.Row;
@@ -163,52 +205,17 @@ namespace eGUICustomizations.Graph
         //    e.Cache.RaiseExceptionHandling<TWNManualGUIAR.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
         //}
 
-        protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.netAmt> e)
-        {       
-            var row = (TWNManualGUIAR)e.Row;
+        //protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.netAmt> e)
+        //{       
+        //    var row = (TWNManualGUIAR)e.Row;
 
-            foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-                                                               .And<TaxRev.taxType.IsEqual<@P.AsString>>>
-                                                        .View.ReadOnly.Select(this, row.TaxID, "S"))     // S = Group type (Output)
-            { 
-                row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate); 
-            }
-        }
-          
-        protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.customerID> e)
-        {
-            var row = (TWNManualGUIAR)e.Row;
-
-            PXResult<Location> result = SelectFrom<Location>.InnerJoin<Customer>.On<Location.bAccountID.IsEqual<Customer.bAccountID>
-                                                                                    .And<Location.locationID.IsEqual<Customer.defLocationID>>>
-                                                            .InnerJoin<TaxZone>.On<TaxZone.taxZoneID.IsEqual<Location.cTaxZoneID>>
-                                                            .InnerJoin<TaxZoneDet>.On<TaxZoneDet.taxZoneID.IsEqual<Location.cTaxZoneID>>
-                                                            .Where<Customer.bAccountID.IsEqual<@P.AsInt>>.View.Select(this, row.CustomerID);
-            if (result != null)
-            {
-                row.TaxZoneID     = result.GetItem<Location>().CTaxZoneID;
-                row.TaxCategoryID = result.GetItem<TaxZone>().DfltTaxCategoryID;
-                row.TaxID         = result.GetItem<TaxZoneDet>().TaxID;
-
-                foreach (CSAnswers cS in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.ReadOnly.Select(this, result.GetItem<Customer>().NoteID))
-                {
-                    switch (cS.AttributeID)
-                    {
-                        case ARRegisterExt.VATOUTFRMTName :
-                            row.VatOutCode = cS.Value;
-                            break;
-
-                        case ARRegisterExt.OurTaxNbrName :
-                            row.OurTaxNbr = cS.Value;
-                            break;
-
-                        case ARRegisterExt.TaxNbrName :
-                            row.TaxNbr = cS.Value;
-                            break;
-                    }
-                }
-            }
-        }
+        //    foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
+        //                                                       .And<TaxRev.taxType.IsEqual<@P.AsString>>>
+        //                                                .View.ReadOnly.Select(this, row.TaxID, "S"))     // S = Group type (Output)
+        //    { 
+        //        row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate); 
+        //    }
+        //}
         #endregion
     }
 }

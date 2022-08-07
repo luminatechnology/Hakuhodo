@@ -39,7 +39,7 @@ namespace PX.Objects.CA
                             VATCode       = manGUIBank.VATInCode,
                             GUINbr        = manGUIBank.GUINbr,
                             GUIStatus     = TWNGUIStatus.Used,
-                            BranchID      = Base.CATranCashTrans_Ordered.Current.BranchID,
+                            BranchID      = manGUIBank.BranchID,
                             GUIDirection  = TWNGUIDirection.Receipt,
                             GUIDate       = manGUIBank.GUIDate,
                             GUITitle      = (string)PXSelectorAttribute.GetField(ViewManGUIBank.Cache, manGUIBank,

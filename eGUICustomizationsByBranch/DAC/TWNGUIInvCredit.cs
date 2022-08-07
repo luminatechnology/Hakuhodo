@@ -2,6 +2,7 @@ using System;
 using PX.Data;
 using PX.Objects.AR;
 using PX.Objects.CS;
+using PX.Objects.GL;
 using eGUICustomizations.Descriptor;
 using eGUICustomizations.Graph;
 
@@ -119,6 +120,12 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Calculation Tax Amt")]
         public virtual Decimal? CalcTaxAmt { get; set; }
         public abstract class calcTaxAmt : PX.Data.BQL.BqlDecimal.Field<calcTaxAmt> { }
+        #endregion
+
+        #region BranchID
+        [Branch()]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
         #region CreatedByID

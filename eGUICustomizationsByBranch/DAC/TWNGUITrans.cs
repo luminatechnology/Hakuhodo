@@ -206,14 +206,10 @@ namespace eGUICustomizations.DAC
         public abstract class deductionCode : PX.Data.BQL.BqlString.Field<deductionCode> { }
         #endregion
 
-        #region Branch
-        [PXDBString(10, IsUnicode = true)]
-        [PXUIField(DisplayName = "Branch")]
-        [PXSelector(typeof(Search<Branch.branchCD>), 
-                    Filterable = true,
-                    DescriptionField = typeof(Branch.acctName))]
-        public virtual string Branch { get; set; }
-        public abstract class branch : PX.Data.BQL.BqlString.Field<branch> { }
+        #region BranchID
+        [Branch()]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
         #region BatchNbr

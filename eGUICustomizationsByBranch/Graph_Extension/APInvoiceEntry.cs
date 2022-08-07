@@ -3,6 +3,7 @@ using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.CS;
+using PX.Objects.CR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 
@@ -102,43 +103,11 @@ namespace PX.Objects.AP
             WHTView.AllowDelete = WHTView.AllowInsert = WHTView.AllowUpdate = Base.Transactions.AllowUpdate;
         }
 
-        //protected void _(Events.RowInserting<APInvoice> e)
-        //{
-        //    if (e.Row == null || Base.vendor.Current == null || activateGUI == false) { return; }
-
-        //    APRegisterExt regisExt = e.Row.GetExtension<APRegisterExt>();
-
-        //    string vATIncode = regisExt.UsrVATInCode;
-
-        //    if (string.IsNullOrEmpty(vATIncode))
-        //    {
-        //        CSAnswers cSAnswers = CSAnswers.PK.Find(Base, Base.vendor.Current.NoteID, TWNManualGUIAPBill.VATINFRMTName);
-
-        //        vATIncode = (e.Row.IsRetainageDocument == true || cSAnswers == null) ? null : cSAnswers.Value;
-        //    }
-
-        //    regisExt.UsrVATInCode = e.Row.DocType == APDocType.DebitAdj &&
-        //                            !string.IsNullOrEmpty(vATIncode) ? TWGUIFormatCode.vATInCode23 /*(int.Parse(vATIncode) + 2).ToString()*/ : vATIncode;
-        //}
-
         protected void _(Events.FieldUpdated<APInvoice.vendorID> e)
         {
-            var vendor = Base.vendor.Current;
+            var vendor  = Base.vendor.Current;
 
             if (vendor == null || activateGUI == false) { return; }
-
-            //switch (row.DocType)
-            //{
-            //    case APDocType.DebitAdj:
-            //        row.GetExtension<APRegisterExt>().UsrVATInCode = TWGUIFormatCode.vATInCode23;
-            //        break;
-
-            //    case APDocType.Invoice:
-            //        CSAnswers cSAnswers = CSAnswers.PK.Find(Base, vendor.NoteID, TWNManualGUIAPBill.VATINFRMTName);
-
-            //        row.GetExtension<APRegisterExt>().UsrVATInCode = cSAnswers?.Value;
-            //        break;
-            //}
 
             foreach (APTaxTran tran in Base.Taxes.Cache.Cached)
             {
@@ -184,7 +153,7 @@ namespace PX.Objects.AP
                             }
                         }
 
-                        wNWHT.SecNHIPct = pref.SecGenerationNHIPct;
+                        wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
 
                         WHTView.Cache.Update(wNWHT);
                     }
@@ -203,21 +172,27 @@ namespace PX.Objects.AP
             e.NewValue = row.VendorID == null ? new string1() : e.NewValue;
         }
 
-        protected void _(Events.FieldDefaulting<TWNManualGUIAPBill.ourTaxNbr> e)
+        protected virtual void _(Events.FieldUpdated<TWNManualGUIAPBill.branchID> e)
         {
-            var row = e.Row as TWNManualGUIAPBill;
+            var row = (TWNManualGUIAPBill)e.Row;
 
-            TWNGUIPreferences preferences = SelectFrom<TWNGUIPreferences>.View.Select(Base);
-
-            e.NewValue = row.VendorID == null ? preferences.OurTaxNbr : e.NewValue;
+            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
         }
+        //protected void _(Events.FieldDefaulting<TWNManualGUIAPBill.ourTaxNbr> e)
+        //{
+        //    var row = e.Row as TWNManualGUIAPBill;
 
-        protected void _(Events.FieldVerifying<TWNManualGUIAPBill.gUINbr> e)
-        {
-            var row = e.Row as TWNManualGUIAPBill;
+        //    TWNGUIPreferences preferences = SelectFrom<TWNGUIPreferences>.View.Select(Base);
 
-            tWNGUIValidation.CheckGUINbrExisted(Base, (string)e.NewValue, row.VATInCode);
-        }
+        //    e.NewValue = row.VendorID == null ? preferences.OurTaxNbr : e.NewValue;
+        //}
+
+        //protected void _(Events.FieldVerifying<TWNManualGUIAPBill.gUINbr> e)
+        //{
+        //    var row = e.Row as TWNManualGUIAPBill;
+
+        //    tWNGUIValidation.CheckGUINbrExisted(Base, (string)e.NewValue, row.VATInCode);
+        //}
         #endregion
 
         #endregion

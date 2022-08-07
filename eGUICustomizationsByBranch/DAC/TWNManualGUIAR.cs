@@ -3,8 +3,10 @@ using PX.Data;
 using PX.Objects.AR;
 using PX.Objects.CR;
 using PX.Objects.CS;
+using PX.Objects.GL;
 using PX.Objects.TX;
 using eGUICustomizations.Descriptor;
+using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {
@@ -108,14 +110,13 @@ namespace eGUICustomizations.DAC
     
         #region OurTaxNbr     
         [TaxNbrVerify(8, IsUnicode = true)]
-        [PXUIField(DisplayName = "Our Tax Nbr")]
-        [PXDefault(typeof(TWNGUIPreferences.ourTaxNbr))]
+        [PXUIField(DisplayName = "Our Tax Nbr.")]
         public virtual string OurTaxNbr { get; set; }
         public abstract class ourTaxNbr : PX.Data.BQL.BqlString.Field<ourTaxNbr> { }
         #endregion
-    
+
         #region NetAmt
-        [TWNetAmount(0)]
+        [TWTaxAmountCalc(0, typeof(taxID), typeof(netAmt), typeof(taxAmt))]
         [PXDefault(TypeCode.Decimal, "0.0")]
         [PXUIField(DisplayName = "Net Amt")]
         public virtual decimal? NetAmt { get; set; }
@@ -173,6 +174,12 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Remark")]
         public virtual string Remark { get; set; }
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }
+        #endregion
+
+        #region BranchID
+        [Branch(useDefaulting: false)]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
         #region CreatedByID

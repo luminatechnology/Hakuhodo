@@ -128,20 +128,6 @@ namespace eGUICustomizations.Graph
             e.NewValue = row.VendorID == null ? "1" : e.NewValue;
         }
 
-        protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.gUINbr> e)
-        {
-            var row = (TWNManualGUIAP)e.Row;
-
-            tWNGUIValidation.CheckGUINbrExisted(this, (string)e.NewValue, row.VATInCode);
-        }
-
-        protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.taxAmt> e)
-        {
-            var row = (TWNManualGUIAP)e.Row;
-
-            e.Cache.RaiseExceptionHandling<TWNManualGUIAP.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
-        }
-
         protected virtual void _(Events.FieldUpdated<TWNManualGUIAP.vendorID> e)
         {
             var row = (TWNManualGUIAP)e.Row;
@@ -153,24 +139,24 @@ namespace eGUICustomizations.Graph
                                                             .Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.Select(this, row.VendorID);
             if (result != null)
             {
-                row.TaxZoneID     = result.GetItem<Location>().VTaxZoneID;
+                row.TaxZoneID = result.GetItem<Location>().VTaxZoneID;
                 row.TaxCategoryID = result.GetItem<TaxZone>().DfltTaxCategoryID;
-                row.TaxID         = result.GetItem<TaxZoneDet>().TaxID;
+                row.TaxID = result.GetItem<TaxZoneDet>().TaxID;
 
                 foreach (CSAnswers cS in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.Select(this, result.GetItem<Vendor>().NoteID))
                 {
                     switch (cS.AttributeID)
                     {
-                        case TWNManualGUIAPBill.VATINFRMTName :
+                        case TWNManualGUIAPBill.VATINFRMTName:
                             row.VATInCode = cS.Value;
                             break;
-                        case TWNManualGUIAPBill.OurTaxNbrName :
+                        case TWNManualGUIAPBill.OurTaxNbrName:
                             row.OurTaxNbr = cS.Value;
                             break;
-                        case TWNManualGUIAPBill.TaxNbrName :
+                        case TWNManualGUIAPBill.TaxNbrName:
                             row.TaxNbr = cS.Value;
                             break;
-                        case TWNManualGUIAPBill.DeductionName :
+                        case TWNManualGUIAPBill.DeductionName:
                             row.Deduction = cS.Value;
                             break;
                     }
@@ -178,16 +164,37 @@ namespace eGUICustomizations.Graph
             }
         }
 
-        protected void _(Events.FieldUpdated<TWNManualGUIAP, TWNManualGUIAP.netAmt> e)
+        protected virtual void _(Events.FieldUpdated<TWNManualGUIAP.branchID> e)
         {
             var row = (TWNManualGUIAP)e.Row;
 
-            foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-                                                               .And<TaxRev.taxType.IsEqual<TaxRev.taxType>>>.View.Select(this, row.TaxID, "P") ) // P = Group type (Input)
-            { 
-                row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate);
-            }
+            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
         }
+
+        //protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.gUINbr> e)
+        //{
+        //    var row = (TWNManualGUIAP)e.Row;
+
+        //    tWNGUIValidation.CheckGUINbrExisted(this, (string)e.NewValue, row.VATInCode);
+        //}
+
+        //protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.taxAmt> e)
+        //{
+        //    var row = (TWNManualGUIAP)e.Row;
+
+        //    e.Cache.RaiseExceptionHandling<TWNManualGUIAP.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
+        //}
+
+        //protected void _(Events.FieldUpdated<TWNManualGUIAP, TWNManualGUIAP.netAmt> e)
+        //{
+        //    var row = (TWNManualGUIAP)e.Row;
+
+        //    foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
+        //                                                       .And<TaxRev.taxType.IsEqual<TaxRev.taxType>>>.View.Select(this, row.TaxID, "P") ) // P = Group type (Input)
+        //    { 
+        //        row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate);
+        //    }
+        //}
         #endregion
     }
 }

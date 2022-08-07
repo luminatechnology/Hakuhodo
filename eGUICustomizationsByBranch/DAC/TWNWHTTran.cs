@@ -160,6 +160,12 @@ namespace eGUICustomizations.DAC
         public abstract class netAmt : PX.Data.BQL.BqlDecimal.Field<netAmt> { }
         #endregion
 
+        #region BranchID
+        [Branch()]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
+        #endregion
+
         #region CreatedByID
         [PXDBCreatedByID()]
         public virtual Guid? CreatedByID { get; set; }

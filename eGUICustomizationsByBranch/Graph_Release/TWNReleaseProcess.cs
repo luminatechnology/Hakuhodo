@@ -32,7 +32,7 @@ namespace eGUICustomizations.Graph_Release
             row = ViewGUITrans.Insert(row);
 
             row.GUIStatus     = sGUITran.GUIStatus;
-            row.Branch        = PXAccess.GetBranchCD(sGUITran.BranchID);
+            row.BranchID      = sGUITran.BranchID;
             row.GUIDirection  = sGUITran.GUIDirection;
             row.GUIDate       = sGUITran.GUIDate;
             row.GUIDecPeriod  = sGUITran.GUIDecPeriod ?? sGUITran.GUIDate;
