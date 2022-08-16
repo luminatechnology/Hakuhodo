@@ -105,58 +105,56 @@ namespace PX.Objects.AP
 
         protected void _(Events.FieldUpdated<APInvoice.vendorID> e)
         {
+            var invoice = Base.Document.Current;
             var vendor  = Base.vendor.Current;
 
-            if (vendor == null || activateGUI == false) { return; }
+            if (invoice == null || vendor == null || activateGUI == false) { return; }
 
-            foreach (APTaxTran tran in Base.Taxes.Cache.Cached)
+            if (TX.TaxZone.PK.Find(Base, invoice.TaxZoneID)?.GetExtension<TX.TaxZoneExt>().UsrWHTTaxRelated == true)
             {
-                if (TX.Tax.PK.Find(Base, tran.TaxID)?.TaxType == TX.CSTaxType.Withholding)
+                TWNGUIPreferences pref = GUISetup.Select();
+
+                if (pref?.EnableWHT == true && invoice.DocType == APDocType.Invoice)
                 {
-                    TWNGUIPreferences pref = GUISetup.Select();
-
-                    if (pref?.EnableWHT == true && Base.Document.Current?.DocType == APDocType.Invoice)
+                    TWNWHT wNWHT = new TWNWHT()
                     {
-                        TWNWHT wNWHT = new TWNWHT()
-                        {
-                            DocType = Base.Document.Current.DocType,
-                            RefNbr = Base.Document.Current.RefNbr
-                        };
+                        DocType = invoice.DocType,
+                        RefNbr  = invoice.RefNbr
+                    };
 
-                        wNWHT = WHTView.Insert(wNWHT);
+                    wNWHT = WHTView.Insert(wNWHT);
 
-                        foreach (CSAnswers answers in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.Select(Base, vendor.NoteID))
+                    foreach (CSAnswers answers in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.Select(Base, vendor.NoteID))
+                    {
+                        switch (answers.AttributeID)
                         {
-                            switch (answers.AttributeID)
-                            {
-                                case TWNWHT.PersonalName:
-                                    wNWHT.PersonalID = answers.Value;
-                                    break;
-                                case TWNWHT.PropertyName:
-                                    wNWHT.PropertyID = answers.Value;
-                                    break;
-                                case TWNWHT.TypeOfInName:
-                                    wNWHT.TypeOfIn = answers.Value;
-                                    break;
-                                case TWNWHT.WHTFmtCodeName:
-                                    wNWHT.WHTFmtCode = answers.Value;
-                                    break;
-                                case TWNWHT.WHTFmtSubName:
-                                    wNWHT.WHTFmtSub = answers.Value;
-                                    break;
-                                case TWNWHT.WHTTaxPctName:
-                                    wNWHT.WHTTaxPct = answers.Value;
-                                    break;
-                                case TWNWHT.SecNHICodeName:
-                                    wNWHT.SecNHICode = answers.Value;
-                                    break;
-                            }
+                            case TWNWHT.PersonalName:
+                                wNWHT.PersonalID = answers.Value;
+                                break;
+                            case TWNWHT.PropertyName:
+                                wNWHT.PropertyID = answers.Value;
+                                break;
+                            case TWNWHT.TypeOfInName:
+                                wNWHT.TypeOfIn = answers.Value;
+                                break;
+                            case TWNWHT.WHTFmtCodeName:
+                                wNWHT.WHTFmtCode = answers.Value;
+                                break;
+                            case TWNWHT.WHTFmtSubName:
+                                wNWHT.WHTFmtSub = answers.Value;
+                                break;
+                            case TWNWHT.WHTTaxPctName:
+                                wNWHT.WHTTaxPct = answers.Value;
+                                break;
+                            case TWNWHT.SecNHICodeName:
+                                wNWHT.SecNHICode = answers.Value;
+                                break;
                         }
-
-                        wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
-
-                        WHTView.Cache.Update(wNWHT);
                     }
+
+                    wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
+
+                    WHTView.Cache.Update(wNWHT);
                 }
             }
         }
@@ -172,27 +170,13 @@ namespace PX.Objects.AP
             e.NewValue = row.VendorID == null ? new string1() : e.NewValue;
         }
 
-        protected virtual void _(Events.FieldUpdated<TWNManualGUIAPBill.branchID> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill.branchID> e)
         {
-            var row = (TWNManualGUIAPBill)e.Row;
+            e.NewValue = Base.Document.Current?.BranchID;
 
-            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
+            // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
+            ManualAPBill.Cache.SetValueExt<TWNManualGUIAPBill.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
         }
-        //protected void _(Events.FieldDefaulting<TWNManualGUIAPBill.ourTaxNbr> e)
-        //{
-        //    var row = e.Row as TWNManualGUIAPBill;
-
-        //    TWNGUIPreferences preferences = SelectFrom<TWNGUIPreferences>.View.Select(Base);
-
-        //    e.NewValue = row.VendorID == null ? preferences.OurTaxNbr : e.NewValue;
-        //}
-
-        //protected void _(Events.FieldVerifying<TWNManualGUIAPBill.gUINbr> e)
-        //{
-        //    var row = e.Row as TWNManualGUIAPBill;
-
-        //    tWNGUIValidation.CheckGUINbrExisted(Base, (string)e.NewValue, row.VATInCode);
-        //}
         #endregion
 
         #endregion

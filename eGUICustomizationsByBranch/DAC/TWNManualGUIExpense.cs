@@ -1,13 +1,11 @@
 using System;
 using PX.Data;
 using PX.Objects.AP;
-using PX.Objects.CR;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.EP;
 using PX.Objects.TX;
 using eGUICustomizations.Descriptor;
-using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {
@@ -57,7 +55,7 @@ namespace eGUICustomizations.DAC
 
         #region GUINbr
         [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
-        [PXUIField(DisplayName = "GUI Nbr")]
+        [PXUIField(DisplayName = "GUI Nbr.")]
         [PXDefault()]
         public virtual string GUINbr { get; set; }
         public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }

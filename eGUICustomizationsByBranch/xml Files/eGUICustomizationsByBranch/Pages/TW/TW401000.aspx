@@ -14,8 +14,8 @@
 			<px:PXGridLevel DataMember="ViewGUITrans">
 			    <Columns>
 				<px:PXGridColumn DataField="GUIStatus" Width="70" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="Branch" Width="70" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="Branch_Branch_acctName" Width="180" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="BranchID" Width="70" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="BranchID_Branch_acctName" Width="180" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUIDirection" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUIFormatcode" Width="120" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUINbr" Width="70" ></px:PXGridColumn>
@@ -64,7 +64,7 @@
 					<px:PXSelector AllowEdit="True" runat="server" ID="CstPXSelector5" DataField="TaxCategoryID" ></px:PXSelector>
 					<px:PXSelector AllowEdit="True" runat="server" ID="CstPXSelector6" DataField="TaxID" ></px:PXSelector>
 					<px:PXSelector AllowEdit="True" runat="server" ID="CstPXSelector7" DataField="TaxZoneID" ></px:PXSelector>
-					<px:PXSelector AllowEdit="True" runat="server" ID="CstPXSelector8" DataField="Branch" ></px:PXSelector>
+					<px:PXSelector AllowEdit="True" runat="server" ID="CstPXSelector8" DataField="BranchID" ></px:PXSelector>
 					<px:PXSelector runat="server" ID="CstPXSelector9" DataField="CustVend" AllowEdit="True" ></px:PXSelector>
 					<px:PXSelector runat="server" ID="CstPXSelector10" DataField="BatchNbr" AllowEdit="True" ></px:PXSelector></RowTemplate></px:PXGridLevel>
 		</Levels>

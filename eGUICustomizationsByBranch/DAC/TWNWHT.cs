@@ -130,13 +130,13 @@ namespace eGUICustomizations.DAC
         #region SecNHIPct
         [PXDBDecimal()]
         [PXUIField(DisplayName = "2GNHI %")]
-        //[PXDefault(typeof(Search<TWNGUIPreferences.secGenerationNHIPct>), PersistingCheck = PXPersistingCheck.Nothing)]
+        [PXDefault(typeof(Search<TWNGUIPreferences.secGenerationNHIPct>), PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual decimal? SecNHIPct { get; set; }
         public abstract class secNHIPct : PX.Data.BQL.BqlDecimal.Field<secNHIPct> { }
         #endregion
 
         #region SecNHICode
-        public const string SecNHICodeName = "SECNHICode";
+        public const string SecNHICodeName = "SECNHICODE";
         public class SecNHICodeAtt : PX.Data.BQL.BqlString.Constant<SecNHICodeAtt>
         {
             public SecNHICodeAtt() : base(SecNHICodeName) { }

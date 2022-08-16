@@ -91,6 +91,8 @@ namespace PX.Objects.AR
                     {
                         string gUINbr = gUINbrs[i].TrimStart();
 
+                        TWNGUIValidation.VerifyCorrspondingGUIByBranch(Base.ARDocument.Cache, gUINbr, doc.BranchID);
+
                         // Avoid standard logic calling this method twice and inserting duplicate records into TWNGUITrans.
                         if (APReleaseProcess_Extension.CountExistedRec(Base, gUINbr, docExt.UsrVATOutCode, doc.RefNbr) > 0) { return; }
 

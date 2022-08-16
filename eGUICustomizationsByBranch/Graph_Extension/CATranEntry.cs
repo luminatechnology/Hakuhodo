@@ -63,44 +63,13 @@ namespace PX.Objects.CA
             e.NewValue = row.VendorID == null ? "1" : e.NewValue;
         }
 
-        protected virtual void _(Events.FieldUpdated<TWNManualGUIBank.branchID> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIBank.branchID> e)
         {
-            var row = (TWNManualGUIBank)e.Row;
+            e.NewValue = Base.CAAdjRecords.Current?.BranchID;
 
-            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
+            // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
+            ManGUIBank.Cache.SetValueExt<TWNManualGUIBank.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
         }
-
-        //protected void _(Events.FieldDefaulting<TWNManualGUIBank.ourTaxNbr> e)
-        //{
-        //    var row = e.Row as TWNManualGUIBank;
-
-        //    e.NewValue = row.VendorID == null ? GUIPreferences.Current.OurTaxNbr : e.NewValue;
-        //}
-
-        //protected virtual void _(Events.FieldVerifying<TWNManualGUIBank.gUINbr> e)
-        //{
-        //    var row = (TWNManualGUIBank)e.Row;
-
-        //    tWNGUIValidation.CheckGUINbrExisted(Base, (string)e.NewValue, row.VATInCode);
-        //}
-
-        //protected virtual void _(Events.FieldVerifying<TWNManualGUIBank.taxAmt> e)
-        //{
-        //    var row = (TWNManualGUIBank)e.Row;
-
-        //    e.Cache.RaiseExceptionHandling<TWNManualGUIBank.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
-        //}
-
-        //protected virtual void _(Events.FieldUpdated< TWNManualGUIBank.netAmt> e)
-        //{        
-        //    var row = (TWNManualGUIBank)e.Row;
-
-        //    foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-        //                                                       .And<TaxRev.taxType.IsEqual<TaxRev.taxType>>>.View.Select(Base, row.TaxID, "P")) // P = Group type (Input)
-        //    {
-        //        row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate);
-        //    }
-        //}
         #endregion
     }
 }

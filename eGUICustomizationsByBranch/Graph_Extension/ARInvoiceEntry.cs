@@ -18,10 +18,6 @@ namespace PX.Objects.AR
 
         public TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
 
-        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
-
-        //public static bool IsActive() => TWNGUIValidation.ActivateTWGUI(new PXGraph());
-
         #region Delegate Methods
         public delegate void PersistDelgate();
         [PXOverride]
@@ -106,7 +102,7 @@ namespace PX.Objects.AR
                                                                                 regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering : pref.GUI3CopiesNumbering, 
                                                                                 regisExt.UsrGUIDate);
 
-                    tWNGUIValidation.CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
+                    new TWNGUIValidation().CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
                 }
             }
         }
@@ -201,6 +197,11 @@ namespace PX.Objects.AR
         #endregion
 
         #region Static Methods
+        /// <summary>
+        /// Convert Arabic numerals to Traditional Chinese and display on custom report.
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public static string AmtInChinese(int amount)
         {
             try
@@ -313,16 +314,6 @@ namespace PX.Objects.AR
                 throw;
             }
         }
-
-        //public static bool CheckAppointmentAmt(ARInvoice invoice)
-        //{
-        //    FSAppointment appointment = SelectFrom<FSAppointment>.InnerJoin<FSPostDoc>.On<FSPostDoc.appointmentID.IsEqual<FSAppointment.appointmentID>>
-        //                                                         .Where<FSPostDoc.postDocType.IsEqual<@P.AsString>
-        //                                                                .And<FSPostDoc.postRefNbr.IsEqual<@P.AsString>>>
-        //                                                         .View.Select(PXGraph.CreateInstance<ARInvoiceEntry>(), invoice.DocType, invoice.RefNbr);
-            
-        //    return appointment != null && appointment.CostTotal.Equals(decimal.Zero);
-        //}
         #endregion
     }
 }

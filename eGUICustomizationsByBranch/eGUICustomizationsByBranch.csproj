@@ -114,6 +114,7 @@
     <Compile Include="Graph_Release\EPReleaseProcess.cs" />
     <Compile Include="Graph_Release\TWNReleaseProcess.cs" />
     <Compile Include="DAC_Extension\BAccountExtensions.cs" />
+    <Compile Include="DAC_Extension\TaxZoneExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

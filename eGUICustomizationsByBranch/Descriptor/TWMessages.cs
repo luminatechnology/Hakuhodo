@@ -42,5 +42,6 @@ namespace eGUICustomizations.Descriptor
         public const string HasMultiPrepay = "{0} Is Applied To One Or Multiple GUI. Please Void Corresponding GUI(s) First.";
         public const string InsufPrepayCN  = "No Sufficient Unapplied Prepay Amount, Please Check Your Credit Amount.";
         public const string CantVoidPrepayGUI = "This's A Prepayment GUI, Please Return The Original Prepayment To Void.";
+        public const string GUIBranchDiffFinBranch = "The GUI Invoice Branch Is Different From The Financal Branch, Please Check The Invoice Or Branch Settings";
     }
 }

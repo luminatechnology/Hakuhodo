@@ -18,6 +18,12 @@ namespace PX.Objects.EP
         public static bool IsActive() => TWNGUIValidation.ActivateTWGUI(new PXGraph());
         #endregion
 
+        #region Cache Attached
+        [PXMergeAttributes(Method = MergeMethod.Merge)]
+        [GL.Branch(typeof(AccessInfo.branchID))]
+        protected virtual void _(Events.CacheAttached<EPExpenseClaim.branchID> e) { }
+        #endregion
+
         #region Event Handlers
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
 
@@ -64,11 +70,12 @@ namespace PX.Objects.EP
             e.NewValue = row.VendorID == null ? "1" : e.NewValue;
         }
 
-        protected virtual void _(Events.FieldUpdated<TWNManualGUIExpense.branchID> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIExpense.branchID> e)
         {
-            var row = (TWNManualGUIExpense)e.Row;
+            e.NewValue = Base.ExpenseClaim.Current?.BranchID;
 
-            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
+            // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
+            manGUIExpense.Cache.SetValueExt<TWNManualGUIExpense.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
         }
         #endregion
     }

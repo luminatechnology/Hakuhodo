@@ -2,12 +2,10 @@
 using PX.Data;
 using PX.Objects.AP;
 using PX.Objects.AR;
-using PX.Objects.CR;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.TX;
 using eGUICustomizations.Descriptor;
-using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {
@@ -62,7 +60,10 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region VendorID
-        [Vendor]
+        [VendorActive(Visibility = PXUIVisibility.SelectorVisible,
+                      DescriptionField = typeof(Vendor.acctName),
+                      CacheGlobal = true,
+                      Filterable = true)]
         [PXDefault(typeof(APInvoice.vendorID), PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual int? VendorID { get; set; }
         public abstract class vendorID : PX.Data.BQL.BqlInt.Field<vendorID> { }
@@ -204,7 +205,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region BranchID
-        [Branch(useDefaulting: false)]
+        [Branch(useDefaulting:false)]
         public virtual int? BranchID { get; set; }
         public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion

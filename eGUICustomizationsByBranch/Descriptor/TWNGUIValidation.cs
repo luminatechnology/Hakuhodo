@@ -4,6 +4,7 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Data.Licensing;
 using PX.Objects.AR;
+using PX.Objects.CS;
 using eGUICustomizations.DAC;
 using Branch = PX.Objects.GL.Branch;
 
@@ -32,6 +33,25 @@ namespace eGUICustomizations.Descriptor
                                                   .Where<Branch.branchID.IsEqual<@P.AsInt>>.View.ReadOnly.Select(graph, graph.Accessinfo.BranchID);
 
             return address.CountryID == "TW"; // Hard code country ID in condition.
+        }
+
+        /// <summary>
+        /// 放行時新增檢核因為有可能分公司會在存檔後修改，當統一發票所屬的公司別與AR30100上的公司別不符時。
+        /// </summary>
+        /// <param name="cache"></param>
+        /// <param name="gUINbr"></param>
+        /// <param name="sBranchID"></param>
+        public static void VerifyCorrspondingGUIByBranch(PXCache cache, string gUINbr, int? sBranchID)
+        {
+            int? branchID = SelectFrom<NumberingSequence>.Where<NumberingSequence.startNbr.IsLessEqual<@P.AsString>
+                                                                .And<NumberingSequence.endNbr.IsGreaterEqual<@P.AsString>
+                                                                    .And<NumberingSequence.numberingID.IsEqual<@P.AsString>>>>
+                                                         .View.SelectSingleBound(cache.Graph, null, gUINbr, gUINbr, SelectFrom<TWNGUIPreferences>.View.Select(cache.Graph).TopFirst?.GUI3CopiesNumbering).TopFirst?.NBranchID;
+
+            if (branchID == null || branchID != sBranchID)
+            {
+                throw new PXException(TWMessages.GUIBranchDiffFinBranch);
+            }
         }
         #endregion
 
