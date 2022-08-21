@@ -1,5 +1,5 @@
 ﻿<Report Name="tw641000.rpx">
-    <Report version="20211215" Name="report1">
+    <Report Name="report1" version="20211215">
         <CommonSettings>
             <ViewPdf>True</ViewPdf>
         </CommonSettings>
@@ -60,15 +60,11 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <Name>guirptfmt</Name>
             </EmbeddedImage>
         </EmbeddedImages>
-        <ExportFileName>=Format( 'ARInvoice {0} {1}', IsNull([@DocType],''),IsNull([@RefNbr],''))</ExportFileName>
+        <ExportFileName>=Format('GUI Invoice {0} {1}', IsNull([TWNGUITrans.GUIFormatcode],''),IsNull([TWNGUITrans.GUINbr],''))</ExportFileName>
         <Filters>
             <FilterExp>
-                <DataField>ARRegister.DocType</DataField>
-                <Value>@DocType</Value>
-            </FilterExp>
-            <FilterExp>
-                <DataField>ARRegister.RefNbr</DataField>
-                <Value>@RefNbr</Value>
+                <DataField>TWNGUITrans.GUINbr</DataField>
+                <Value>@GUINbr</Value>
             </FilterExp>
             <FilterExp>
                 <Condition>NotEqual</Condition>
@@ -89,7 +85,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <DefaultValue>INV</DefaultValue>
                 <Name>DocType</Name>
                 <Prompt>Document Type</Prompt>
-                <Required>True</Required>
                 <ValidValues>
                     <ParameterValue>
                         <Label>Invoice</Label>
@@ -120,48 +115,65 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                         <Value>PPM</Value>
                     </ParameterValue>
                 </ValidValues>
+                <Visible>False</Visible>
             </ReportParameter>
             <ReportParameter>
                 <Name>RefNbr</Name>
                 <Prompt>Reference Nbr.</Prompt>
-                <Required>True</Required>
                 <ViewName>=Report.GetFieldSchema('ARRegister.RefNbr,DocType')</ViewName>
+                <Visible>False</Visible>
+            </ReportParameter>
+            <ReportParameter>
+                <Name>GUINbr</Name>
+                <Prompt>GUI Nbr.</Prompt>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNGUITrans.GUINbr')</ViewName>
             </ReportParameter>
         </Parameters>
         <Relations>
             <ReportRelation>
-                <ChildName>ARInvoice</ChildName>
+                <ChildName>ARRegister</ChildName>
                 <Links>
+                    <RelationRow>
+                        <ChildField>RefNbr</ChildField>
+                        <ParentField>OrderNbr</ParentField>
+                    </RelationRow>
                     <RelationRow>
                         <ChildField>DocType</ChildField>
                         <ParentField>DocType</ParentField>
                     </RelationRow>
-                    <RelationRow>
-                        <ChildField>RefNbr</ChildField>
-                        <ParentField>RefNbr</ParentField>
-                    </RelationRow>
                 </Links>
-                <ParentName>ARRegister</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildName>TWNGUITrans</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>OrderNbr</ChildField>
-                        <ParentField>RefNbr</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentName>ARRegister</ParentName>
+                <ParentName>TWNGUITrans</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Customer</ChildName>
                 <Links>
                     <RelationRow>
-                        <ChildField>BAccountID</ChildField>
-                        <ParentField>CustomerID</ParentField>
+                        <ChildField>AcctCD</ChildField>
+                        <ParentField>=Trim(CustVend)</ParentField>
                     </RelationRow>
                 </Links>
-                <ParentName>ARRegister</ParentName>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>Branch</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>BranchID</ChildField>
+                        <ParentField>BranchID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>BAccount2</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>BAccountID</ChildField>
+                        <ParentField>BAccountID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>Branch</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Contact</ChildName>
@@ -177,6 +189,30 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </RelationRow>
                 </Links>
                 <ParentName>Customer</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>Address</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>AddressID</ChildField>
+                        <ParentField>DefBillAddressID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>Customer</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>ARInvoice</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>DocType</ChildField>
+                        <ParentField>DocType</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>RefNbr</ChildField>
+                        <ParentField>RefNbr</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>ARRegister</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>ARAddress</ChildName>
@@ -206,26 +242,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <ChildName>TWNGUIPreferences</ChildName>
                 <JoinType>Cross</JoinType>
                 <ParentName>ARInvoice</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildName>Branch</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>BranchID</ChildField>
-                        <ParentField>BranchID</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentName>ARInvoice</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildName>BAccount2</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>BAccountID</ChildField>
-                        <ParentField>BAccountID</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentName>Branch</ParentName>
             </ReportRelation>
         </Relations>
         <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>
@@ -2176,10 +2192,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="AcctCD_Segment1">
                     </ReportField>
-                    <ReportField Name="AcctCD_Segment2">
-                    </ReportField>
-                    <ReportField Name="AcctCD_Segment3">
-                    </ReportField>
                     <ReportField Name="AcctName">
                     </ReportField>
                     <ReportField Name="AcctReferenceNbr">
@@ -2201,6 +2213,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="BaseCuryID">
                     </ReportField>
+                    <ReportField Name="BRAND_Attributes">
+                    </ReportField>
                     <ReportField Name="CampaignSourceID">
                     </ReportField>
                     <ReportField Name="CampaignSourceID_CRCampaign_campaignName">
@@ -2221,20 +2235,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="COGSAcctID_description">
                     </ReportField>
                     <ReportField Name="COGSAcctID_Segment1">
-                    </ReportField>
-                    <ReportField Name="COGSSubID">
-                    </ReportField>
-                    <ReportField Name="COGSSubID_description">
-                    </ReportField>
-                    <ReportField Name="COGSSubID_Segment1">
-                    </ReportField>
-                    <ReportField Name="COGSSubID_Segment2">
-                    </ReportField>
-                    <ReportField Name="COGSSubID_Segment3">
-                    </ReportField>
-                    <ReportField Name="COGSSubID_Segment4">
-                    </ReportField>
-                    <ReportField Name="COGSSubID_Sub_description">
                     </ReportField>
                     <ReportField Name="ConsolidateStatements">
                         <DataType>Boolean</DataType>
@@ -2348,8 +2348,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="DiscTakenSubID_Segment3">
                     </ReportField>
-                    <ReportField Name="DiscTakenSubID_Segment4">
-                    </ReportField>
                     <ReportField Name="DiscTakenSubID_Sub_description">
                     </ReportField>
                     <ReportField Name="EntityTypeID">
@@ -2432,8 +2430,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="NoteText">
                     </ReportField>
-                    <ReportField Name="OURTAXNBR_Attributes">
-                    </ReportField>
                     <ReportField Name="OverrideBillAddress">
                         <DataType>Boolean</DataType>
                     </ReportField>
@@ -2454,10 +2450,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="ParentBAccountID_description">
                     </ReportField>
                     <ReportField Name="ParentBAccountID_Segment1">
-                    </ReportField>
-                    <ReportField Name="ParentBAccountID_Segment2">
-                    </ReportField>
-                    <ReportField Name="ParentBAccountID_Segment3">
                     </ReportField>
                     <ReportField Name="PaymentsByLinesAllowed">
                         <DataType>Boolean</DataType>
@@ -2483,8 +2475,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="PrepaymentSubID_Segment3">
                     </ReportField>
-                    <ReportField Name="PrepaymentSubID_Segment4">
-                    </ReportField>
                     <ReportField Name="PrepaymentSubID_Sub_description">
                     </ReportField>
                     <ReportField Name="PreviewHtml">
@@ -2501,14 +2491,13 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="PrintInvoices">
                         <DataType>Boolean</DataType>
                     </ReportField>
-                    <ReportField Name="PRINTPREPA_Attributes">
-                        <DataType>Boolean</DataType>
-                    </ReportField>
                     <ReportField Name="PrintStatements">
                         <DataType>Boolean</DataType>
                     </ReportField>
                     <ReportField Name="PseudonymizationStatus">
                         <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="REMITDESC_Attributes">
                     </ReportField>
                     <ReportField Name="RetainageApply">
                         <DataType>Boolean</DataType>
@@ -2587,6 +2576,20 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="tstamp">
                     </ReportField>
                     <ReportField Name="Type">
+                    </ReportField>
+                    <ReportField Name="UsrAddressLine">
+                    </ReportField>
+                    <ReportField Name="UsrAESKey">
+                    </ReportField>
+                    <ReportField Name="UsrCompanyName">
+                    </ReportField>
+                    <ReportField Name="UsrOurTaxNbr">
+                    </ReportField>
+                    <ReportField Name="UsrTaxRegistrationID">
+                    </ReportField>
+                    <ReportField Name="UsrWHTTaxAuthority">
+                    </ReportField>
+                    <ReportField Name="UsrZeroTaxTaxCntry">
                     </ReportField>
                     <ReportField Name="VATOUTFRMT_Attributes">
                     </ReportField>
@@ -2733,11 +2736,13 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="BatchNbr_description">
                     </ReportField>
-                    <ReportField Name="Branch">
+                    <ReportField Name="BranchID">
                     </ReportField>
-                    <ReportField Name="Branch_Branch_acctName">
+                    <ReportField Name="BranchID_Branch_acctName">
                     </ReportField>
-                    <ReportField Name="Branch_description">
+                    <ReportField Name="BranchID_description">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment1">
                     </ReportField>
                     <ReportField Name="CarrierID">
                     </ReportField>
@@ -2788,6 +2793,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="DeductionCode_CSAttributeDetail_description">
                     </ReportField>
                     <ReportField Name="DeductionCode_description">
+                    </ReportField>
+                    <ReportField Name="DocType">
                     </ReportField>
                     <ReportField Name="EGUIExcluded">
                         <DataType>Boolean</DataType>
@@ -3971,8 +3978,125 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 </Fields>
                 <FullName>PX.Objects.CR.BAccount2</FullName>
             </ReportTable>
+            <ReportTable Name="Address">
+                <Fields>
+                    <ReportField Name="AddressID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="AddressLine1">
+                    </ReportField>
+                    <ReportField Name="AddressLine2">
+                    </ReportField>
+                    <ReportField Name="AddressLine3">
+                    </ReportField>
+                    <ReportField Name="AddressType">
+                    </ReportField>
+                    <ReportField Name="BAccountID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="City">
+                    </ReportField>
+                    <ReportField Name="CountryID">
+                    </ReportField>
+                    <ReportField Name="CountryID_Country_description">
+                    </ReportField>
+                    <ReportField Name="CountryID_description">
+                    </ReportField>
+                    <ReportField Name="County">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="DisplayName">
+                    </ReportField>
+                    <ReportField Name="IsValidated">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="Latitude">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="Longitude">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="PostalCode">
+                    </ReportField>
+                    <ReportField Name="PseudonymizationStatus">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="RevisionID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="Selected">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="State">
+                    </ReportField>
+                    <ReportField Name="State_description">
+                    </ReportField>
+                    <ReportField Name="State_State_name">
+                    </ReportField>
+                    <ReportField Name="TaxLocationCode">
+                    </ReportField>
+                    <ReportField Name="TaxMunicipalCode">
+                    </ReportField>
+                    <ReportField Name="TaxSchoolCode">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                </Fields>
+                <FullName>PX.Objects.CR.Address</FullName>
+            </ReportTable>
         </Tables>
-        <Version>20201103</Version>
         <ViewerFields>
             <ViewerField Name="ARInvoice.DocType">
             </ViewerField>
@@ -4133,7 +4257,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <TextAlign>Left</TextAlign>
                         </Style>
-                        <Value>=[ARRegister.UsrGUINbr]</Value>
+                        <Value>=IsNull([ARRegister.UsrTaxNbr], [TWNGUITrans.GUINbr])</Value>
                     </TextBox>
                     <TextBox Name="textBox11">
                         <Location>2.1164cm, 1.90476cm</Location>
@@ -4157,7 +4281,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <TextAlign>Left</TextAlign>
                         </Style>
-                        <Value>=[ARRegister.UsrTaxNbr]</Value>
+                        <Value>=IsNull([ARRegister.UsrTaxNbr], [TWNGUITrans.TaxNbr])</Value>
                     </TextBox>
                     <TextBox Name="textBox13">
                         <Location>2.1164cm, 3.1746cm</Location>
@@ -4169,7 +4293,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <TextAlign>Left</TextAlign>
                         </Style>
-                        <Value>=[ARAddress.AddressLine1]</Value>
+                        <Value>=IsNull([ARAddress.AddressLine1], [Address.AddressLine1])</Value>
                     </TextBox>
                     <TextBox Name="textBox2">
                         <Format>yyyy-MM-dd</Format>
@@ -4388,7 +4512,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Left</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=IsNull([ARRegister.UsrOurTaxNbr], [TWNGUIPreferences.OurTaxNbr])</Value>
+                        <Value>=IsNull([TWNGUITrans.OurTaxNbr], [BAccount2.UsrOurTaxNbr])</Value>
                     </TextBox>
                     <TextBox Name="textBox16">
                         <Location>15.87302cm, 2.96296cm</Location>
@@ -4471,7 +4595,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Right</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=IIf([ARRegister.UsrTaxNbr] = NULL, Sum([ARTran.Qty] * IIf([ARRegister.UsrTaxNbr] &lt;&gt; NULL, IIf([ARInvoice.TaxCalcMode] = 'G', [ARTran.CuryUnitPrice] / 1.05,[ARTran.CuryUnitPrice]),[ARTran.CuryUnitPrice])), [TWNGUITrans.NetAmount])</Value>
+                        <Value>=IIf([TWNGUITrans.OrderNbr] = Null,#010;     IIf([TWNGUITrans.TaxNbr] = Null, [TWNGUITrans.NetAmount] + [TWNGUITrans.TaxAmount], [TWNGUITrans.NetAmount]),#010;     IIf([ARRegister.UsrTaxNbr] = Null, #010;         Sum([ARTran.Qty] * IIf([ARRegister.UsrTaxNbr] &lt;&gt; Null, #010;                                IIf([ARInvoice.TaxCalcMode] = 'G', #010;                                    [ARTran.CuryUnitPrice] / 1.05,[ARTran.CuryUnitPrice]),#010;                                    [ARTran.CuryUnitPrice])),       #010;      [TWNGUITrans.NetAmount])#010;    )#010;     #010;#010;#010;#010;</Value>
                         <VisibleExpr>=[PageIndex]=[PageCount]</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox24">
@@ -4487,7 +4611,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=IIf([ARRegister.UsrTaxNbr] = NULL, '', [TWNGUITrans.TaxAmount])</Value>
+                        <Value>=IIf([TWNGUITrans.TaxNbr] = Null, '', [TWNGUITrans.TaxAmount])</Value>
                         <VisibleExpr>=[PageIndex]=[PageCount]</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox25">
@@ -4700,7 +4824,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
             </PageFooter>
             <PageHeader Name="pageHeaderSection2">
                 <Height>1.25cm</Height>
-                <VisibleExpr>=[ARRegister.DocType] = 'PPM'</VisibleExpr>
+                <VisibleExpr>=[ARRegister.DocType] = 'PPM' OR [TWNGUITrans.DocType] = 'PPM'</VisibleExpr>
                 <Items>
                     <TextBox Name="textBox44">
                         <CanGrow>True</CanGrow>
@@ -4732,51 +4856,120 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </TextBox>
                 </Items>
             </PageHeader>
+            <PageHeader Name="pageHeaderSection3">
+                <Height>1.25cm</Height>
+                <Variables>
+                    <ReportVariable>
+                        <Name>RemitAmount</Name>
+                        <ValueExpr>=IIf([TWNGUITrans.TaxNbr] = Null, [TWNGUITrans.NetAmount] + [TWNGUITrans.TaxAmount], [TWNGUITrans.NetAmount])</ValueExpr>
+                    </ReportVariable>
+                </Variables>
+                <VisibleExpr>=[TWNGUITrans.OrderNbr] = Null</VisibleExpr>
+                <Items>
+                    <TextBox Name="textBox46">
+                        <Format>=[ARTran.CuryTranAmt.Format]</Format>
+                        <Location>4.16667in, 0cm</Location>
+                        <Size>3.38624cm, 1.25cm</Size>
+                        <Style>
+                            <Font>
+                                <Name>Microsoft YaHei UI</Name>
+                                <Size>12px</Size>
+                            </Font>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <Value>=$RemitAmount</Value>
+                    </TextBox>
+                    <TextBox Name="textBox47">
+                        <Format>=[ARTran.CuryTranAmt.Format]#010;</Format>
+                        <Location>3.16667in, 0cm</Location>
+                        <Size>2.54cm, 1.25cm</Size>
+                        <Style>
+                            <Font>
+                                <Name>Microsoft YaHei UI</Name>
+                                <Size>12px</Size>
+                            </Font>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <Value>=$RemitAmount</Value>
+                        <VisibleExpr>=IIf([ARTran.CuryUnitPrice] &lt;&gt; 0, true, false)</VisibleExpr>
+                    </TextBox>
+                    <TextBox Name="textBox48">
+                        <Location>2in, 0cm</Location>
+                        <Size>2.97cm, 1.25cm</Size>
+                        <Style>
+                            <Font>
+                                <Name>Microsoft YaHei UI</Name>
+                                <Size>12px</Size>
+                            </Font>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <Value>1</Value>
+                        <VisibleExpr>=[ARTran.Qty] &lt;&gt; 0</VisibleExpr>
+                    </TextBox>
+                    <TextBox Name="textBox49">
+                        <CanGrow>True</CanGrow>
+                        <Location>3px, 0cm</Location>
+                        <Size>1.96in, 1.25cm</Size>
+                        <Style>
+                            <Font>
+                                <Name>Microsoft YaHei UI</Name>
+                                <Size>12px</Size>
+                            </Font>
+                            <TextAlign>Left</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <Value>=[Customer.REMITDESC_Attributes]</Value>
+                    </TextBox>
+                </Items>
+            </PageHeader>
         </Sections>
         <Items>
             <Line Name="line5">
                 <Direction>Vertical</Direction>
                 <LineWidth>2px</LineWidth>
                 <Location>3.16667in, 1.5in</Location>
-                <OverlayHeight>72px</OverlayHeight>
-                <Size>0.05in, 2in</Size>
+                <OverlayHeight>96px</OverlayHeight>
+                <Size>0.05in, 2.75in</Size>
             </Line>
             <Line Name="line1">
                 <Direction>Vertical</Direction>
                 <LineWidth>2px</LineWidth>
                 <Location>7.416in, 2in</Location>
-                <OverlayHeight>48px</OverlayHeight>
+                <OverlayHeight>72px</OverlayHeight>
                 <OverlayShift>24px</OverlayShift>
-                <Size>0.1cm, 8cm</Size>
+                <Size>0.1cm, 9.89cm</Size>
             </Line>
             <Line Name="line2">
                 <Direction>Vertical</Direction>
                 <LineWidth>2px</LineWidth>
                 <Location>1px, 2in</Location>
-                <OverlayHeight>48px</OverlayHeight>
+                <OverlayHeight>72px</OverlayHeight>
                 <OverlayShift>24px</OverlayShift>
-                <Size>0.1cm, 8cm</Size>
+                <Size>0.1cm, 9.89cm</Size>
             </Line>
             <Line Name="line4">
                 <Direction>Vertical</Direction>
                 <LineWidth>2px</LineWidth>
                 <Location>2in, 1.5in</Location>
-                <OverlayHeight>72px</OverlayHeight>
-                <Size>0.05in, 2in</Size>
+                <OverlayHeight>96px</OverlayHeight>
+                <Size>0.05in, 2.75in</Size>
             </Line>
             <Line Name="line6">
                 <Direction>Vertical</Direction>
                 <LineWidth>2px</LineWidth>
                 <Location>4.16667in, 1.5in</Location>
-                <OverlayHeight>72px</OverlayHeight>
-                <Size>0.05in, 3.17in</Size>
+                <OverlayHeight>96px</OverlayHeight>
+                <Size>0.05in, 3.54in</Size>
             </Line>
             <Line Name="line7">
                 <Direction>Vertical</Direction>
                 <LineWidth>2px</LineWidth>
                 <Location>5.5in, 1.5in</Location>
-                <OverlayHeight>72px</OverlayHeight>
-                <Size>0.05in, 3.65in</Size>
+                <OverlayHeight>96px</OverlayHeight>
+                <Size>0.05in, 11.12cm</Size>
             </Line>
         </Items>
     </Report>

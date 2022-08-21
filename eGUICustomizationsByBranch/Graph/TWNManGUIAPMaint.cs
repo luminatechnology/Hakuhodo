@@ -60,6 +60,7 @@ namespace eGUICustomizations.Graph
                             VATCode       = manualGUIAP.VATInCode,
                             GUINbr        = manualGUIAP.GUINbr,
                             GUIStatus     = TWNGUIStatus.Used,
+                            BranchID      = manualGUIAP.BranchID,
                             GUIDirection  = TWNGUIDirection.Receipt,
                             GUIDate       = manualGUIAP.GUIDate,
                             GUIDecPeriod  = manualGUIAP.GUIDecPeriod,

@@ -38,8 +38,15 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region GUINbr
-        [GUINumber(14, IsUnicode = true, InputMask = ">aaaaaaaaaaaaa")]
+        [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr")]
+        [PXSelector(typeof(Search<TWNGUITrans.gUINbr, Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
+                                                            And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>>>>),
+                    typeof(TWNGUITrans.gUINbr),
+                    typeof(TWNGUITrans.gUIFormatcode),
+                    typeof(TWNGUITrans.branchID),
+                    typeof(TWNGUITrans.gUIDate),
+                    ValidateValue = false)]
         public virtual string GUINbr { get; set; }
         public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }
         #endregion
@@ -182,7 +189,8 @@ namespace eGUICustomizations.DAC
         [PXSelector(typeof(Search<PX.Objects.CR.BAccount.acctCD,
                                   Where<PX.Objects.CR.BAccount.type.IsIn<PX.Objects.CR.BAccountType.customerType,
                                                                          PX.Objects.CR.BAccountType.vendorType,
-                                                                         PX.Objects.CR.BAccountType.employeeType>>>),
+                                                                         PX.Objects.CR.BAccountType.employeeType,
+                                                                         PX.Objects.CR.BAccountType.combinedType>>>),
                     typeof(PX.Objects.CR.BAccount.acctName))]
         public virtual string CustVend { get; set; }
         public abstract class custVend : PX.Data.BQL.BqlString.Field<custVend> { }

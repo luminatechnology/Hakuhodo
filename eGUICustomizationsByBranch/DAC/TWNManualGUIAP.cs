@@ -1,13 +1,11 @@
 using System;
 using PX.Data;
 using PX.Objects.AP;
-using PX.Objects.CR;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.TX;
 using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Descriptor.TWNStringList;
-using static PX.Objects.CS.BranchMaint;
 
 namespace eGUICustomizations.DAC
 {

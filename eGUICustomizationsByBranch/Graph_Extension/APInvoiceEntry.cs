@@ -103,7 +103,40 @@ namespace PX.Objects.AP
             WHTView.AllowDelete = WHTView.AllowInsert = WHTView.AllowUpdate = Base.Transactions.AllowUpdate;
         }
 
-        protected void _(Events.FieldUpdated<APInvoice.vendorID> e)
+        protected void _(Events.FieldUpdated<APInvoice.taxZoneID> e, PXFieldUpdated baseHandler)
+        {
+            baseHandler?.Invoke(e.Cache, e.Args);
+
+            InsertDefaultWHT();
+        }
+
+        #region TWNManualGUIAPBill
+        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
+
+        protected void _(Events.FieldDefaulting<TWNManualGUIAPBill.deduction> e)
+        {
+            var row = e.Row as TWNManualGUIAPBill;
+
+            /// If user doesn't choose a vendor then bring the fixed default value from Attribure "DEDUCTCODE" first record.
+            e.NewValue = row.VendorID == null ? new string1() : e.NewValue;
+        }
+
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill.branchID> e)
+        {
+            e.NewValue = Base.Document.Current?.BranchID;
+
+            // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
+            ManualAPBill.Cache.SetValueExt<TWNManualGUIAPBill.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
+        }
+        #endregion
+
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// TX206000 新增 “代扣稅相關” checkbox, AP301000 如果選出來的 供應商稅務區域 是與代扣稅相關，則將代扣稅相關欄位由供應商帶出.
+        /// </summary>
+        protected virtual void InsertDefaultWHT()
         {
             var invoice = Base.Document.Current;
             var vendor  = Base.vendor.Current;
@@ -119,10 +152,13 @@ namespace PX.Objects.AP
                     TWNWHT wNWHT = new TWNWHT()
                     {
                         DocType = invoice.DocType,
-                        RefNbr  = invoice.RefNbr
+                        RefNbr = invoice.RefNbr
                     };
 
                     wNWHT = WHTView.Insert(wNWHT);
+
+                    // Avoid returning an Null cache with the same PK.
+                    if (wNWHT == null) { return; }
 
                     foreach (CSAnswers answers in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.Select(Base, vendor.NoteID))
                     {
@@ -158,27 +194,6 @@ namespace PX.Objects.AP
                 }
             }
         }
-
-        #region TWNManualGUIAPBill
-        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
-
-        protected void _(Events.FieldDefaulting<TWNManualGUIAPBill.deduction> e)
-        {
-            var row = e.Row as TWNManualGUIAPBill;
-
-            /// If user doesn't choose a vendor then bring the fixed default value from Attribure "DEDUCTCODE" first record.
-            e.NewValue = row.VendorID == null ? new string1() : e.NewValue;
-        }
-
-        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill.branchID> e)
-        {
-            e.NewValue = Base.Document.Current?.BranchID;
-
-            // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
-            ManualAPBill.Cache.SetValueExt<TWNManualGUIAPBill.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
-        }
-        #endregion
-
         #endregion
     }
 }

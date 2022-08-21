@@ -194,7 +194,12 @@ namespace eGUICustomizations.Descriptor
 
             if (_NetAmt != null)
             {
-                throw new TWNGUIValidation().CheckTaxAmount(sender, (decimal)sender.GetValue(e.Row, _NetAmt.Name), (decimal)e.NewValue);
+                var exception = new TWNGUIValidation().CheckTaxAmount(sender, (decimal)sender.GetValue(e.Row, _NetAmt.Name), (decimal)e.NewValue);
+
+                if (exception != null)
+                {
+                    throw exception;
+                }
             }
         }
     }
