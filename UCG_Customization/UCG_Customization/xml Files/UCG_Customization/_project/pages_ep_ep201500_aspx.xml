@@ -1,0 +1,12 @@
+﻿<Page path="~/pages/ep/ep201500.aspx" pageSource="pVXJbtswEL0HyD8QLHKMl3RBEdhBXdtpDNitYLlJbgUtTWwmlKiSlJcc+u2dkeRY8ZY09Ykmh2/evHkcNU6+ME9MgPVFPElx0eTtd5wNhHVg6OBSKtz7U13v2GpfWnctYV6Jsk3OWqnT3RnE7kYaSJMmdyYFzq6FkqFwMITfKVjX5HdCWdxv67DA7XpntfrHWq0ibLKoBJYfHzH89eIpGOlsk1PCX6sozkbS0bWfsaNFmFHn7OTi+Oj4qIGl5CxHywTYtTQuFcoTbvoifwJoIIXzto4dlsF6nSYPcF0nstmWp0QAV1qFYOgwmXZ8zkwaCyzLBzNDmIucfCNZnHu3HeGEr1MTQAYWWs5uZEhc6rXaydNVm19lRPm7iLA277byY3wPgbOVrlfpQCKMi5DAQMjYceYZGQmzJPok3/oc5ZZWjkmeUaZ+QSej1BZKjUXw0NZRJOLQls5KlP2NMJYz6sXIsox/mbex+k8ovphlrY8i6dpTdBvYFdN/A+qAAgeH6TSqeypuVDe6Q52vllq/zwln+53QP2iEb0aGGcoEF1t9vwI5meL/D7VastiwiO+WVN7jqYxDWJyzOr2AllJ6jjaW8WQlXytwUsfW01bSArd1wtda0ONshfepdW2t0ii2T4plWD4IE0xXWGthVq71H2RM68J4eCvDopfky0fkR/hoYDHuEc0mP61/Pnv/iZe70YcZqN2mI3my4yz1AKIxmA1jb9zL7g71fARRonC67Dhew/fFUqdumCrYVN53iJ8rsiq+L8ZIs+jBIG+40Sov83awbdTnuXDEPHRDmXsGwnUFvc5W36nYSwkqJD+X4w6nGMHCPUthAyMT6vrhDKWwwwl8mOTDxj4UObqLBHAAtIJApy+Vsh37xmx+On5VpiKOLDiEOwN2um+mZEmrh23TKB7IQc5k2DzurU3ch/DqJu0G2BafZKE5+BXn4Oqb/B/Ihdi7ld0tXTFunx75sxG9NRUaRJheW/by8HtHo+AGp5+ec9aNBU77cLO/pQw7Rvlf">
+    <PXGridLevel DataMember="EPDepartment" ParentId="phL_grid_Levels#0" TypeFullName="PX.Web.UI.PXGridLevel">
+        <Children Key="Columns">
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="UsrWorkGroupID" />
+                    <Prop Key="Width" Value="180" />
+                </PXGridColumn>
+            </AddItem>
+        </Children>
+    </PXGridLevel>
+</Page>

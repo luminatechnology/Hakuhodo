@@ -1,0 +1,1 @@
+"C:\Program Files\Acumatica\Acumatica ERP\AcumaticaUCG\App_Data\Projects\UCG_Customization\UCG_Customization.sln"
