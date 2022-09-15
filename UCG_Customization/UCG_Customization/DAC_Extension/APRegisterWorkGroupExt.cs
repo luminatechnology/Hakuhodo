@@ -1,29 +1,22 @@
-using PX.Data.ReferentialIntegrity.Attributes;
-using PX.Data.WorkflowAPI;
 using PX.Data;
-using PX.Objects.AP;
-using PX.Objects.AR;
-using PX.Objects.CM;
-using PX.Objects.Common;
-using PX.Objects.CR;
-using PX.Objects.CS;
-using PX.Objects.EP;
-using PX.Objects.GL.DAC.Abstract;
-using PX.Objects.GL;
-using PX.Objects.TX;
-using PX.Objects;
-using PX.SM;
-using PX.TM;
-using System.Collections.Generic;
-using System;
 
-namespace PX.Objects.EP
+namespace PX.Objects.AP
 {
-    public class EPExpenseClaimWorkGroupExt : PXCacheExtension<PX.Objects.EP.EPExpenseClaim>
+    public class APRegisterWorkGroupExt : PXCacheExtension<PX.Objects.AP.APRegister>
     {
+
+        #region UsrDepartmentID 
+        [PXDBString]
+        [PXUIField(DisplayName = "DepartmentID", IsReadOnly = true)]
+        [PXDBDefault(PersistingCheck = PXPersistingCheck.Nothing)]
+        public virtual string UsrDepartmentID { get; set; }
+        public abstract class usrDepartmentID : PX.Data.BQL.BqlString.Field<usrDepartmentID> { }
+        #endregion
+
         #region UsrApproveWG01 
         [PXDBString]
         [PXUIField(DisplayName = "ApproveWG01")]
+
         public virtual string UsrApproveWG01 { get; set; }
         public abstract class usrApproveWG01 : PX.Data.BQL.BqlString.Field<usrApproveWG01> { }
         #endregion
@@ -90,6 +83,5 @@ namespace PX.Objects.EP
         public virtual string UsrApproveWG10 { get; set; }
         public abstract class usrApproveWG10 : PX.Data.BQL.BqlString.Field<usrApproveWG10> { }
         #endregion
-
     }
 }
