@@ -37,34 +37,82 @@ SELECT
   c.EMail,
   p.UsrIsTTGenerated AS IsTTGenerated,
   (
-    SELECT
-      ValueString
-    FROM
-      LocationKvExt
-    WHERE
-      CompanyID = l.CompanyID
-      AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCTNAME '
+    Case
+      when acct.Type like 'E%' then (
+        SELECT
+          vpm.DetailValue
+        FROM
+          VendorPaymentMethodDetail vpm
+        WHERE
+          r.CompanyID = vpm.CompanyID
+          AND acct.BAccountID = vpm.BAccountID
+          AND acct.DefLocationID = vpm.LocationID
+          AND l.VPaymentMethodID = vpm.PaymentMethodID
+          AND vpm.DetailID = 'BKACCTNAME'
+      )
+      else (
+        SELECT
+          ValueString
+        FROM
+          LocationKvExt
+        WHERE
+          CompanyID = l.CompanyID
+          AND RecordID = l.NoteID
+          AND FieldName = 'AttributeBKACCTNAME'
+      )
+    end
   ) AS AcctName,
   (
-    SELECT
-      ValueString
-    FROM
-      LocationKvExt
-    WHERE
-      CompanyID = l.CompanyID
-      AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCT'
+    Case
+      when acct.Type like 'E%' then (
+        SELECT
+          vpm.DetailValue
+        FROM
+          VendorPaymentMethodDetail vpm
+        WHERE
+          r.CompanyID = vpm.CompanyID
+          AND acct.BAccountID = vpm.BAccountID
+          AND acct.DefLocationID = vpm.LocationID
+          AND l.VPaymentMethodID = vpm.PaymentMethodID
+          AND vpm.DetailID = 'BKACCT'
+      )
+      else (
+        SELECT
+          ValueString
+        FROM
+          LocationKvExt
+        WHERE
+          CompanyID = l.CompanyID
+          AND RecordID = l.NoteID
+          AND FieldName = 'AttributeBKACCT'
+      )
+    end
   ) AS PayAccount,
   (
-    SELECT
-      ValueString
-    FROM
-      LocationKvExt
-    WHERE
-      CompanyID = l.CompanyID
-      AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCTNAME'
+    Case
+      when acct.Type like 'E%' then (
+        SELECT
+          vpm.DetailValue
+        FROM
+          VendorPaymentMethodDetail vpm
+        WHERE
+          r.CompanyID = vpm.CompanyID
+          AND acct.BAccountID = vpm.BAccountID
+          AND acct.DefLocationID = vpm.LocationID
+          AND l.VPaymentMethodID = vpm.PaymentMethodID
+          AND vpm.DetailID = 'BKBRCODE'
+      )
+      else (
+        SELECT
+          ValueString
+        FROM
+          LocationKvExt
+        WHERE
+          CompanyID = l.CompanyID
+          AND RecordID = l.NoteID
+          AND FieldName = 'AttributeBKACCTNAME'
+      )
+    end
   ) AS BankBranch
 FROM
   APPayment p
@@ -85,6 +133,8 @@ FROM
   AND p.RemitAddressID = addr.AddressID
   LEFT JOIN Contact c ON c.CompanyID = p.CompanyID
   AND c.ContactID = p.RemitContactID
+  LEFT JOIN Location el ON r.CompanyID = el.CompanyID
+  AND acct.DefLocationID = el.LocationID
 WHERE
   r.DocType = 'CHK'
   AND r.Status IN ('N', 'C')
@@ -128,7 +178,7 @@ SELECT
     WHERE
       CompanyID = l.CompanyID
       AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCTNAME '
+      AND FieldName = 'AttributeBKACCTNAME'
   ) AS AcctName,
   (
     SELECT

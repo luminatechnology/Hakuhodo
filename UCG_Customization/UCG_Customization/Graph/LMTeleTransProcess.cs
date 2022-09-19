@@ -46,7 +46,10 @@ namespace UCG_Customization
         #region Event
         protected void _(Events.RowSelected<MasterTable> e)
         {
-            DetailsView.SetParametersDelegate(list => DoProcess(list, this));
+            LMTeleTransProcess _this = this;
+            DetailsView.SetProcessDelegate(delegate (List<APARTeleTransView> list) {
+                DoProcess(list, _this);
+            });
         }
 
         protected void _(Events.RowUpdated<MasterTable> e)
@@ -113,6 +116,11 @@ namespace UCG_Customization
                            string.Empty),
                        true);
                 }
+            }
+            catch (PXRedirectToFileException)
+            {
+                PXProcessing<APARTeleTransView>.SetProcessed();
+                throw;
             }
             catch (Exception ex)
             {
