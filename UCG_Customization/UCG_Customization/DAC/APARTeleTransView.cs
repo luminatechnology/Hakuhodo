@@ -65,10 +65,17 @@ namespace UCG_Customization.DAC
         #endregion
 
         #region PayBankBranch
-        [PXDBString(40, IsUnicode = true, InputMask = "")]
+        [PXDBString(255, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Pay Bank Branch")]
         public virtual string PayBankBranch { get; set; }
         public abstract class payBankBranch : PX.Data.BQL.BqlString.Field<payBankBranch> { }
+        #endregion
+
+        #region ExtRefNbr
+        [PXDBString(40, IsUnicode = true, InputMask = "")]
+        [PXUIField(DisplayName = "Pay Account")]
+        public virtual string ExtRefNbr { get; set; }
+        public abstract class extRefNbr : PX.Data.BQL.BqlString.Field<extRefNbr> { }
         #endregion
 
         #region TaxRegistrationID
@@ -161,5 +168,6 @@ namespace UCG_Customization.DAC
         public virtual string BankBranch { get; set; }
         public abstract class bankBranch : PX.Data.BQL.BqlString.Field<bankBranch> { }
         #endregion
+
     }
 }

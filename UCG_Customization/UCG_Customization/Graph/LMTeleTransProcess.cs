@@ -21,8 +21,8 @@ namespace UCG_Customization
         const string ENCODING = "BIG5";
 
         public PXCancel<MasterTable> Cancel;
-        public PXFilter<MasterTable> MasterView;
 
+        public PXFilter<MasterTable> MasterView;
         public PXFilteredProcessing<APARTeleTransView, MasterTable,
             Where<APARTeleTransView.branch, Equal<Current<MasterTable.branchID>>,
                     And<APARTeleTransView.cashAccountID, Equal<Current<MasterTable.cashAccountID>>,
@@ -144,11 +144,11 @@ namespace UCG_Customization
             var segmentKey = "1"; //Segment Key (1)
             var ourCustomerID = GetStr(datas[0].TaxRegistrationID, 10, false);//OurCustomerID (10)
             var selCount = GetStr(param.SelCount.ToString(), 8, true, '0');//SelCount (8) Left pad with 0
-            var curySelTotal = GetStr((param.CurySelTotal ?? 0).ToString("0"), 11, true);//CurySelTotal (11) Left pad with 0
+            var curySelTotal = GetStr((param.CurySelTotal ?? 0).ToString("0"), 11, true,'0');//CurySelTotal (11) Left pad with 0
             var payBankBranch = GetStr(datas[0].PayBankBranch, 7, false);//PayBankBranch (7)
-            var payAccount = GetStr(datas[0].PayAccount, 16, false);//PayAccount (16)
+            var payAccount = GetStr(datas[0].ExtRefNbr, 16, false);//PayAccount (16)
             var batchDate = GetStr(GetRocDateStr(sysDate), 7, false);//BatchDate (7) systemDat YYYmmDD (民國年)
-            var reserveField = GetStr(datas[0].TaxRegistrationID, 10, true);//ReserveField (7) left pad with blank
+            var reserveField = GetStr("", 7, false);//ReserveField (7) left pad with blank
             var feePayee = GetStr(param.PayTypeID == "TTO" ? "1" : " ", 1, false);//FeePayee (1) if payment method = 'TTO' then 1 ,else blank
             var payName = GetStr("", 80, true);//PayName (80) left pad with blank
             return
@@ -166,8 +166,17 @@ namespace UCG_Customization
 
         private static void DoPayLine(APARTeleTransView data, MasterTable param, StreamWriter sw)
         {
+            bool isAP = data.DataType == "AP";
+            if (isAP) { //AP聯絡資訊轉換
+                APPayment payment = APPayment.PK.Find(new PXGraph(),data.DocType, data.RefNbr);
+                APAddress addr = GetAPAddress(payment?.RemitAddressID);//取得isDefAddres = false資料
+                APContact contact = GetAPContact(payment?.RemitContactID);//取得idDefContact = false資料
+                if (addr != null) data.PostalCode = addr.PostalCode;
+                if (contact != null) data.EMail = contact.Email;
+            }
+
             var segmentKey = "2"; //(1)
-            var vendorID = GetStr(data.BAccountID?.ToString(), 10, false);//(10) VendorID/CustomerID 
+            var vendorID = GetStr(data.BAccountTWID?.ToString(), 10, false);//(10) VendorID/CustomerID 
             var vendorName = GetStr(data.AcctName, 60, false);//(60) 
             var postCode = GetStr(data.PostalCode, 5, false);//(5)
             var email = GetStr(data.EMail, 80, false);//(80)
@@ -185,7 +194,7 @@ namespace UCG_Customization
 
             //====Get detail
             List<String> detailStrs = new List<String>();
-            if (data.DataType == "AP")
+            if (isAP)
             {
                 var details = GetAPTranPost(data.RefNbr, data.DocType);
                 _lineDetailCount = details.Count;
@@ -236,7 +245,11 @@ namespace UCG_Customization
             var item = GetStr(guiAPBill?.GUINbr, 10, false);//(10)
             var amtChar = (tran.CuryAmt ?? 0) >= 0 ? '0' : ' ';
             var amount = GetStr((tran.CuryAmt ?? 0).ToString("0"), 11, true, amtChar);//(11)
-            var remark = GetStr(srcAPRegister?.DocDesc, 80, false);//(80)
+            var _remark = srcAPRegister?.DocDesc;
+            if (_remark == null || "".Equals(_remark)) {
+                _remark = GetAPTran(tran.SourceRefNbr, tran.SourceDocType)?.TranDesc;
+            }
+            var remark = GetStr(_remark, 80, false);//(80)
             var guiNbr = GetStr(guiAPBill?.GUINbr, 20, false);//(20)
             return
                   segmentKey
@@ -255,7 +268,12 @@ namespace UCG_Customization
             var item = GetStr(guiTrans?.GUINbr, 10, false);//(10)
             var amtChar = (tran?.CuryAmt ?? 0) >= 0 ? '0' : ' ';//TODO: 待確認欄位資訊
             var amount = GetStr((tran?.CuryAmt ?? 0).ToString("0"), 11, true, amtChar);//(11)
-            var remark = GetStr(srcARRegister?.DocDesc, 80, false);//(80)
+            var _remark = srcARRegister?.DocDesc;
+            if (_remark == null || "".Equals(_remark))
+            {
+                _remark = GetARTran(tran.SourceRefNbr, tran.SourceDocType)?.TranDesc;
+            }
+            var remark = GetStr(_remark, 80, false);//(80)
             var guiNbr = GetStr(guiTrans?.GUINbr, 20, false);//(20)
             return
                   segmentKey
@@ -309,16 +327,20 @@ namespace UCG_Customization
         private static PXResultset<APTranPost> GetAPTranPost(string refNbr, string docType)
         {
             return PXSelect<APTranPost,
-                   Where<APTranPost.refNbr, Equal<Required<APTranPost.refNbr>>,
-                       And<APTranPost.docType, Equal<Required<APTranPost.docType>>>>>
+                   Where<APTranPost.refNbr,NotEqual<APTranPost.sourceRefNbr>,
+                       And<APTranPost.docType,NotEqual<APTranPost.sourceDocType>, 
+                       And<APTranPost.refNbr, Equal<Required<APTranPost.refNbr>>,
+                       And<APTranPost.docType, Equal<Required<APTranPost.docType>>>>>>>
                        .Select(new PXGraph(), refNbr, docType);
         }
 
         private static PXResultset<ARTranPost> GetARTranPost(string refNbr, string docType)
         {
             return PXSelect<ARTranPost,
-                   Where<ARTranPost.refNbr, Equal<Required<ARTranPost.refNbr>>,
-                       And<ARTranPost.docType, Equal<Required<ARTranPost.docType>>>>>
+                   Where< ARTranPost.refNbr,NotEqual<ARTranPost.sourceRefNbr>,
+                       And<ARTranPost.docType, NotEqual<ARTranPost.sourceDocType>,
+                       And<ARTranPost.refNbr, Equal<Required<ARTranPost.refNbr>>,
+                       And<ARTranPost.docType, Equal<Required<ARTranPost.docType>>>>>>>
                    .Select(new PXGraph(), refNbr, docType);
         }
 
@@ -355,6 +377,38 @@ namespace UCG_Customization
                    .Select(new PXGraph(), srcRefNbr, srcDocType);
         }
 
+        private static APAddress GetAPAddress(int? addressID)
+        {
+            return PXSelect<APAddress,
+                   Where<APAddress.isDefaultAddress, Equal<False>,
+                       And<APAddress.addressID, Equal<Required<APAddress.addressID>>>>>
+                   .Select(new PXGraph(), addressID);
+        }
+
+        private static APContact GetAPContact(int? contactID)
+        {
+            return PXSelect<APContact,
+                   Where<APContact.isDefaultContact, Equal<False>,
+                       And<APContact.contactID, Equal<Required<APContact.contactID>>>>>
+                   .Select(new PXGraph(), contactID);
+        }
+
+        private static APTran GetAPTran(string srcRefNbr,string srcDocType) {
+            return PXSelect<APTran,
+                   Where<APTran.refNbr, Equal<Required<APTran.refNbr>>,
+                   And<APTran.tranType, Equal<Required<APTran.tranType>>>>,
+                   OrderBy<Asc<APTran.lineNbr>>>
+                   .Select(new PXGraph(),srcRefNbr,srcDocType);
+        }
+
+        private static ARTran GetARTran(string srcRefNbr, string srcDocType)
+        {
+            return PXSelect<ARTran,
+                   Where<ARTran.refNbr, Equal<Required<ARTran.refNbr>>,
+                   And<ARTran.tranType, Equal<Required<ARTran.tranType>>>>,
+                   OrderBy<Asc<ARTran.lineNbr>>>
+                   .Select(new PXGraph(), srcRefNbr, srcDocType);
+        }
 
         #endregion
 
@@ -367,6 +421,7 @@ namespace UCG_Customization
             #region BranchID
             [PXInt()]
             [PXUIField(DisplayName = "BranchID", Required = true)]
+            [PXUnboundDefault(typeof(AccessInfo.branchID))]
             [PXDimensionSelector("BIZACCT", typeof(Search<Branch.branchID, Where<Branch.active, Equal<True>, And<MatchWithBranch<Branch.branchID>>>>), typeof(Branch.branchCD), DescriptionField = typeof(Branch.acctName))]
             public virtual int? BranchID { get; set; }
             public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
@@ -387,7 +442,11 @@ namespace UCG_Customization
             #region CashAccountID
             [PXInt()]
             [PXUIField(DisplayName = "PayAccountID", Required = true)]
-            [PXSelector(typeof(Search<CashAccount.cashAccountID, Where<CashAccount.active, Equal<True>>>),
+            [PXSelector(typeof(Search2<CashAccount.cashAccountID, 
+                InnerJoin<PaymentMethodAccount,On<CashAccount.cashAccountID,Equal<PaymentMethodAccount.cashAccountID>>>,
+                Where<CashAccount.active, Equal<True>,
+                And<CashAccount.branchID,Equal<Current<branchID>>,
+                    And<PaymentMethodAccount.paymentMethodID,Equal<Current<payTypeID>>>>>>),
                 SubstituteKey = typeof(CashAccount.cashAccountCD),
                 DescriptionField = typeof(CashAccount.descr))]
             public virtual int? CashAccountID { get; set; }
@@ -397,6 +456,7 @@ namespace UCG_Customization
             #region DocDate
             [PXDate()]
             [PXUIField(DisplayName = "DocDate")]
+            [PXUnboundDefault(typeof(AccessInfo.businessDate))]
             public virtual DateTime? DocDate { get; set; }
             public abstract class docDate : PX.Data.BQL.BqlDateTime.Field<docDate> { }
             #endregion

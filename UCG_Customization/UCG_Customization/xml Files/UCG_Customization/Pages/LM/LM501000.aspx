@@ -21,7 +21,7 @@
 				<px:PXLayoutRule runat="server" ID="CstPXLayoutRule12" StartColumn="True" ></px:PXLayoutRule>
 				<px:PXSegmentMask CommitChanges="True" runat="server" ID="CstPXSegmentMask14" DataField="BranchID" ></px:PXSegmentMask>
 				<px:PXSelector CommitChanges="True" runat="server" ID="CstPXSelector23" DataField="PayTypeID" ></px:PXSelector>
-				<px:PXSelector CommitChanges="True" runat="server" ID="CstPXSelector26" DataField="CashAccountID" ></px:PXSelector>
+				<px:PXSelector AutoRefresh="True" CommitChanges="True" runat="server" ID="CstPXSelector26" DataField="CashAccountID" ></px:PXSelector>
 				<px:PXLayoutRule runat="server" ID="CstPXLayoutRule13" StartColumn="True" ></px:PXLayoutRule>
 				<px:PXSelector CommitChanges="True" runat="server" ID="CstPXSelector24" DataField="BAccountID" ></px:PXSelector>
 				<px:PXDateTimeEdit CommitChanges="True" runat="server" ID="CstPXDateTimeEdit25" DataField="DocDate" ></px:PXDateTimeEdit>

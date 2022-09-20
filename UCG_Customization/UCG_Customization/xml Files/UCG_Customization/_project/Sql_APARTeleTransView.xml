@@ -12,7 +12,17 @@ SELECT
   r.BatchNbr,
   p.PaymentMethodID,
   p.CashAccountID,
-  ca.ExtRefNbr AS PayBankBranch,
+  (
+    SELECT
+      ValueString
+    FROM
+      CashAccountKvExt
+    WHERE
+      CompanyID = ca.CompanyID
+      AND RecordID = ca.NoteID
+      AND FieldName = 'AttributeBKBRCODE'
+  ) AS PayBankBranch,
+  ca.ExtRefNbr,
   BranchBAccount.TaxRegistrationID AS TaxRegistrationID,
   p.RefNbr,
   p.DocType,
@@ -37,8 +47,8 @@ SELECT
   c.EMail,
   p.UsrIsTTGenerated AS IsTTGenerated,
   (
-    Case
-      when acct.Type like 'E%' then (
+    CASE
+      WHEN acct.Type LIKE 'E%' THEN (
         SELECT
           vpm.DetailValue
         FROM
@@ -50,7 +60,7 @@ SELECT
           AND l.VPaymentMethodID = vpm.PaymentMethodID
           AND vpm.DetailID = 'BKACCTNAME'
       )
-      else (
+      ELSE (
         SELECT
           ValueString
         FROM
@@ -60,11 +70,11 @@ SELECT
           AND RecordID = l.NoteID
           AND FieldName = 'AttributeBKACCTNAME'
       )
-    end
+    END
   ) AS AcctName,
   (
-    Case
-      when acct.Type like 'E%' then (
+    CASE
+      WHEN acct.Type LIKE 'E%' THEN (
         SELECT
           vpm.DetailValue
         FROM
@@ -76,7 +86,7 @@ SELECT
           AND l.VPaymentMethodID = vpm.PaymentMethodID
           AND vpm.DetailID = 'BKACCT'
       )
-      else (
+      ELSE (
         SELECT
           ValueString
         FROM
@@ -86,11 +96,11 @@ SELECT
           AND RecordID = l.NoteID
           AND FieldName = 'AttributeBKACCT'
       )
-    end
+    END
   ) AS PayAccount,
   (
-    Case
-      when acct.Type like 'E%' then (
+    CASE
+      WHEN acct.Type LIKE 'E%' THEN (
         SELECT
           vpm.DetailValue
         FROM
@@ -102,7 +112,7 @@ SELECT
           AND l.VPaymentMethodID = vpm.PaymentMethodID
           AND vpm.DetailID = 'BKBRCODE'
       )
-      else (
+      ELSE (
         SELECT
           ValueString
         FROM
@@ -112,7 +122,7 @@ SELECT
           AND RecordID = l.NoteID
           AND FieldName = 'AttributeBKACCTNAME'
       )
-    end
+    END
   ) AS BankBranch
 FROM
   APPayment p
@@ -146,7 +156,17 @@ SELECT
   r.BatchNbr,
   p.PaymentMethodID,
   p.CashAccountID,
-  ca.ExtRefNbr AS PayBankBranch,
+  (
+    SELECT
+      ValueString
+    FROM
+      CashAccountKvExt
+    WHERE
+      CompanyID = ca.CompanyID
+      AND RecordID = ca.NoteID
+      AND FieldName = 'AttributeBKBRCODE'
+  ) AS PayBankBranch,
+  ca.ExtRefNbr,
   BranchBAccount.TaxRegistrationID AS TaxRegistrationID,
   p.RefNbr,
   p.DocType,
