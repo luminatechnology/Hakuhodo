@@ -9,7 +9,7 @@
 	</px:PXDataSource>
 </asp:Content>
 <asp:Content ID="cont2" ContentPlaceHolderID="phL" runat="Server">
-	<px:PXGrid ID="grid" SyncPosition="True" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Inquire" AllowAutoHide="false">
+	<px:PXGrid ID="grid" SyncPosition="True" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Inquire" AllowAutoHide="false" NoteIndicator="false" FilesIndicator="false">
 		<Levels>
 			<px:PXGridLevel DataMember="GUITranProc">
 			    <Columns>

@@ -308,6 +308,7 @@ namespace eGUICustomizations.DAC
         #region EGUIExcluded
         [PXDBBool()]
         [PXUIField(DisplayName = "eGUI Excluded")]
+        [PXDefault(false, PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual bool? EGUIExcluded { get; set; }
         public abstract class eGUIExcluded : PX.Data.BQL.BqlBool.Field<eGUIExcluded> { }
         #endregion

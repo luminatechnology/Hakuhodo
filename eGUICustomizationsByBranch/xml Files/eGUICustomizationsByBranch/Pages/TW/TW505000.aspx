@@ -10,11 +10,12 @@
 	</px:PXDataSource>
 </asp:Content>
 <asp:Content ID="cont2" ContentPlaceHolderID="phF" Runat="Server">
-	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="70px" AllowAutoHide="false">
+	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="95px" AllowAutoHide="false">
 		<Template>
 			<px:PXLayoutRule runat="server" ID="PXLayoutRule2" StartRow="True" ></px:PXLayoutRule>
-			<px:PXLayoutRule runat="server" ID="CstPXLayoutRule1" StartColumn="True" ></px:PXLayoutRule>
-			<px:PXLayoutRule runat="server" ID="CstPXLayoutRule6" Merge="True" ></px:PXLayoutRule>
+			<px:PXLayoutRule runat="server" ID="CstPXLayoutRule1" StartColumn="True" ColumnSpan="2" ></px:PXLayoutRule>
+			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="BranchID" CommitChanges="true"></px:PXSelector>
+ 			<px:PXLayoutRule runat="server" ID="CstPXLayoutRule6" Merge="True" ></px:PXLayoutRule>
 			<px:PXDateTimeEdit runat="server" ID="CstPXDateTimeEdit3" CommitChanges="True" DataField="FromDate_Date" ></px:PXDateTimeEdit>
 			<px:PXDateTimeEdit runat="server" ID="CstPXDateTimeEdit5" TimeMode="True" SuppressLabel="True" CommitChanges="True" DataField="FromDate_Time" ></px:PXDateTimeEdit>
 			<px:PXLayoutRule runat="server" ID="CstPXLayoutRule7" Merge="True" ></px:PXLayoutRule>
@@ -27,7 +28,7 @@
 	</px:PXFormView>
 </asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">
-	<px:PXGrid SyncPosition="True" ID="grid" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Inquire" AllowAutoHide="false">
+	<px:PXGrid SyncPosition="True" ID="grid" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Inquire" AllowAutoHide="false" NoteIndicator="false" FilesIndicator="false">
 		<Levels>
 			<px:PXGridLevel DataMember="WHTTranProc">
 			    <Columns>

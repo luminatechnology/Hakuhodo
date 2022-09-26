@@ -14,7 +14,7 @@
 		<Levels>
 			<px:PXGridLevel DataMember="WHTTran">
 			    <Columns>
-				<px:PXGridColumn DataField="BatchNbr" Width="140" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="BatchNbr" Width="140" CommitChanges="true" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="BranchID" Width="140" />
 				<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PaymDate" Width="90" ></px:PXGridColumn>
@@ -32,11 +32,10 @@
 				<px:PXGridColumn DataField="SecNHIAmt" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="WHTTaxPct" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="WHTAmt" Width="100" ></px:PXGridColumn></Columns>
-			
 				<RowTemplate>
 					<px:PXSelector runat="server" ID="CstPXSelector1" DataField="RefNbr" AllowEdit="True" ></px:PXSelector>
 					<px:PXSelector runat="server" ID="CstPXSelector2" DataField="BatchNbr" AllowEdit="True" ></px:PXSelector>
-								<px:PXSegmentMask runat="server" ID="CstPXSegmentMask2" DataField="BranchID" AllowEdit="True" /></RowTemplate></px:PXGridLevel>
+					<px:PXSegmentMask runat="server" ID="CstPXSegmentMask2" DataField="BranchID" AllowEdit="True" /></RowTemplate></px:PXGridLevel>
 		</Levels>
 		<AutoSize Container="Window" Enabled="True" MinHeight="150" ></AutoSize>
 		<ActionBar >

@@ -49,7 +49,7 @@ namespace eGUICustomizations.DAC
         [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr")]
         [PXDefault()]
-        [ARGUINbrAutoNum(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(AccessInfo.businessDate))]
+        [ARGUINbrAutoNum(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(gUIDate))]
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr,
                                   Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                         And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
@@ -67,6 +67,7 @@ namespace eGUICustomizations.DAC
         #region GUIDate
         [PXDBDate()]
         [PXUIField(DisplayName = "GUI Date")]
+        [PXDefault()]
         public virtual DateTime? GUIDate { get; set; }
         public abstract class gUIDate : PX.Data.BQL.BqlDateTime.Field<gUIDate> { }
         #endregion

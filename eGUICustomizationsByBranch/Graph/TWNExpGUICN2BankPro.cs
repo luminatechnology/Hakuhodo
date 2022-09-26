@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using PX.Data;
 using PX.Objects.AR;
+using PX.Objects.CR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Graph.TWNExpGUIInv2BankPro;
@@ -11,16 +12,18 @@ namespace eGUICustomizations.Graph
     public class TWNExpGUICN2BankPro : PXGraph<TWNExpGUICN2BankPro>
     {
         #region Process & Setup
-        public PXCancel<TWNGUITrans> Cancel;
-        public PXProcessing<TWNGUITrans,
-                            Where<TWNGUITrans.eGUIExcluded.IsNotEqual<True>
-                                  .And<TWNGUITrans.eGUIExported.IsNotEqual<True>
-                                      .And<TWNGUITrans.gUIFormatcode.IsEqual<ARRegisterExt.VATOut33Att>
-                                          .And<TWNGUITrans.taxNbr.IsNotNull>>>>> GUITranProc;
-                            //Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-                            //      And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-                            //                 Or<TWNGUITrans.eGUIExported, IsNull>>,
-                            //          And<TWNGUITrans.gUIFormatcode, Equal<ARRegisterExt.VATOut33Att>>>>> GUITranProc;
+        public PXCancel<WHTTranFilter> Cancel;
+        public PXFilter<WHTTranFilter> Filter;
+
+        public PXFilteredProcessing<TWNGUITrans,
+                                    WHTTranFilter,
+                                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
+                                          And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
+                                                     Or<TWNGUITrans.eGUIExported, IsNull>>,
+                                              And<TWNGUITrans.gUIFormatcode, Equal<ARRegisterExt.VATOut33Att>,
+                                                  And<TWNGUITrans.taxNbr, IsNull,
+                                                      And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>>> GUITranProc;
+
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
@@ -43,11 +46,12 @@ namespace eGUICustomizations.Graph
 
                 TWNExpGUIInv2BankPro graph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string lines = "", fileName = "";
+                string lines = "";
 
-                TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
+                //TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
+                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbBymBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
 
-                fileName = preferences.OurTaxNbr + "-AllowanceMD--Paper-" + DateTime.Today.ToString("yyyyMMdd") + "-" + DateTime.Now.ToString("hhmmss") + ".txt";
+                string fileName = $"{ourTaxNbrByBranch}-AllowanceMD-{ourTaxNbrByBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {

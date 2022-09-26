@@ -23,24 +23,26 @@ namespace eGUICustomizations.Graph
                                     Where<TWNWHTTran.tranDate, GreaterEqual<Current<WHTTranFilter.fromDate>>,
                                           And<TWNWHTTran.tranDate, LessEqual<Current<WHTTranFilter.toDate>>,
                                               And<TWNWHTTran.paymDate, GreaterEqual<Current<WHTTranFilter.fromPaymDate>>,
-                                                  And<TWNWHTTran.paymDate, LessEqual<Current<WHTTranFilter.toPaymDate>>>>>>> WHTTranProc;
+                                                  And<TWNWHTTran.paymDate, LessEqual<Current<WHTTranFilter.toPaymDate>>,
+                                                      And<TWNWHTTran.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>>> WHTTranProc;
 
         public PXSetup<TWNGUIPreferences> GUISetup;
         #endregion
 
-        #region Constructor
+        #region Ctor
         public TWNGenWHTFile()
         {
             WHTTranProc.SetProcessCaption(ActionsMessages.Export);
             WHTTranProc.SetProcessAllCaption(TWMessages.ExportAll);
             ///<remarks> Because the file is downloaded using the throw exception, an error message may be displayed even if there is no error.///</remarks>
             WHTTranProc.SetProcessDelegate(Export);
-            //WHTTranProc.SetProcessDelegate(delegate (List<TWNWHTTran> list)
-            //{
-            //    TWNGenWHTFile graph = CreateInstance<TWNGenWHTFile>();
+        }
+        #endregion
 
-            //    graph.Export(list);
-            //});
+        #region Event Handlers
+        protected virtual void _(Events.FieldDefaulting<WHTTranFilter.toDate> e)
+        {
+            e.NewValue = DateTime.Parse(this.Accessinfo.BusinessDate.ToString()).AddDays(1).Date.AddSeconds(-1);
         }
         #endregion
 
@@ -149,8 +151,7 @@ namespace eGUICustomizations.Graph
         }
 
         /// <summary>
-        /// If TWN_WhtTrans.FormatCode ='9A', then TWN_WhtTrans.FormatSubCode 
-        /// else(TWN_WhtTrans.PropertyID if TWN_WhtTrans.PropertyID is not blank)
+        /// If TWN_WhtTrans.FormatCode ='9A', then TWN_WhtTrans.FormatSubCode else(TWN_WhtTrans.PropertyID if TWN_WhtTrans.PropertyID is not blank)
         /// </summary>
         protected string GetFormatNbr(TWNWHTTran wHTTran)
         {
@@ -182,6 +183,13 @@ namespace eGUICustomizations.Graph
     [PXCacheName("Withholding Tax Trans Filter")]
     public class WHTTranFilter : GUITransFilter
     {
+        #region BranchID
+        [PX.Objects.GL.Branch()]
+        [PXDefault(typeof(AccessInfo.branchID))]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
+        #endregion
+
         #region FromDate
         public new abstract class fromDate : PX.Data.BQL.BqlDateTime.Field<fromDate> { }
         #endregion
