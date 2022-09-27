@@ -11,6 +11,13 @@ namespace eGUICustomizations.Graph
 {
     public class TWNExpGUICN2BankPro : PXGraph<TWNExpGUICN2BankPro>
     {
+        #region String Constant Classes
+        public class VATOutCode34 : PX.Data.BQL.BqlString.Constant<VATOutCode34>
+        {
+            public VATOutCode34() : base(TWGUIFormatCode.vATOutCode34) { }
+        }
+        #endregion
+
         #region Process & Setup
         public PXCancel<WHTTranFilter> Cancel;
         public PXFilter<WHTTranFilter> Filter;
@@ -20,9 +27,8 @@ namespace eGUICustomizations.Graph
                                     Where<TWNGUITrans.eGUIExcluded, Equal<False>,
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                              And<TWNGUITrans.gUIFormatcode, Equal<ARRegisterExt.VATOut33Att>,
-                                                  And<TWNGUITrans.taxNbr, IsNull,
-                                                      And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>>> GUITranProc;
+                                              And<TWNGUITrans.gUIFormatcode, In3<ARRegisterExt.VATOut33Att, VATOutCode34>,
+                                                  And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
 
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion

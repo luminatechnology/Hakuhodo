@@ -44,14 +44,9 @@ namespace eGUICustomizations.Graph
                                     Where<TWNGUITrans.eGUIExcluded, Equal<False>,
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                              And<TWNGUITrans.gUIFormatcode, In3<VATOutCode31, VATOutCode32, VATOutCode35>,
-                                                  And<TWNGUITrans.taxNbr, IsNull,
-                                                      And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>>> GUITranProc;
-        //And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-        //           Or<TWNGUITrans.eGUIExported, IsNull>>,
-        //     And<Where<TWNGUITrans.gUIFormatcode, Equal<VATOutCode31>,
-        //               Or<TWNGUITrans.gUIFormatcode, Equal<VATOutCode32>,
-        //                  Or<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>>>>>>>> GUITranProc;
+                                              And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
+                                                  And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
+
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
