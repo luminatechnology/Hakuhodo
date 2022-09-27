@@ -57,14 +57,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAC\APARTeleTransView.cs" />
+    <Compile Include="DAC_Extension\APRegisterUCGExt.cs" />
     <Compile Include="DAC_Extension\ARPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\APPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\EPExpenseClaim.cs" />
     <Compile Include="DAC_Extension\EPDepartment.cs" />
+    <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
     <Compile Include="DAC_Extension\APRegisterWorkGroupExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry.cs" />
     <Compile Include="Graph\LMTeleTransProcess.cs" />
+    <Compile Include="Graph_Extension\SubcontractEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\TextUtil.cs" />
   </ItemGroup>

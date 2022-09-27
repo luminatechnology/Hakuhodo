@@ -1,9 +1,5 @@
 ﻿<Sql TableName="APARTeleTransView" SqlScriptPriority="2" CustomScript="#CDATA">
-    <CDATA name="CustomScript"><![CDATA[IF OBJECT_ID('dbo.APARTeleTransView', 'V') IS NOT NULL
-    DROP VIEW [dbo].[APARTeleTransView]
-GO
-
-CREATE VIEW [dbo].[APARTeleTransView]
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER VIEW [dbo].[APARTeleTransView]
 AS
 SELECT
   p.CompanyID,
@@ -140,13 +136,19 @@ FROM
   LEFT JOIN Location l ON r.companyID = l.companyID
   AND r.VendorLocationID = l.LocationID
   LEFT JOIN Address addr ON r.CompanyID = addr.CompanyID
-  AND p.RemitAddressID = addr.AddressID
+  AND l.DefAddressID = addr.AddressID
   LEFT JOIN Contact c ON c.CompanyID = p.CompanyID
-  AND c.ContactID = p.RemitContactID
+  AND l.DefContactID=c.ContactID
   LEFT JOIN Location el ON r.CompanyID = el.CompanyID
   AND acct.DefLocationID = el.LocationID
 WHERE
-  r.DocType = 'CHK'
+  (
+    r.DocType = 'CHK'
+    OR (
+      r.DocType = 'PPM'
+      And r.RefNbr LIKE 'PY%'
+    )
+  )
   AND r.Status IN ('N', 'C')
 UNION ALL
 SELECT
@@ -235,9 +237,9 @@ FROM
   AND p.CashAccountID = ca.CashAccountID
   LEFT JOIN Location l ON r.companyID = l.companyID
   AND r.CustomerLocationID = l.LocationID
-  LEFT JOIN ARAddress addr ON r.CompanyID = addr.CompanyID
+  LEFT JOIN Address addr ON r.CompanyID = addr.CompanyID
   AND l.DefAddressID = addr.AddressID
-  LEFT JOIN ARContact c ON p.CompanyID = c.CompanyID
+  LEFT JOIN Contact c ON p.CompanyID = c.CompanyID
   AND l.DefContactID = c.ContactID
 WHERE
   r.DocType = 'REF'
