@@ -131,10 +131,12 @@ namespace PX.Objects.AP
                                                                .Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
                         wHTTran.WHTTaxPct  = string.IsNullOrEmpty(tWNWHT.WHTTaxPct) ? 0m : System.Convert.ToDecimal(tWNWHT.WHTTaxPct);
                         wHTTran.WHTAmt     = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.WHTTaxPct).Value);
+                        wHTTran.WHTAmt     = wHTTran.WHTAmt == 0m ? 0m : wHTTran.WHTAmt / 100m;
                         wHTTran.NetAmt     = doc.CuryOrigDocAmt;
                         wHTTran.SecNHIPct  = tWNWHT.SecNHIPct;
                         wHTTran.SecNHICode = tWNWHT.SecNHICode;
                         wHTTran.SecNHIAmt  = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.SecNHIPct).Value);
+                        wHTTran.SecNHIAmt  = wHTTran.SecNHIAmt == 0m ? 0m : wHTTran.SecNHIAmt / 100m;
 
                         WHTTranView.Update(wHTTran);
 

@@ -41,6 +41,7 @@ namespace PX.Objects.AR
                 ((string.IsNullOrEmpty(docExt.UsrGUINbr) && docExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode36) || !string.IsNullOrEmpty(docExt.UsrVATOutCode)) &&
                 doc.OpenDoc == true)
             {
+                #region Validations 
                 if (docExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34) &&
                     docExt.UsrCreditAction == TWNStringList.TWNCreditAction.NO)
                 {
@@ -50,6 +51,7 @@ namespace PX.Objects.AR
                 {
                     throw new PXException(TWMessages.VATOutCodeIs37);
                 }
+                #endregion
 
                 #region Tax Details
                 string taxZoneID, taxID, taxCateID = null;
@@ -104,7 +106,7 @@ namespace PX.Objects.AR
 
                             if (!string.IsNullOrEmpty(taxCateID)) { goto CreatGUI; }
                         }
-                        
+
                     CreatGUI:
                         if (docExt.UsrCreditAction.IsIn(TWNStringList.TWNCreditAction.CN, TWNStringList.TWNCreditAction.NO))
                         {
@@ -190,6 +192,15 @@ namespace PX.Objects.AR
                                 rp.CreateGUIPrepayAdjust();
                             }
                             #endregion
+                        }
+
+                        // According to Eva's requirement on UCG client.
+                        if (!string.IsNullOrEmpty(gUINbr) && string.IsNullOrEmpty(Base.ARInvoice_DocType_RefNbr.Current?.InvoiceNbr))
+                        {
+                            PXUpdate<Set<ARInvoice.invoiceNbr, Required<ARInvoice.invoiceNbr>>,
+                                     ARInvoice,
+                                     Where<ARInvoice.docType, Equal<Required<ARInvoice.docType>>,
+                                           And<ARInvoice.refNbr, Equal<Required<ARInvoice.refNbr>>>>>.Update(rp, gUINbr, doc.DocType, doc.RefNbr);
                         }
 
                         #region GUI Tran Credit Action

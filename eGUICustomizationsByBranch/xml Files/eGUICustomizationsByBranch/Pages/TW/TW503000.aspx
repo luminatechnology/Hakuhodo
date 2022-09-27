@@ -2,18 +2,25 @@
 <%@ MasterType VirtualPath="~/MasterPages/FormDetail.master" %>
 
 <asp:Content ID="cont1" ContentPlaceHolderID="phDS" Runat="Server">
-	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%"
-        TypeName="eGUICustomizations.Graph.TWNExpGUIInv2BankPro" PrimaryView="GUITranProc">
+	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="eGUICustomizations.Graph.TWNExpGUIInv2BankPro" PrimaryView="Filter">
 		<CallbackCommands>
 		</CallbackCommands>
 	</px:PXDataSource>
 </asp:Content>
+<asp:Content ID="cont2" ContentPlaceHolderID="phF" Runat="Server">
+	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="50px" AllowAutoHide="false">
+		<Template>
+			<px:PXLayoutRule runat="server" ID="PXLayoutRule2" StartRow="True" ControlSize="M" ></px:PXLayoutRule>
+			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="BranchID" CommitChanges="true"></px:PXSelector>
+		</Template>
+	</px:PXFormView>
+</asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">
-	<px:PXGrid AdjustPageSize="Auto" AllowPaging="True" SyncPosition="True" ID="grid" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Inquire" AllowAutoHide="false">
+	<px:PXGrid AdjustPageSize="Auto" AllowPaging="True" SyncPosition="True" ID="grid" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Inquire" AllowAutoHide="false" NoteIndicator="false" FilesIndicator="false">
 		<Levels>
 			<px:PXGridLevel DataMember="GUITranProc">
 			    <Columns>
-				<px:PXGridColumn Type="CheckBox" AllowCheckAll="True" DataField="Selected" Width="60" ></px:PXGridColumn>
+				<px:PXGridColumn Type="CheckBox" AllowCheckAll="True" DataField="Selected" Width="30" TextAlign="Center" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="BranchID" Width="140" />
 				<px:PXGridColumn DataField="GUIStatus" Width="120" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUIFormatcode" Width="70" ></px:PXGridColumn>

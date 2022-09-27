@@ -1,9 +1,9 @@
 ﻿using System;
 using PX.Data;
 using PX.Objects.AP;
+using PX.Objects.GL;
 using eGUICustomizations.Graph;
 using eGUICustomizations.Descriptor;
-using PX.Objects.GL;
 
 namespace eGUICustomizations.DAC
 {
@@ -37,9 +37,9 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region BatchNbr
-        [PXDBString(15, IsUnicode = true, InputMask = "")]
+        [PXDBString(15, IsUnicode = true)]
         [PXUIField(DisplayName = "Batch Nbr.")]
-        [PXSelector(typeof(Search<Batch.batchNbr, Where<Batch.module, Equal<BatchModule.moduleAP>>>))]
+        [PXSelector(typeof(Search<Batch.batchNbr, Where<Batch.module, In3<BatchModule.moduleAP, BatchModule.moduleGL, BatchModule.moduleCA, BatchModule.moduleAR>>>))]
         public virtual string BatchNbr { get; set; }
         public abstract class batchNbr : PX.Data.BQL.BqlString.Field<batchNbr> { }
         #endregion

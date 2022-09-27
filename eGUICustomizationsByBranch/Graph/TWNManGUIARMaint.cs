@@ -1,4 +1,5 @@
 using System.Collections;
+using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
@@ -84,9 +85,6 @@ namespace eGUICustomizations.Graph
             {
                 Customer customer = Customer.PK.Find(this, manualGUIAR.CustomerID);
 
-                //TaxExt taxExt = PXCache<Tax>.GetExtension<TaxExt>(SelectFrom<Tax>
-                //                                                            .Where<Tax.taxID.IsEqual<@P.AsString>>.View.Select(this, manualGUIAR.TaxID) );
-
                 PXLongOperation.StartOperation(this, delegate
                 {
                     using (PXTransactionScope ts = new PXTransactionScope())
@@ -141,14 +139,11 @@ namespace eGUICustomizations.Graph
 
         protected virtual void _(Events.RowPersisting<TWNManualGUIAR> e)
         {
-            if (e.Row.VatOutCode == TWGUIFormatCode.vATOutCode31)
-            {
-                AutoNumberAttribute.SetNumberingId<TWNManualGUIAR.gUINbr>(e.Cache, GUIPreferences.Current.GUI3CopiesManNumbering);
-            }
-            else if (e.Row.VatOutCode == TWGUIFormatCode.vATOutCode32)
-            {
-                AutoNumberAttribute.SetNumberingId<TWNManualGUIAR.gUINbr>(e.Cache, GUIPreferences.Current.GUI2CopiesNumbering);
-            }
+            var gUIPref = GUIPreferences.Current;
+
+            AutoNumberAttribute.SetNumberingId<TWNManualGUIAR.gUINbr>(e.Cache, e.Row.VatOutCode == TWGUIFormatCode.vATOutCode31 ? gUIPref.GUI3CopiesManNumbering :
+                                                                                                                                  e.Row.VatOutCode == TWGUIFormatCode.vATOutCode32 ? gUIPref.GUI2CopiesNumbering : 
+                                                                                                                                                                                     gUIPref.GUI3CopiesNumbering);
         }
 
         protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.customerID> e)
@@ -192,32 +187,6 @@ namespace eGUICustomizations.Graph
 
             row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
         }
-
-        //protected virtual void _(Events.FieldVerifying<TWNManualGUIAR.gUINbr> e)
-        //{
-        //    var row = (TWNManualGUIAR)e.Row;
-
-        //    tWNGUIValidation.CheckGUINbrExisted(this, row.GUINbr, row.VatOutCode);
-        //}
-
-        //protected virtual void _(Events.FieldVerifying<TWNManualGUIAR.taxAmt> e)
-        //{
-        //    var row = (TWNManualGUIAR)e.Row;
-
-        //    e.Cache.RaiseExceptionHandling<TWNManualGUIAR.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
-        //}
-
-        //protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.netAmt> e)
-        //{       
-        //    var row = (TWNManualGUIAR)e.Row;
-
-        //    foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-        //                                                       .And<TaxRev.taxType.IsEqual<@P.AsString>>>
-        //                                                .View.ReadOnly.Select(this, row.TaxID, "S"))     // S = Group type (Output)
-        //    { 
-        //        row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate); 
-        //    }
-        //}
         #endregion
     }
 }
