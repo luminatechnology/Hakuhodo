@@ -1,10 +1,15 @@
 ﻿using PX.Data;
 using PX.Objects.PM;
 using PX.Objects.IN;
+using PX.Objects.GL;
+using PX.Objects.CR;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using PX.Objects.CA;
+using PX.Common;
+using PX.Data.BQL.Fluent;
+using PX.Data.BQL;
 
 namespace PX.Objects.AP
 {
@@ -20,16 +25,20 @@ namespace PX.Objects.AP
         const string EPPAYREFNB = "AttributeEPPAYREFNB";
         /// <summary>User Defined - 代墊款/暫借款</summary>
         const string EPPAYTYPE = "AttributeEPPAYTYPE";
+        /// <summary>員工代墊款-代碼</summary>
+        const string EMP_ADV_CODE = "A";
         /// <summary>員工暫借款-代碼</summary>
         const string EMP_TEMP_BOR_CODE = "B";
         #endregion
         #region Message
         const string MSG_EPREFNBR_NOT_FOUND = "查無暫借款{0}";
         const string MSG_EPREFNBR_NOT_FOUND_4DATE = "申請日期早於暫借款{0}立帳日，請確認日期";
-        const string MSG_EPPAYAMT_INSUFFICIENT = "暫借款{0}餘額不足";
+        const string MSG_EPPAYAMT_INSUFFICIENT = "代墊/暫借款{0}餘額不足";
+        const string MSG_EPPAYAMT_FORMAT_ERR = "代墊/暫借款：僅供輸入數字";
+        const string MSG_EPPAYAMT_GREATER_AMT = "代墊/暫借款大於請款金額，請確認金額";
         const string MSG_CANNOT_AUTO_ADJ = "暫借款 {0} 無法自動沖銷，請人工作業";
         const string MSG_PLZ_EPLENT = "請維護執行項目EPLENT";
-        const string MSG_EPLENT_NOT_FOUND = "銀行帳戶查無對應的EPLENT";
+        const string MSG_CASH_ACCOUNT_NOT_FOUND = "銀行帳戶查無對應的{0}";
         #endregion
         #endregion
 
@@ -70,22 +79,9 @@ namespace PX.Objects.AP
                     PXCache cache = Base.Document.Cache;
                     string epPayType = (PXStringState)cache.GetValueExt(invoice, EPPAYTYPE);
                     //代墊款/暫借款 是否為 員工暫借款
-                    if (epPayType == EMP_TEMP_BOR_CODE)
+                    if (epPayType.IsIn(EMP_ADV_CODE, EMP_TEMP_BOR_CODE))
                     {
-                        //暫借款單號
-                        string epPayRefNbr = (PXStringState)cache.GetValueExt(invoice, EPPAYREFNB);
-                        //暫借沖銷金額
-                        string _epPayAmt = (PXStringState)cache.GetValueExt(invoice, EPPAYAMT);
-                        decimal epPayAmt = Decimal.Parse(_epPayAmt);
-                        using (PXTransactionScope ts = new PXTransactionScope())
-                        {
-                            APInvoice ppmInvoice = ValidateEmpTempBor(invoice, epPayRefNbr, epPayAmt);
-                            string epLentAP = CreateAPInvoice(invoice, ppmInvoice, epPayRefNbr, epPayAmt);
-                            cache.SetValueExt<APRegisterUCGExt.usrEPLentAP>(invoice, epLentAP);
-                            _return = baseMethod(adapter);
-                            CreateAPPayment(invoice, epPayAmt);
-                            ts.Complete();
-                        }
+                        DoCustRelease(adapter, baseMethod, invoice, cache, epPayType);
                     }
                     else
                     {
@@ -104,6 +100,49 @@ namespace PX.Objects.AP
         #endregion
 
         #region Method
+        private void DoCustRelease(PXAdapter adapter, ReleaseDelegate baseMethod, APInvoice invoice, PXCache cache, string epPayType)
+        {
+
+            //暫借款單號
+            string epPayRefNbr = (PXStringState)cache.GetValueExt(invoice, EPPAYREFNB);
+            //暫借沖銷金額
+            string _epPayAmt = (PXStringState)cache.GetValueExt(invoice, EPPAYAMT);
+            decimal epPayAmt = 0;
+            try
+            {
+                epPayAmt = Decimal.Parse(_epPayAmt);
+            }
+            catch (Exception)
+            {
+                throw new PXException(MSG_EPPAYAMT_FORMAT_ERR);
+            }
+            if (epPayAmt > invoice.CuryOrigDocAmt)
+            {
+                throw new PXException(MSG_EPPAYAMT_GREATER_AMT);
+            }
+
+            using (PXTransactionScope ts = new PXTransactionScope())
+            {
+                if (epPayType == EMP_TEMP_BOR_CODE)
+                {
+                    APInvoice ppmInvoice = ValidateEmpTempBor(invoice, epPayRefNbr, epPayAmt);
+                    string epLentAP = CreateAPInvoice4TempBor(invoice, ppmInvoice, epPayRefNbr, epPayAmt);
+                    cache.SetValueExt<APRegisterUCGExt.usrEPLentAP>(invoice, epLentAP);
+                    baseMethod(adapter);
+                    CreateAPPayment4TempBor(invoice, epPayAmt);
+                }
+                else if (epPayType == EMP_ADV_CODE)
+                {
+                    string epLentAP = CreateAPInvoice4Adv(invoice, epPayAmt);
+                    cache.SetValueExt<APRegisterUCGExt.usrEPLentAP>(invoice, epLentAP);
+                    baseMethod(adapter);
+                    CreateAPPayment4Adv(invoice, epPayAmt);
+                }
+
+                ts.Complete(Base);
+            }
+        }
+
         /// <summary>
         /// 驗證員工暫借款
         /// </summary>
@@ -131,7 +170,7 @@ namespace PX.Objects.AP
             return ppmInvoice;
         }
 
-        private string CreateAPInvoice(APInvoice inv, APInvoice ppm, string epPayRefNbr, decimal epPayAmt)
+        private string CreateAPInvoice4TempBor(APInvoice inv, APInvoice ppm, string epPayRefNbr, decimal epPayAmt)
         {
             APInvoiceEntry graph = PXGraph.CreateInstance<APInvoiceEntry>();
             //c.建立 一張新的AP單
@@ -193,7 +232,7 @@ namespace PX.Objects.AP
             return graph.Document.Current.RefNbr;
         }
 
-        private void CreateAPPayment(APInvoice inv, decimal epPayAmt)
+        private void CreateAPPayment4TempBor(APInvoice inv, decimal epPayAmt)
         {
             APPaymentEntry graph = PXGraph.CreateInstance<APPaymentEntry>();
             //建立一張 APPayment(CHK)
@@ -212,8 +251,8 @@ namespace PX.Objects.AP
             //Payment Method = 原AP Payment Method
             cache.SetValueExt<APPayment.paymentMethodID>(payment, inv.PayTypeID);
             //Pay Account = by 不同branch有各自對應的 EPLENTXX
-            CashAccount cashAccount = GetEPLENT_CashAccount(graph, inv.BranchID);
-            if (cashAccount == null) throw new PXException(MSG_EPLENT_NOT_FOUND);
+            CashAccount cashAccount = GetCashAccountByLikeCD(graph, inv.BranchID, "EPLENT%");
+            if (cashAccount == null) throw new PXException(MSG_CASH_ACCOUNT_NOT_FOUND, "EPLENT");
             cache.SetValueExt<APPayment.cashAccountID>(payment, cashAccount.CashAccountID);
             //Pay Amount = 沖銷金額
             cache.SetValueExt<APPayment.curyOrigDocAmt>(payment, epPayAmt);
@@ -228,11 +267,11 @@ namespace PX.Objects.AP
             adj.AdjdDocType = inv.DocType;
             adj.AdjdRefNbr = inv.RefNbr;
             adj.AdjdLineNbr = 0;
-            //set origamt to zero to apply "full" amounts to invoices.
             adj = PXCache<APAdjust>.CreateCopy(graph.Adjustments.Insert(adj));
             PXCache adCache = graph.Adjustments.Cache;
             adj = graph.Adjustments.Update(adj);
             adCache.SetValueExt<APAdjust.curyAdjgAmt>(adj, epPayAmt);
+            adCache.SetValueExt<APAdjust.curyAdjgWhTaxAmt>(adj, 0m);
             //待沖帳文件 查無(#77)時，報錯: 請檢查XXXX
             #endregion
             //提交、放行單據  正確放行 END
@@ -242,6 +281,115 @@ namespace PX.Objects.AP
             //放行
             graph.release.Press();
 
+        }
+
+        private string CreateAPInvoice4Adv(APInvoice inv, decimal epPayAmt)
+        {
+            APInvoiceEntry graph = PXGraph.CreateInstance<APInvoiceEntry>();
+            //建立 一張新的AP單
+            APInvoice invoice = graph.Document.Current = graph.Document.Insert();
+            invoice = graph.Document.Update(invoice);
+            PXCache cache = graph.Document.Cache;
+            cache.SetValueExt<APInvoice.docType>(invoice, APDocType.Invoice);
+            //Vendor = 原單 經辦人
+            BAccount baccount = GetBaccountByDefContact(graph,inv.EmployeeID);
+            cache.SetValueExt<APInvoice.vendorID>(invoice, baccount.BAccountID);
+            //DocDate = 原單DocDate
+            cache.SetValueExt<APInvoice.docDate>(invoice, inv.DocDate);
+            //供應商參考 = 原單RefNbr
+            cache.SetValueExt<APInvoice.invoiceNbr>(invoice, inv.RefNbr);
+            //Doc Desc = ‘員工代墊 -’ +原單DocDesc
+            cache.SetValueExt<APInvoice.docDesc>(invoice, "員工代墊 - " + inv.DocDesc);
+            //折讓退傭單號 = ‘NA’
+            cache.SetValueExt(invoice, DJNBR, "NA");
+            //財務Branch = 原單Branch
+            cache.SetValueExt<APInvoice.branchID>(invoice, inv.BranchID);
+
+            //專案 = X
+            cache.SetValueExt<APInvoice.projectID>(invoice, ProjectDefaultAttribute.NonProject());
+            //經辦人 = ADMIN(emp = 24)
+            cache.SetValueExt<APInvoice.employeeID>(invoice, 24);
+            invoice = graph.Document.Update(invoice);
+
+            //Item
+            #region --Transactions
+            APTran tran = graph.Transactions.Insert();
+            tran = graph.Transactions.Update(tran);
+            PXCache tCache = graph.Transactions.Cache;
+            //Branch = 原單Branch
+            tCache.SetValueExt<APTran.branchID>(tran, inv.BranchID);
+            //TranDesc = ‘員工代墊 -’ +原單DocDesc
+            tCache.SetValueExt<APTran.tranDesc>(tran, "員工代墊 - " + inv.DocDesc);
+            //成本小計 = 代墊金額
+            tran.Qty = 1;
+            tCache.SetValueExt<APTran.qty>(tran, tran.Qty);
+            tCache.SetValueExt<APTran.curyUnitCost>(tran, epPayAmt);
+
+            //會計科目 = 2229001
+            Account account = Account.UK.Find(graph, "2229001");
+            if (account == null) throw new PXException("請維護會計科目：2229001");
+            tCache.SetValueExt<APTran.accountID>(tran, account.AccountID);
+
+            //子科目 = 000000000
+            Sub sub = Sub.UK.Find(graph, "000000000");
+            if (sub == null) throw new PXException("請維護子科目：000000000");
+            tCache.SetValueExt<APTran.subID>(tran, sub.SubID);
+            //稅務類別 = EXAMPT
+            tCache.SetValueExt<APTran.taxCategoryID>(tran, "EXAMPT");
+            tran = graph.Transactions.Update(tran);
+            #endregion
+
+            graph.Save.Press();
+            graph.releaseFromHold.Press();
+            graph.release.Press();
+            return graph.Document.Current.RefNbr;
+        }
+
+        private void CreateAPPayment4Adv(APInvoice inv, decimal epPayAmt)
+        {
+            APPaymentEntry graph = PXGraph.CreateInstance<APPaymentEntry>();
+            //建立一張 APPayment(CHK)
+            APPayment payment = graph.Document.Current = graph.Document.Insert();
+            payment = graph.Document.Update(payment);
+            PXCache cache = graph.Document.Cache;
+            cache.SetValueExt<APPayment.docType>(payment, APDocType.Check);
+            //供應商 = 原單Vendor
+            cache.SetValueExt<APPayment.vendorID>(payment, inv.VendorID);
+            //財務Branch = 原單branch
+            cache.SetValueExt<APPayment.branchID>(payment, inv.BranchID);
+            //沖帳日期 = docdate = 原單doc date
+            cache.SetValueExt<APPayment.adjDate>(payment, inv.DocDate);
+            cache.SetValueExt<APPayment.docDate>(payment, inv.DocDate);
+            //付款方法 = 原單付款方法
+            cache.SetValueExt<APPayment.paymentMethodID>(payment, inv.PayTypeID);
+            //銀行帳戶 = EPPAYxx(依branch會有不同的代碼)
+            CashAccount cashAccount = GetCashAccountByLikeCD(graph, inv.BranchID, "EPPAY%");
+            if (cashAccount == null) throw new PXException(MSG_CASH_ACCOUNT_NOT_FOUND, "EPPAY");
+            cache.SetValueExt<APPayment.cashAccountID>(payment, cashAccount.CashAccountID);
+            //上方付款金額 = 代墊金額
+            cache.SetValueExt<APPayment.curyOrigDocAmt>(payment, epPayAmt);
+            cache.SetValueExt<APPayment.docDesc>(payment, "員工代墊 - " + inv.DocDesc);
+            payment = graph.Document.Update(payment);
+
+            #region Adjustments
+            //下方待沖帳文件 應該要有原AP(#77) 更新支付金額 = 沖銷金額
+            APAdjust adj = new APAdjust();
+            adj.AdjdDocType = inv.DocType;
+            adj.AdjdRefNbr = inv.RefNbr;
+            adj.AdjdLineNbr = 0;
+            adj = PXCache<APAdjust>.CreateCopy(graph.Adjustments.Insert(adj));
+            PXCache adCache = graph.Adjustments.Cache;
+            adj = graph.Adjustments.Update(adj);
+            adCache.SetValueExt<APAdjust.curyAdjgAmt>(adj, epPayAmt);
+            adCache.SetValueExt<APAdjust.curyAdjgWhTaxAmt>(adj, 0m);
+            //待沖帳文件 查無(#77)時，報錯: 請檢查XXXX
+            #endregion
+            //提交、放行單據  正確放行 END
+            graph.Save.Press();
+            //提交
+            graph.releaseFromHold.Press();
+            //放行
+            graph.release.Press();
         }
         #endregion
 
@@ -253,13 +401,20 @@ namespace PX.Objects.AP
                 .Select(graph, inventoryCD);
         }
 
-        private CashAccount GetEPLENT_CashAccount(PXGraph graph, int? branchID)
+        private CashAccount GetCashAccountByLikeCD(PXGraph graph, int? branchID, string cashAccountCD)
         {
             return PXSelect<CashAccount,
                 Where<CashAccount.branchID, Equal<Required<CashAccount.branchID>>,
                 And<CashAccount.cashAccountCD, Like<Required<CashAccount.cashAccountCD>>>>>
-                .Select(graph, branchID, "EPLENT%");
+                .Select(graph, branchID, cashAccountCD);
         }
+
+        private BAccount GetBaccountByDefContact(PXGraph graph, int? contactID)
+        {
+            return SelectFrom<BAccount>.Where<BAccount.defContactID.IsEqual<@P.AsInt>>.View.Select(graph, contactID);
+        }
+
+
         #endregion
     }
 }
