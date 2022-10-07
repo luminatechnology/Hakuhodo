@@ -1,247 +1,245 @@
 ﻿<Sql TableName="APARTeleTransView" SqlScriptPriority="2" CustomScript="#CDATA">
-    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER VIEW [dbo].[APARTeleTransView]
-AS
-SELECT
-  p.CompanyID,
-  'AP' AS DataType,
-  r.BranchID AS Branch,
-  r.BatchNbr,
-  p.PaymentMethodID,
-  p.CashAccountID,
-  (
-    SELECT
-      ValueString
-    FROM
-      CashAccountKvExt
-    WHERE
-      CompanyID = ca.CompanyID
-      AND RecordID = ca.NoteID
-      AND FieldName = 'AttributeBKBRCODE'
-  ) AS PayBankBranch,
-  ca.ExtRefNbr,
-  BranchBAccount.TaxRegistrationID AS TaxRegistrationID,
-  p.RefNbr,
-  p.DocType,
-  r.DocDate,
-  r.DocDesc,
-  r.VendorID AS BAccountID,
-  (
-    SELECT
-      TOP (1) Value
-    FROM
-      CSAnswers
-    WHERE
-      companyid = r.CompanyID
-      AND RefNoteID = acct.NoteID
-      AND AttributeID IN ('TAXNBR', 'PERSONALID')
-    ORDER BY
-      AttributeID DESC
-  ) AS BAccountTWID,
-  r.CuryOrigDocAmt,
-  r.CuryID,
-  addr.PostalCode,
-  c.EMail,
-  p.UsrIsTTGenerated AS IsTTGenerated,
-  (
-    CASE
-      WHEN acct.Type LIKE 'E%' THEN (
+    <CDATA name="CustomScript"><![CDATA[SELECT
+    p.CompanyID,
+    'AP' AS DataType,
+    r.BranchID AS Branch,
+    r.BatchNbr,
+    p.PaymentMethodID,
+    p.CashAccountID,
+    (
         SELECT
-          vpm.DetailValue
+            ValueString
         FROM
-          VendorPaymentMethodDetail vpm
+            CashAccountKvExt
         WHERE
-          r.CompanyID = vpm.CompanyID
-          AND acct.BAccountID = vpm.BAccountID
-          AND acct.DefLocationID = vpm.LocationID
-          AND l.VPaymentMethodID = vpm.PaymentMethodID
-          AND vpm.DetailID = 'BKACCTNAME'
-      )
-      ELSE (
+            CompanyID = ca.CompanyID
+            AND RecordID = ca.NoteID
+            AND FieldName = 'AttributeBKBRCODE'
+    ) AS PayBankBranch,
+    ca.ExtRefNbr,
+    BranchBAccount.TaxRegistrationID AS TaxRegistrationID,
+    p.RefNbr,
+    p.DocType,
+    r.DocDate,
+    r.DocDesc,
+    r.VendorID AS BAccountID,
+    (
         SELECT
-          ValueString
+            TOP (1) Value
         FROM
-          LocationKvExt
+            CSAnswers
         WHERE
-          CompanyID = l.CompanyID
-          AND RecordID = l.NoteID
-          AND FieldName = 'AttributeBKACCTNAME'
-      )
-    END
-  ) AS AcctName,
-  (
-    CASE
-      WHEN acct.Type LIKE 'E%' THEN (
-        SELECT
-          vpm.DetailValue
-        FROM
-          VendorPaymentMethodDetail vpm
-        WHERE
-          r.CompanyID = vpm.CompanyID
-          AND acct.BAccountID = vpm.BAccountID
-          AND acct.DefLocationID = vpm.LocationID
-          AND l.VPaymentMethodID = vpm.PaymentMethodID
-          AND vpm.DetailID = 'BKACCT'
-      )
-      ELSE (
-        SELECT
-          ValueString
-        FROM
-          LocationKvExt
-        WHERE
-          CompanyID = l.CompanyID
-          AND RecordID = l.NoteID
-          AND FieldName = 'AttributeBKACCT'
-      )
-    END
-  ) AS PayAccount,
-  (
-    CASE
-      WHEN acct.Type LIKE 'E%' THEN (
-        SELECT
-          vpm.DetailValue
-        FROM
-          VendorPaymentMethodDetail vpm
-        WHERE
-          r.CompanyID = vpm.CompanyID
-          AND acct.BAccountID = vpm.BAccountID
-          AND acct.DefLocationID = vpm.LocationID
-          AND l.VPaymentMethodID = vpm.PaymentMethodID
-          AND vpm.DetailID = 'BKBRCODE'
-      )
-      ELSE (
-        SELECT
-          ValueString
-        FROM
-          LocationKvExt
-        WHERE
-          CompanyID = l.CompanyID
-          AND RecordID = l.NoteID
-          AND FieldName = 'AttributeBKACCTNAME'
-      )
-    END
-  ) AS BankBranch
+            companyid = r.CompanyID
+            AND RefNoteID = acct.NoteID
+            AND AttributeID IN ('TAXNBR', 'PERSONALID')
+        ORDER BY
+            AttributeID DESC
+    ) AS BAccountTWID,
+    r.CuryOrigDocAmt,
+    r.CuryID,
+    addr.PostalCode,
+    c.EMail,
+    p.UsrIsTTGenerated AS IsTTGenerated,
+    (
+        CASE
+            WHEN acct.Type LIKE 'E%' THEN (
+                SELECT
+                    vpm.DetailValue
+                FROM
+                    VendorPaymentMethodDetail vpm
+                WHERE
+                    r.CompanyID = vpm.CompanyID
+                    AND acct.BAccountID = vpm.BAccountID
+                    AND acct.DefLocationID = vpm.LocationID
+                    AND l.VPaymentMethodID = vpm.PaymentMethodID
+                    AND vpm.DetailID = 'BKACCTNAME'
+            )
+            ELSE (
+                SELECT
+                    ValueString
+                FROM
+                    LocationKvExt
+                WHERE
+                    CompanyID = l.CompanyID
+                    AND RecordID = l.NoteID
+                    AND FieldName = 'AttributeBKACCTNAME'
+            )
+        END
+    ) AS AcctName,
+    (
+        CASE
+            WHEN acct.Type LIKE 'E%' THEN (
+                SELECT
+                    vpm.DetailValue
+                FROM
+                    VendorPaymentMethodDetail vpm
+                WHERE
+                    r.CompanyID = vpm.CompanyID
+                    AND acct.BAccountID = vpm.BAccountID
+                    AND acct.DefLocationID = vpm.LocationID
+                    AND l.VPaymentMethodID = vpm.PaymentMethodID
+                    AND vpm.DetailID = 'BKACCT'
+            )
+            ELSE (
+                SELECT
+                    ValueString
+                FROM
+                    LocationKvExt
+                WHERE
+                    CompanyID = l.CompanyID
+                    AND RecordID = l.NoteID
+                    AND FieldName = 'AttributeBKACCT'
+            )
+        END
+    ) AS PayAccount,
+    (
+        CASE
+            WHEN acct.Type LIKE 'E%' THEN (
+                SELECT
+                    vpm.DetailValue
+                FROM
+                    VendorPaymentMethodDetail vpm
+                WHERE
+                    r.CompanyID = vpm.CompanyID
+                    AND acct.BAccountID = vpm.BAccountID
+                    AND acct.DefLocationID = vpm.LocationID
+                    AND l.VPaymentMethodID = vpm.PaymentMethodID
+                    AND vpm.DetailID = 'BKBRCODE'
+            )
+            ELSE (
+                SELECT
+                    ValueString
+                FROM
+                    LocationKvExt
+                WHERE
+                    CompanyID = l.CompanyID
+                    AND RecordID = l.NoteID
+                    AND FieldName = 'AttributeBKBRCODE'
+            )
+        END
+    ) AS BankBranch
 FROM
-  APPayment p
-  INNER JOIN APRegister r ON p.CompanyID = r.CompanyID
-  AND p.RefNbr = r.RefNbr
-  AND p.DocType = r.DocType
-  INNER JOIN Branch b ON p.CompanyID = b.CompanyID
-  AND b.BranchID = r.BranchID
-  INNER JOIN BAccount BranchBAccount ON b.CompanyID = BranchBAccount.CompanyID
-  AND b.BAccountID = BranchBAccount.BAccountID
-  INNER JOIN BAccount acct ON r.CompanyID = acct.CompanyID
-  AND acct.BAccountID = r.VendorID
-  INNER JOIN CashAccount ca ON p.CompanyID = ca.CompanyID
-  AND p.CashAccountID = ca.CashAccountID
-  LEFT JOIN Location l ON r.companyID = l.companyID
-  AND r.VendorLocationID = l.LocationID
-  LEFT JOIN Address addr ON r.CompanyID = addr.CompanyID
-  AND l.DefAddressID = addr.AddressID
-  LEFT JOIN Contact c ON c.CompanyID = p.CompanyID
-  AND l.DefContactID=c.ContactID
-  LEFT JOIN Location el ON r.CompanyID = el.CompanyID
-  AND acct.DefLocationID = el.LocationID
+    APPayment p
+    INNER JOIN APRegister r ON p.CompanyID = r.CompanyID
+    AND p.RefNbr = r.RefNbr
+    AND p.DocType = r.DocType
+    INNER JOIN Branch b ON p.CompanyID = b.CompanyID
+    AND b.BranchID = r.BranchID
+    INNER JOIN BAccount BranchBAccount ON b.CompanyID = BranchBAccount.CompanyID
+    AND b.BAccountID = BranchBAccount.BAccountID
+    INNER JOIN BAccount acct ON r.CompanyID = acct.CompanyID
+    AND acct.BAccountID = r.VendorID
+    INNER JOIN CashAccount ca ON p.CompanyID = ca.CompanyID
+    AND p.CashAccountID = ca.CashAccountID
+    LEFT JOIN Location l ON r.companyID = l.companyID
+    AND r.VendorLocationID = l.LocationID
+    LEFT JOIN Address addr ON r.CompanyID = addr.CompanyID
+    AND l.DefAddressID = addr.AddressID
+    LEFT JOIN Contact c ON c.CompanyID = p.CompanyID
+    AND l.DefContactID = c.ContactID
+    LEFT JOIN Location el ON r.CompanyID = el.CompanyID
+    AND acct.DefLocationID = el.LocationID
 WHERE
-  (
-    r.DocType = 'CHK'
-    OR (
-      r.DocType = 'PPM'
-      And r.RefNbr LIKE 'PY%'
+    (
+        r.DocType = 'CHK'
+        OR (
+            r.DocType = 'PPM'
+            AND r.RefNbr LIKE 'PY%'
+        )
     )
-  )
-  AND r.Status IN ('N', 'C')
+    AND r.Status IN ('N', 'C')
 UNION ALL
 SELECT
-  p.CompanyID,
-  'AR' AS DataType,
-  r.BranchID AS Branch,
-  r.BatchNbr,
-  p.PaymentMethodID,
-  p.CashAccountID,
-  (
-    SELECT
-      ValueString
-    FROM
-      CashAccountKvExt
-    WHERE
-      CompanyID = ca.CompanyID
-      AND RecordID = ca.NoteID
-      AND FieldName = 'AttributeBKBRCODE'
-  ) AS PayBankBranch,
-  ca.ExtRefNbr,
-  BranchBAccount.TaxRegistrationID AS TaxRegistrationID,
-  p.RefNbr,
-  p.DocType,
-  r.DocDate,
-  r.DocDesc,
-  r.CustomerID AS BAccountID,
-  (
-    SELECT
-      TOP (1) Value
-    FROM
-      CSAnswers
-    WHERE
-      companyid = r.CompanyID
-      AND RefNoteID = acct.NoteID
-      AND AttributeID IN ('TAXNBR', 'PERSONALID')
-    ORDER BY
-      AttributeID DESC
-  ) AS BAccountTWID,
-  r.CuryOrigDocAmt,
-  r.CuryID,
-  addr.PostalCode,
-  c.EMail,
-  p.UsrIsTTGenerated AS IsTTGenerated,
-  (
-    SELECT
-      ValueString
-    FROM
-      LocationKvExt
-    WHERE
-      CompanyID = l.CompanyID
-      AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCTNAME'
-  ) AS AcctName,
-  (
-    SELECT
-      ValueString
-    FROM
-      LocationKvExt
-    WHERE
-      CompanyID = l.CompanyID
-      AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCT'
-  ) AS PayAccount,
-  (
-    SELECT
-      ValueString
-    FROM
-      LocationKvExt
-    WHERE
-      CompanyID = l.CompanyID
-      AND RecordID = l.NoteID
-      AND FieldName = 'AttributeBKACCTNAME'
-  ) AS BankBranch
+    p.CompanyID,
+    'AR' AS DataType,
+    r.BranchID AS Branch,
+    r.BatchNbr,
+    p.PaymentMethodID,
+    p.CashAccountID,
+    (
+        SELECT
+            ValueString
+        FROM
+            CashAccountKvExt
+        WHERE
+            CompanyID = ca.CompanyID
+            AND RecordID = ca.NoteID
+            AND FieldName = 'AttributeBKBRCODE'
+    ) AS PayBankBranch,
+    ca.ExtRefNbr,
+    BranchBAccount.TaxRegistrationID AS TaxRegistrationID,
+    p.RefNbr,
+    p.DocType,
+    r.DocDate,
+    r.DocDesc,
+    r.CustomerID AS BAccountID,
+    (
+        SELECT
+            TOP (1) Value
+        FROM
+            CSAnswers
+        WHERE
+            companyid = r.CompanyID
+            AND RefNoteID = acct.NoteID
+            AND AttributeID IN ('TAXNBR', 'PERSONALID')
+        ORDER BY
+            AttributeID DESC
+    ) AS BAccountTWID,
+    r.CuryOrigDocAmt,
+    r.CuryID,
+    addr.PostalCode,
+    c.EMail,
+    p.UsrIsTTGenerated AS IsTTGenerated,
+    (
+        SELECT
+            ValueString
+        FROM
+            LocationKvExt
+        WHERE
+            CompanyID = l.CompanyID
+            AND RecordID = l.NoteID
+            AND FieldName = 'AttributeBKACCTNAME'
+    ) AS AcctName,
+    (
+        SELECT
+            ValueString
+        FROM
+            LocationKvExt
+        WHERE
+            CompanyID = l.CompanyID
+            AND RecordID = l.NoteID
+            AND FieldName = 'AttributeBKACCT'
+    ) AS PayAccount,
+    (
+        SELECT
+            ValueString
+        FROM
+            LocationKvExt
+        WHERE
+            CompanyID = l.CompanyID
+            AND RecordID = l.NoteID
+            AND FieldName = 'AttributeBKACCTNAME'
+    ) AS BankBranch
 FROM
-  ARPayment p
-  INNER JOIN ARRegister r ON p.CompanyID = r.CompanyID
-  AND p.RefNbr = r.RefNbr
-  AND p.DocType = r.DocType
-  INNER JOIN Branch b ON p.CompanyID = b.CompanyID
-  AND b.BranchID = r.BranchID
-  INNER JOIN BAccount BranchBAccount ON b.CompanyID = BranchBAccount.CompanyID
-  AND b.BAccountID = BranchBAccount.BAccountID
-  INNER JOIN BAccount acct ON r.CompanyID = acct.CompanyID
-  AND acct.BAccountID = r.CustomerID
-  INNER JOIN CashAccount ca ON p.CompanyID = ca.CompanyID
-  AND p.CashAccountID = ca.CashAccountID
-  LEFT JOIN Location l ON r.companyID = l.companyID
-  AND r.CustomerLocationID = l.LocationID
-  LEFT JOIN Address addr ON r.CompanyID = addr.CompanyID
-  AND l.DefAddressID = addr.AddressID
-  LEFT JOIN Contact c ON p.CompanyID = c.CompanyID
-  AND l.DefContactID = c.ContactID
+    ARPayment p
+    INNER JOIN ARRegister r ON p.CompanyID = r.CompanyID
+    AND p.RefNbr = r.RefNbr
+    AND p.DocType = r.DocType
+    INNER JOIN Branch b ON p.CompanyID = b.CompanyID
+    AND b.BranchID = r.BranchID
+    INNER JOIN BAccount BranchBAccount ON b.CompanyID = BranchBAccount.CompanyID
+    AND b.BAccountID = BranchBAccount.BAccountID
+    INNER JOIN BAccount acct ON r.CompanyID = acct.CompanyID
+    AND acct.BAccountID = r.CustomerID
+    INNER JOIN CashAccount ca ON p.CompanyID = ca.CompanyID
+    AND p.CashAccountID = ca.CashAccountID
+    LEFT JOIN Location l ON r.companyID = l.companyID
+    AND r.CustomerLocationID = l.LocationID
+    LEFT JOIN Address addr ON r.CompanyID = addr.CompanyID
+    AND l.DefAddressID = addr.AddressID
+    LEFT JOIN Contact c ON p.CompanyID = c.CompanyID
+    AND l.DefContactID = c.ContactID
 WHERE
-  r.DocType = 'REF'
-  AND r.Status IN ('N', 'C')]]></CDATA>
+    r.DocType = 'REF'
+    AND r.Status IN ('N', 'C')]]></CDATA>
 </Sql>
