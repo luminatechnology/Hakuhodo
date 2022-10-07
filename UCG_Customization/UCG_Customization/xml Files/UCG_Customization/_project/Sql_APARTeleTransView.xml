@@ -1,5 +1,6 @@
 ﻿<Sql TableName="APARTeleTransView" SqlScriptPriority="2" CustomScript="#CDATA">
-    <CDATA name="CustomScript"><![CDATA[SELECT
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER VIEW APARTeleTransView AS
+SELECT
     p.CompanyID,
     'AP' AS DataType,
     r.BranchID AS Branch,
