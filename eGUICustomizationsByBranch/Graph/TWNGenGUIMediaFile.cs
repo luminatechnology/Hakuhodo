@@ -5,7 +5,6 @@ using PX.Data.BQL.Fluent;
 using System;
 using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using PX.Objects.CS;
 using eGUICustomizations.DAC;
@@ -27,24 +26,29 @@ namespace eGUICustomizations.Graph
         #region Features & Setup
         public PXCancel<GUITransFilter> Cancel; 
         public PXFilter<GUITransFilter> Filter;
-        public PXFilteredProcessing<TWNGUITrans, GUITransFilter,
-                                    Where<TWNGUITrans.gUIDecPeriod, LessEqual<Current<GUITransFilter.toDate>>,
-                                          And<TWNGUITrans.gUIDecPeriod, GreaterEqual<Current<GUITransFilter.fromDate>>>>> GUITransList;
+        public PXFilteredProcessing<TWNGUITrans, 
+                                    GUITransFilter,
+                                    Where<TWNGUITrans.gUIDecPeriod, Between<Current<GUITransFilter.fromDate>, Current<GUITransFilter.toDate>>,
+                                          And<TWNGUITrans.branchID, Equal<Current<GUITransFilter.branchID>>>>> GUITransList;
+        //public PXFilteredProcessing<TWNGUITrans, GUITransFilter,
+        //                            Where<TWNGUITrans.gUIDecPeriod, LessEqual<Current<GUITransFilter.toDate>>,
+        //                                  And<TWNGUITrans.gUIDecPeriod, GreaterEqual<Current<GUITransFilter.fromDate>>,
+        //                                      And<TWNWHTTran.branchID, Equal<Current<GUITransFilter.branchID>>>>>> GUITransList;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
-        #region Delegate Data View
-        public IEnumerable gUITransList()
-        {
-            GUITransFilter filter = Filter.Current;
+        //#region Delegate Data View
+        //public IEnumerable gUITransList()
+        //{
+        //    GUITransFilter filter = Filter.Current;
 
-            foreach (TWNGUITrans row in SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIDecPeriod.IsLessEqual<@P.AsDateTime>
-                                                                      .And<TWNGUITrans.gUIDecPeriod.IsGreaterEqual<@P.AsDateTime>>>.View.Select(this, filter.ToDate.Value.AddDays(1).Date.AddSeconds(-1), filter.FromDate))
-            {
-                yield return row;
-            }
-        }
-        #endregion
+        //    foreach (TWNGUITrans row in SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIDecPeriod.IsLessEqual<@P.AsDateTime>
+        //                                                              .And<TWNGUITrans.gUIDecPeriod.IsGreaterEqual<@P.AsDateTime>>>.View.Select(this, filter.ToDate.Value.AddDays(1).Date.AddSeconds(-1), filter.FromDate))
+        //    {
+        //        yield return row;
+        //    }
+        //}
+        //#endregion
 
         #region Ctor
         public TWNGenGUIMediaFile()
@@ -71,9 +75,9 @@ namespace eGUICustomizations.Graph
         #endregion
 
         #region Event Handler
-        protected void _(Events.FieldUpdated<GUITransFilter.toDate> e)
+        protected void _(Events.FieldDefaulting<GUITransFilter.toDate> e)
         {
-            e.Cache.SetValue<GUITransFilter.toDate>(e.Row, DateTime.Parse(e.NewValue.ToString()).AddDays(1).Date.AddSeconds(-1) );
+            e.NewValue = Accessinfo.BusinessDate.Value.AddDays(1).Date.AddSeconds(-1);
         }
         #endregion
 
@@ -370,6 +374,13 @@ namespace eGUICustomizations.Graph
     [PXCacheName("GUI Trans Filter")]
     public partial class GUITransFilter : PX.Data.IBqlTable
     {
+        #region BranchID
+        [PX.Objects.GL.Branch()]
+        [PXDefault(typeof(AccessInfo.branchID))]
+        public virtual int? BranchID { get; set; }
+        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
+        #endregion
+
         #region FromDate
         [PXDBDateAndTime(UseTimeZone = true, PreserveTime = true)]
         [PXDefault(typeof(AccessInfo.businessDate))]

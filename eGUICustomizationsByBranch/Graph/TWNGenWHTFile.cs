@@ -60,7 +60,7 @@ namespace eGUICustomizations.Graph
 
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    using (StreamWriter sw = new StreamWriter(stream, Encoding.ASCII))
+                    using (StreamWriter sw = new StreamWriter(stream, Encoding.Unicode))
                     {
                         fileName = this.Accessinfo.BusinessDate.Value.ToString("yyyyMMdd") + ".txt";
 
@@ -183,13 +183,6 @@ namespace eGUICustomizations.Graph
     [PXCacheName("Withholding Tax Trans Filter")]
     public class WHTTranFilter : GUITransFilter
     {
-        #region BranchID
-        [PX.Objects.GL.Branch()]
-        [PXDefault(typeof(AccessInfo.branchID))]
-        public virtual int? BranchID { get; set; }
-        public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
-        #endregion
-
         #region FromDate
         public new abstract class fromDate : PX.Data.BQL.BqlDateTime.Field<fromDate> { }
         #endregion
