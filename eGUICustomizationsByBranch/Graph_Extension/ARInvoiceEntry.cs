@@ -82,7 +82,7 @@ namespace PX.Objects.AR
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, string.IsNullOrEmpty(registerExt.UsrGUINbr));
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled && registerExt.UsrCreditAction != TWNStringList.TWNCreditAction.NO);
         }
 
         protected void _(Events.RowPersisting<ARInvoice> e, PXRowPersisting baseHandler)
@@ -137,6 +137,7 @@ namespace PX.Objects.AR
                 }
 
                 registerExt.UsrCreditAction = TWNStringList.TWNCreditAction.CN;
+                registerExt.UsrCarrierID    = registerExt.UsrNPONbr = null;
             }
         }
 
