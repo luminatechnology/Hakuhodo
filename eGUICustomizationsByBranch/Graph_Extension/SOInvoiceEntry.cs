@@ -41,8 +41,7 @@ namespace PX.Objects.SO
             {
                 Dictionary<string, string> parameters = new Dictionary<string, string>
                 {
-                    [nameof(ARRegister.DocType)] = Base.Document.Current.DocType,
-                    [nameof(ARRegister.RefNbr)] = Base.Document.Current.RefNbr
+                    [nameof(eGUICustomizations.DAC.TWNGUITrans.GUINbr)] = Base.Document.Current.GetExtension<ARRegisterExt>().UsrGUINbr
                 };
 
                 throw new PXReportRequiredException(parameters, GUIReportID, GUIReportID);

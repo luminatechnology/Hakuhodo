@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
+using PX.Data.WorkflowAPI;
 using PX.Objects.CR;
 using PX.Objects.CS;
 using eGUICustomizations.DAC;
@@ -12,11 +15,30 @@ using eGUICustomizations.Graph_Release;
 
 namespace PX.Objects.AR
 {
-    public class ARInvoiceEntry_Extension : PXGraphExtension<ARInvoiceEntry>
+    public class ARInvoiceEntry_Extension : PXGraphExtension<ARInvoiceEntry_ApprovalWorkflow, ARInvoiceEntry>
     {
         public bool activateGUI = TWNGUIValidation.ActivateTWGUI(new PXGraph());
 
         public TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
+
+        #region Override Methods
+        public override void Configure(PXScreenConfiguration config)
+        {
+            Configure(config.GetScreenConfigurationContext<ARInvoiceEntry, ARInvoice>());
+        }
+
+        protected virtual void Configure(WorkflowContext<ARInvoiceEntry, ARInvoice> context)
+        {
+            context.UpdateScreenConfigurationFor(screen =>
+            {
+                return screen.WithActions(actions =>
+                {
+                    actions.Add<ARInvoiceEntry_Extension>(e => e.printGUIInvoice,
+                                                          a => a.WithCategory((PredefinedCategory)FolderType.ReportsFolder).PlaceAfter(s => s.printInvoice));
+                });
+            });
+        }
+        #endregion
 
         #region Delegate Methods
         public delegate void PersistDelgate();
@@ -51,6 +73,24 @@ namespace PX.Objects.AR
             aRTran.Qty         = 1;
 
             Base.Transactions.Cache.Insert(aRTran);
+        }
+
+        public PXAction<ARInvoice> printGUIInvoice;
+        [PXButton()]
+        [PXUIField(DisplayName = "GUI Invoice", MapEnableRights = PXCacheRights.Select)]
+        protected virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
+        {
+            if (Base.Document.Current != null)
+            {
+                Dictionary<string, string> parameters = new Dictionary<string, string>
+                {
+                    [nameof(TWNGUITrans.GUINbr)] = Base.Document.Current.GetExtension<ARRegisterExt>().UsrGUINbr
+                };
+
+                throw new PXReportRequiredException(parameters, SO.SOInvoiceEntry_Extension.GUIReportID, SO.SOInvoiceEntry_Extension.GUIReportID);
+            }
+
+            return adapter.Get();
         }
         #endregion
 
