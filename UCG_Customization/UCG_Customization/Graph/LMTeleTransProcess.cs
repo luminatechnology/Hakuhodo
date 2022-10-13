@@ -183,7 +183,7 @@ namespace UCG_Customization
             var fax = GetStr("", 15, true);//(15)
             var bankBranch = GetStr(data.BankBranch, 7, false);//(7)
             var payAccount = GetStr(data.PayAccount, 16, false);//(16)
-            var payAmount = GetStr((data.CuryOrigDocAmt ?? 0).ToString("0"), 16, true, '0');//(16) Left pad with 0
+            var payAmount = GetStr((data.CuryOrigDocAmt ?? 0).ToString("0"), 11, true, '0');//(11) Left pad with 0
             var batchNbr = GetStr(data.BatchNbr, 10, false);//(10)
             var paymentDate = GetStr(GetRocDateStr(param.PayDate), 7, false);//(7)
             var paymentMod = " ";//(1)
@@ -223,7 +223,7 @@ namespace UCG_Customization
                 + fax           //(15)
                 + bankBranch    //(7)
                 + payAccount    //(16)
-                + payAmount     //(16)
+                + payAmount     //(11)
                 + batchNbr      //(10)
                 + paymentDate   //(7)
                 + paymentMod    //(1)
