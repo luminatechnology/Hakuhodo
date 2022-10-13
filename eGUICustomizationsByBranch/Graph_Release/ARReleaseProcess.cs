@@ -93,7 +93,10 @@ namespace PX.Objects.AR
                     {
                         string gUINbr = gUINbrs[i].TrimStart();
 
-                        TWNGUIValidation.VerifyCorrspondingGUIByBranch(Base.ARDocument.Cache, gUINbr, doc.BranchID);
+                        if (doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale, ARDocType.Prepayment))
+                        {
+                            TWNGUIValidation.VerifyCorrspondingGUIByBranch(Base.ARDocument.Cache, docExt.UsrVATOutCode, gUINbr, doc.BranchID);
+                        }
 
                         // Avoid standard logic calling this method twice and inserting duplicate records into TWNGUITrans.
                         if (APReleaseProcess_Extension.CountExistedRec(Base, gUINbr, docExt.UsrVATOutCode, doc.RefNbr) > 0) { continue; }//return; }

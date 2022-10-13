@@ -41,12 +41,17 @@ namespace eGUICustomizations.Descriptor
         /// <param name="cache"></param>
         /// <param name="gUINbr"></param>
         /// <param name="sBranchID"></param>
-        public static void VerifyCorrspondingGUIByBranch(PXCache cache, string gUINbr, int? sBranchID)
+        public static void VerifyCorrspondingGUIByBranch(PXCache cache, string vATOutCode, string gUINbr, int? sBranchID)
         {
+            var gUIPref = SelectFrom<TWNGUIPreferences>.View.Select(cache.Graph).TopFirst;
+
             int? branchID = SelectFrom<NumberingSequence>.Where<NumberingSequence.startNbr.IsLessEqual<@P.AsString>
                                                                 .And<NumberingSequence.endNbr.IsGreaterEqual<@P.AsString>
                                                                     .And<NumberingSequence.numberingID.IsEqual<@P.AsString>>>>
-                                                         .View.SelectSingleBound(cache.Graph, null, gUINbr, gUINbr, SelectFrom<TWNGUIPreferences>.View.Select(cache.Graph).TopFirst?.GUI3CopiesNumbering).TopFirst?.NBranchID;
+                                                         .View.SelectSingleBound(cache.Graph, null, gUINbr, gUINbr, vATOutCode == TWGUIFormatCode.vATOutCode35 ? gUIPref?.GUI3CopiesNumbering : 
+                                                                                                                                                                 vATOutCode == TWGUIFormatCode.vATOutCode32 ? gUIPref.GUI2CopiesNumbering : 
+                                                                                                                                                                                                              gUIPref.GUI3CopiesManNumbering)
+                                                         .TopFirst?.NBranchID;
 
             if (branchID == null || branchID != sBranchID)
             {
