@@ -65,6 +65,7 @@
     <Compile Include="DAC\TWNGUIInvCredit.cs" />
     <Compile Include="DAC\TWNGUIPreferences.cs" />
     <Compile Include="DAC\TWNGUIPrepayAdjust.cs" />
+    <Compile Include="DAC\TWNGUIPrintedLineDet.cs" />
     <Compile Include="DAC\TWNGUITrans.cs" />
     <Compile Include="DAC\TWNInvTranHist.cs" />
     <Compile Include="DAC\TWNManualGUIAP.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Graph\TWNManGUIAPMaint.cs" />
     <Compile Include="Graph\TWNManGUIARMaint.cs" />
     <Compile Include="Graph\TWNNPOMaint.cs" />
+    <Compile Include="Graph\TWNPrintedLineDetMaint.cs" />
     <Compile Include="Graph\TWNWHTInquiry.cs" />
     <Compile Include="Graph_Extension\AddReturnLineToDirectInvoice.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry.cs" />
