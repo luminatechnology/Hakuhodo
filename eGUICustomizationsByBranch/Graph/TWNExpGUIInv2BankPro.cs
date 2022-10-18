@@ -127,6 +127,7 @@ namespace eGUICustomizations.Graph
 
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
+                    #region M
                     // File Type
                     lines += "M" + verticalBar;
                     // Bill type
@@ -191,6 +192,7 @@ namespace eGUICustomizations.Graph
                     // Void Reason
                     // Project Number Void Approved
                     lines += new string(char.Parse(verticalBar), 2) + "\r\n";
+                    #endregion
 
                     // The following method is only for voided invoice.
                     if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
@@ -199,7 +201,10 @@ namespace eGUICustomizations.Graph
                     }
                     else
                     {
-                        foreach (PXResult<ARTran> result in graph.RetrieveARTran(gUITrans.OrderNbr))
+                        #region D
+                        PXResultset<ARTran> results = graph.RetrieveARTran(gUITrans.OrderNbr);
+
+                        foreach (PXResult<ARTran> result in results)
                         {
                             ARTran aRTran = result;
 
@@ -304,6 +309,47 @@ namespace eGUICustomizations.Graph
                             // Relate Number5
                             lines += new string(char.Parse(verticalBar), 11) + "\r\n";
                         }
+
+                        if (results.Count <= 0)
+                        {
+                            foreach (TWNGUIPrintedLineDet line in SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>>
+                                                                                                  .View.Select(graph, gUITrans.GUINbr))
+                            {
+                                // File Type
+                                lines += "D" + verticalBar;
+                                // Description
+                                lines += line.Descr + verticalBar;
+                                // Quantity
+                                lines += (line.Qty ?? 1) + verticalBar;
+                                // Unit Price
+                                lines += string.Format("{0:0.####}", line.UnitPrice) + verticalBar;
+                                // Amount
+                                lines += string.Format("{0:0.####}", line.Amount) + verticalBar;
+                                // Unit
+                                lines += verticalBar;
+                                // Package
+                                lines += "0" + verticalBar;
+                                // Gift Number 1 (Box)
+                                lines += "0" + verticalBar;
+                                // Gift Number 2 (Piece)
+                                lines += "0" + verticalBar;
+                                // Order No
+                                lines += gUITrans.OrderNbr;
+                                // Buyer Barcode
+                                // Buyer Prod No
+                                // Seller Prod No
+                                // Seller Account No
+                                // Seller Shipping No
+                                // Remark
+                                // Relate Number1
+                                // Relate Number2 (Invoice No)
+                                // Relate Number3 (Invoice Date)
+                                // Relate Number4
+                                // Relate Number5
+                                lines += new string(char.Parse(verticalBar), 11) + "\r\n";
+                            }
+                        }
+                        #endregion
                     }
                 }
 

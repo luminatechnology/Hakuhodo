@@ -93,7 +93,7 @@ namespace PX.Objects.AR
                     {
                         string gUINbr = gUINbrs[i].TrimStart();
 
-                        if (doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale, ARDocType.Prepayment))
+                        if (doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale, ARDocType.Prepayment) && !string.IsNullOrEmpty(gUINbr))
                         {
                             TWNGUIValidation.VerifyCorrspondingGUIByBranch(Base.ARDocument.Cache, docExt.UsrVATOutCode, gUINbr, doc.BranchID);
                         }
@@ -193,6 +193,21 @@ namespace PX.Objects.AR
                             if (doc.DocType == ARDocType.Prepayment)
                             {
                                 rp.CreateGUIPrepayAdjust();
+                            }
+                            #endregion
+
+                            #region InsertPrintedLine
+                            if (doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale))
+                            {
+                                List<(string, int, string, decimal?, decimal?, decimal?, string)> list = new List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>>();
+
+                                int lineNbr = 1;
+                                foreach (ARTran tran in Base.ARTran_TranType_RefNbr.Cache.Cached)
+                                {
+                                    list.Add(ValueTuple.Create(docExt.UsrGUINbr, lineNbr++, tran.TranDesc, tran.Qty, tran.CuryUnitPrice, tran.CuryTranAmt, string.Empty));
+                                }
+
+                                rp.GeneratePrintedLineDetails(list);
                             }
                             #endregion
                         }

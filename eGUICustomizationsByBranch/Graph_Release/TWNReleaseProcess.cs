@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
@@ -14,6 +15,7 @@ namespace eGUICustomizations.Graph_Release
         #region Selects
         public SelectFrom<TWNGUITrans>.View ViewGUITrans;
         public SelectFrom<TWNGUIPrepayAdjust>.View PrepayAdjust;
+        public SelectFrom<TWNGUIPrintedLineDet>.View PrintedLineDet;
         #endregion
 
         #region Property
@@ -158,6 +160,35 @@ namespace eGUICustomizations.Graph_Release
 
                 ts.Complete();
             }
+        }
+
+        /// <summary>
+        /// ValueTuple : P1 : GUINbr, P2 : LineNbr, P3 : Description, P4 : Qty, P5 : UnitPrice, P6 : Amount, P7 : Remark
+        /// </summary>
+        /// <param name="sourceList"></param>
+        public virtual void GeneratePrintedLineDetails(List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>> sourceList)
+        {
+            for (int i = 0; i < sourceList.Count; i++)
+            {
+                (string gUINbr, int lineNbr, string descr, decimal? qty, decimal? unitPrice, decimal? amount, string remark) = sourceList[i];
+
+                TWNGUIPrintedLineDet line = PrintedLineDet.Cache.CreateInstance() as TWNGUIPrintedLineDet;
+
+                line.GUINbr  = gUINbr;
+                line.LineNbr = lineNbr;
+
+                line = PrintedLineDet.Insert(line);
+
+                line.Descr     = descr;
+                line.Qty       = qty;
+                line.UnitPrice = unitPrice;
+                line.Amount    = amount;
+                line.Remark    = remark;
+
+                PrintedLineDet.Update(line);
+            }
+
+            this.Actions.PressSave();
         }
 
         public virtual TWNGUITrans InitAndCheckOnAP(string gUINbr, string vATInCode)
