@@ -122,7 +122,7 @@ namespace PX.Objects.AR
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, !statusClosed && string.IsNullOrEmpty(registerExt.UsrGUINbr));
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled && registerExt.UsrCreditAction != TWNStringList.TWNCreditAction.NO);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled);
 
             printGUIInvoice.SetEnabled(!string.IsNullOrEmpty(registerExt.UsrGUINbr));   
         }
@@ -141,7 +141,9 @@ namespace PX.Objects.AR
 
                     regisExt.UsrGUINbr = ARGUINbrAutoNumAttribute.GetNextNumber(e.Cache, 
                                                                                 e.Row, 
-                                                                                regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering : pref.GUI3CopiesNumbering, 
+                                                                                regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering :
+                                                                                                                                         regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode31 ? pref.GUI3CopiesManNumbering :
+                                                                                                                                                                                                  pref.GUI3CopiesNumbering, 
                                                                                 regisExt.UsrGUIDate);
 
                     new TWNGUIValidation().CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
@@ -178,7 +180,8 @@ namespace PX.Objects.AR
                         break;
                 }
 
-                registerExt.UsrCreditAction = TWNStringList.TWNCreditAction.CN;
+                registerExt.UsrCreditAction = TWNStringList.TWNCreditAction.VG;
+                registerExt.UsrB2CType      = TWNStringList.TWNB2CType.DEF;
                 registerExt.UsrCarrierID    = registerExt.UsrNPONbr = null;
             }
         }
@@ -194,6 +197,8 @@ namespace PX.Objects.AR
                 if (row.DocType == ARDocType.CreditMemo)
                 {
                     vATInCode = TWGUIFormatCode.vATOutCode33;
+
+                    e.Cache.SetValue<ARRegisterExt.usrCreditAction>(row, TWNStringList.TWNCreditAction.VG);
                 }
                 else if (row.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale))
                 {
