@@ -148,6 +148,10 @@ namespace PX.Objects.AR
 
                     new TWNGUIValidation().CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
                 }
+
+                object taxNbr = regisExt.UsrTaxNbr;
+                // Added a validation on save, not only fields with default value.
+                e.Cancel = e.Cache.RaiseFieldVerifying<ARRegisterExt.usrTaxNbr>(e.Row, ref taxNbr);
             }
         }
 
