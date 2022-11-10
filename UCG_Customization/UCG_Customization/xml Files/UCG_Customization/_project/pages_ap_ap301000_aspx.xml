@@ -11,4 +11,21 @@
             <PXLayoutRule OriginalIndex="28" />
         </Children>
     </PXFormView>
+    <PXGridLevel DataMember="Transactions" ParentId="phG_tab_Items#0_grid_Levels#0" TypeFullName="PX.Web.UI.PXGridLevel">
+        <Children Key="Columns">
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="UsedExpense" />
+                    <Prop Key="Width" Value="100" />
+                </PXGridColumn>
+            </AddItem>
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="BudgetAmt" />
+                    <Prop Key="Width" Value="100" />
+                </PXGridColumn>
+            </AddItem>
+            <PXGridColumn DataField="CuryTranBal" OriginalIndex="27" />
+        </Children>
+    </PXGridLevel>
 </Page>

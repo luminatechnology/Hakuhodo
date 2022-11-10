@@ -1,0 +1,27 @@
+﻿<Sql TableName="PMSummaryByBIV" SqlScriptPriority="3" CustomScript="#CDATA">
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER VIEW dbo.PMSummaryByBIV AS
+select
+    c.CompanyID,
+    c.ContractID,
+    dbo.F_UsedIncome (c.CompanyID, c.ContractID) as UsedIncome,
+    dbo.F_UsedExpense (c.CompanyID, c.ContractID,default,default,default) as UsedExpense,
+    SUM(
+        case
+            when b.Type = 'I' then b.CuryRevisedAmount
+            else 0
+        end
+    ) BudgetIncome,
+    SUM(
+        case
+            when b.Type = 'E' then b.CuryRevisedAmount
+            else 0
+        end
+    ) BudgetExpense
+from
+    Contract c
+    Left Join PMBudget b on c.CompanyID = b.CompanyID
+    and c.ContractID = b.ProjectID
+group by
+    c.CompanyID,
+    c.ContractID]]></CDATA>
+</Sql>

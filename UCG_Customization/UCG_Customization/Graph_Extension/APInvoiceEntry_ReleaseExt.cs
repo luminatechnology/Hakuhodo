@@ -61,7 +61,9 @@ namespace PX.Objects.AP
                 decimal epPayAmt = Decimal.Parse(_epPayAmt);
                 ValidateEmpTempBor(invoice, epPayRefNbr, epPayAmt);
             }
-            return baseMethod(adapter);
+            var _return = baseMethod(adapter);
+            Base.Persist();
+            return _return;
         }
         #endregion
 

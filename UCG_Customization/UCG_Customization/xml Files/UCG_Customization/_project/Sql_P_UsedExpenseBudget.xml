@@ -1,0 +1,33 @@
+﻿<Sql TableName="P_UsedExpenseBudget" SqlScriptPriority="3" CustomScript="#CDATA">
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER PROCEDURE dbo.P_UsedExpenseBudget(
+	@AmountType nvarchar(6),
+	@CompanyID int,
+	@ProjectID int,
+	@TaskID int = null,
+	@InventoryID int = null, 
+	@AccountGroupID int= null,
+	@ReturnValue decimal(18,3) out
+)
+AS
+BEGIN
+	IF @AmountType = 'USED'
+		SET @ReturnValue = dbo.F_UsedExpense(@CompanyID,@ProjectID,@TaskID,@InventoryID,@AccountGroupID)
+	Else IF @AmountType = 'BUDGET'
+		SELECT 
+			@ReturnValue = SUM(CuryRevisedAmount) 
+		FROM PMBudget 
+		WHERE CompanyID = @CompanyID
+			And Type = 'E'
+			And ProjectID = @ProjectID
+			--單筆處理
+			And(@TaskID is null Or ProjectTaskID = @TaskID) -- taskID
+			And(@InventoryID is Null Or InventoryID = @InventoryID
+				Or (@AccountGroupID is Null and AccountGroupID is null) 
+				Or (AccountGroupID = @AccountGroupID)
+				) -- Inventory & AccountGroup
+			;
+	IF @ReturnValue is null Set @ReturnValue = 0;
+
+	RETURN;
+END]]></CDATA>
+</Sql>
