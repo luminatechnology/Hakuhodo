@@ -1,4 +1,4 @@
-﻿<Report Name="tw641000.rpx">
+﻿<Report Name="tw641000orig.rpx">
     <Report version="20211215" Name="report1">
         <CommonSettings>
             <ViewPdf>True</ViewPdf>
@@ -156,14 +156,18 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <ParentName>ARInvoice</ParentName>
             </ReportRelation>
             <ReportRelation>
-                <ChildName>TWNGUIPrintedLineDet</ChildName>
+                <ChildName>ARTran</ChildName>
                 <Links>
                     <RelationRow>
-                        <ChildField>GUINbr</ChildField>
-                        <ParentField>GUINbr</ParentField>
+                        <ChildField>TranType</ChildField>
+                        <ParentField>DocType</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>RefNbr</ChildField>
+                        <ParentField>RefNbr</ParentField>
                     </RelationRow>
                 </Links>
-                <ParentName>TWNGUITrans</ParentName>
+                <ParentName>ARInvoice</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Customer</ChildName>
@@ -177,6 +181,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Contact</ChildName>
+                <JoinType>Inner</JoinType>
                 <Links>
                     <RelationRow>
                         <ChildField>BAccountID</ChildField>
@@ -257,11 +262,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
             </ReportRelation>
         </Relations>
         <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>
-        <Sorting>
-            <SortExp>
-                <DataField>TWNGUIPrintedLineDet.LineNbr</DataField>
-            </SortExp>
-        </Sorting>
         <Tables>
             <ReportTable Name="ARAddress">
                 <Fields>
@@ -439,6 +439,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="ARSubID_Segment3">
                     </ReportField>
+                    <ReportField Name="ARSubID_Segment4">
+                    </ReportField>
                     <ReportField Name="ARSubID_Sub_description">
                     </ReportField>
                     <ReportField Name="AvalaraCustomerUsageType">
@@ -465,6 +467,10 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="BranchID_Segment1">
                     </ReportField>
+                    <ReportField Name="BranchID_Segment2">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment3">
+                    </ReportField>
                     <ReportField Name="Canceled">
                         <DataType>Boolean</DataType>
                     </ReportField>
@@ -484,8 +490,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="ChargeAmt">
                         <DataType>Decimal</DataType>
-                    </ReportField>
-                    <ReportField Name="ClDisplayName">
                     </ReportField>
                     <ReportField Name="ClosedDate">
                         <DataType>DateTime</DataType>
@@ -686,6 +690,10 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="CustomerID_Segment1">
                     </ReportField>
+                    <ReportField Name="CustomerID_Segment2">
+                    </ReportField>
+                    <ReportField Name="CustomerID_Segment3">
+                    </ReportField>
                     <ReportField Name="CustomerLocationID">
                     </ReportField>
                     <ReportField Name="CustomerLocationID_description">
@@ -693,9 +701,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="CustomerLocationID_Location_descr">
                     </ReportField>
                     <ReportField Name="CustomerLocationID_Segment1">
-                    </ReportField>
-                    <ReportField Name="DeferPriceDiscountRecalculation">
-                        <DataType>Boolean</DataType>
                     </ReportField>
                     <ReportField Name="DefRetainagePct">
                         <DataType>Decimal</DataType>
@@ -877,9 +882,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                         <DataType>Boolean</DataType>
                     </ReportField>
                     <ReportField Name="IsMigratedRecord">
-                        <DataType>Boolean</DataType>
-                    </ReportField>
-                    <ReportField Name="IsPriceAndDiscountsValid">
                         <DataType>Boolean</DataType>
                     </ReportField>
                     <ReportField Name="IsRetainageDocument">
@@ -1097,6 +1099,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="RetainageSubID_Segment3">
                     </ReportField>
+                    <ReportField Name="RetainageSubID_Segment4">
+                    </ReportField>
                     <ReportField Name="RetainageSubID_Sub_description">
                     </ReportField>
                     <ReportField Name="RetainageTotal">
@@ -1216,14 +1220,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="UsrGUINbr">
                     </ReportField>
-                    <ReportField Name="UsrGUISummary">
-                    </ReportField>
-                    <ReportField Name="UsrGUISummary_CSAttributeDetail_description">
-                    </ReportField>
-                    <ReportField Name="UsrGUISummary_description">
-                    </ReportField>
-                    <ReportField Name="UsrGUITitle">
-                    </ReportField>
                     <ReportField Name="UsrNPONbr">
                     </ReportField>
                     <ReportField Name="UsrNPONbr_description">
@@ -1231,12 +1227,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="UsrNPONbr_TWNNPOTable_descr">
                     </ReportField>
                     <ReportField Name="UsrOurTaxNbr">
-                    </ReportField>
-                    <ReportField Name="UsrShowTWGUITab">
-                        <DataType>Boolean</DataType>
-                    </ReportField>
-                    <ReportField Name="UsrSummaryPrint">
-                        <DataType>Boolean</DataType>
                     </ReportField>
                     <ReportField Name="UsrTaxNbr">
                     </ReportField>
@@ -1268,6 +1258,624 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                 </Fields>
                 <FullName>PX.Objects.AR.ARInvoice</FullName>
+            </ReportTable>
+            <ReportTable Name="ARTran">
+                <Fields>
+                    <ReportField Name="AccountID">
+                    </ReportField>
+                    <ReportField Name="AccountID_Account_description">
+                    </ReportField>
+                    <ReportField Name="AccountID_description">
+                    </ReportField>
+                    <ReportField Name="AccountID_Segment1">
+                    </ReportField>
+                    <ReportField Name="AccrueCost">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="AccruedCost">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="AllowControlAccountForModule">
+                    </ReportField>
+                    <ReportField Name="AvalaraCustomerUsageType">
+                    </ReportField>
+                    <ReportField Name="BaseQty">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="BranchID">
+                    </ReportField>
+                    <ReportField Name="BranchID_Branch_acctName">
+                    </ReportField>
+                    <ReportField Name="BranchID_description">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment1">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment2">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment3">
+                    </ReportField>
+                    <ReportField Name="CalculateDiscountsOnImport">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="Canceled">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="CaseCD">
+                    </ReportField>
+                    <ReportField Name="CashDiscBal">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="Commissionable">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="CommnAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CommnPct">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="Cost">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CostBasis">
+                    </ReportField>
+                    <ReportField Name="CostCodeID">
+                    </ReportField>
+                    <ReportField Name="CostCodeID_description">
+                    </ReportField>
+                    <ReportField Name="CostCodeID_PMCostCode_description">
+                    </ReportField>
+                    <ReportField Name="CostCodeID_Segment1">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="CuryAccruedCost">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryCashDiscBal">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryCommnAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryDiscAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryExtPrice">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryInfoID">
+                        <DataType>Int64</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryOrigRetainageAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryOrigTaxableAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryOrigTaxAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryOrigTranAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryRetainageAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryRetainageBal">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryRetainedTaxableAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryRetainedTaxAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryTaxableAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryTaxAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryTranAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryTranBal">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryUnitPrice">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CuryUnitPriceDR">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CustomerID">
+                    </ReportField>
+                    <ReportField Name="CustomerID_BAccountR_acctName">
+                    </ReportField>
+                    <ReportField Name="CustomerID_Customer_acctName">
+                    </ReportField>
+                    <ReportField Name="CustomerID_description">
+                    </ReportField>
+                    <ReportField Name="CustomerID_Segment1">
+                    </ReportField>
+                    <ReportField Name="CustomerID_Segment2">
+                    </ReportField>
+                    <ReportField Name="CustomerID_Segment3">
+                    </ReportField>
+                    <ReportField Name="Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="Date_Day">
+                    </ReportField>
+                    <ReportField Name="Date_Hour">
+                    </ReportField>
+                    <ReportField Name="Date_Month">
+                    </ReportField>
+                    <ReportField Name="Date_Quarter">
+                    </ReportField>
+                    <ReportField Name="DeferredCode">
+                    </ReportField>
+                    <ReportField Name="DefScheduleID">
+                    </ReportField>
+                    <ReportField Name="DiscAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="DiscountID">
+                    </ReportField>
+                    <ReportField Name="DiscountSequenceID">
+                    </ReportField>
+                    <ReportField Name="DiscPct">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="DiscPctDR">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="DocumentDiscountAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="DocumentDiscountRate">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="DrCr">
+                    </ReportField>
+                    <ReportField Name="DRTermEndDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="DRTermEndDate_Day">
+                    </ReportField>
+                    <ReportField Name="DRTermEndDate_Hour">
+                    </ReportField>
+                    <ReportField Name="DRTermEndDate_Month">
+                    </ReportField>
+                    <ReportField Name="DRTermEndDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="DRTermStartDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="DRTermStartDate_Day">
+                    </ReportField>
+                    <ReportField Name="DRTermStartDate_Hour">
+                    </ReportField>
+                    <ReportField Name="DRTermStartDate_Month">
+                    </ReportField>
+                    <ReportField Name="DRTermStartDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="EmployeeID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="ExpenseAccountID">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccountID_Account_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccountID_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccountID_Segment1">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualAccountID">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualAccountID_Account_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualAccountID_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualAccountID_Segment1">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID_Segment1">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID_Segment2">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID_Segment3">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID_Segment4">
+                    </ReportField>
+                    <ReportField Name="ExpenseAccrualSubID_Sub_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="ExpenseDate_Day">
+                    </ReportField>
+                    <ReportField Name="ExpenseDate_Hour">
+                    </ReportField>
+                    <ReportField Name="ExpenseDate_Month">
+                    </ReportField>
+                    <ReportField Name="ExpenseDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID_description">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID_Segment1">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID_Segment2">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID_Segment3">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID_Segment4">
+                    </ReportField>
+                    <ReportField Name="ExpenseSubID_Sub_description">
+                    </ReportField>
+                    <ReportField Name="ExpireDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="ExpireDate_Day">
+                    </ReportField>
+                    <ReportField Name="ExpireDate_Hour">
+                    </ReportField>
+                    <ReportField Name="ExpireDate_Month">
+                    </ReportField>
+                    <ReportField Name="ExpireDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="ExtPrice">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="FinPeriodID">
+                    </ReportField>
+                    <ReportField Name="FreezeManualDisc">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="GrossSalesAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="GroupDiscountAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="GroupDiscountRate">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="HasMixedProjectTasks">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="InventoryID">
+                    </ReportField>
+                    <ReportField Name="InventoryID_description">
+                    </ReportField>
+                    <ReportField Name="InventoryID_InventoryItem_descr">
+                    </ReportField>
+                    <ReportField Name="InventoryID_Segment1">
+                    </ReportField>
+                    <ReportField Name="InventoryID_Segment2">
+                    </ReportField>
+                    <ReportField Name="InventoryID_Segment3">
+                    </ReportField>
+                    <ReportField Name="InvtDocType">
+                    </ReportField>
+                    <ReportField Name="InvtMult">
+                        <DataType>Int16</DataType>
+                    </ReportField>
+                    <ReportField Name="InvtRefNbr">
+                    </ReportField>
+                    <ReportField Name="IsCancellation">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsFree">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsStockItem">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsTranCostFinal">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="ItemHasResidual">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="LineNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="LineType">
+                    </ReportField>
+                    <ReportField Name="LocationID">
+                    </ReportField>
+                    <ReportField Name="LocationID_description">
+                    </ReportField>
+                    <ReportField Name="LocationID_INLocation_descr">
+                    </ReportField>
+                    <ReportField Name="LocationID_Segment1">
+                    </ReportField>
+                    <ReportField Name="LotSerialNbr">
+                    </ReportField>
+                    <ReportField Name="ManualDisc">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="ManualPrice">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="Margin">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="MarginPercent">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NetSalesAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="OrigDocumentDiscountRate">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigGroupDiscountRate">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceDate_Day">
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceDate_Hour">
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceDate_Month">
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceLineNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceNbr">
+                    </ReportField>
+                    <ReportField Name="OrigInvoiceType">
+                    </ReportField>
+                    <ReportField Name="OrigLineNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigRetainageAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigTaxableAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigTaxAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="OrigTranAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="PlanID">
+                        <DataType>Int64</DataType>
+                    </ReportField>
+                    <ReportField Name="PMDeltaOption">
+                    </ReportField>
+                    <ReportField Name="ProjectID">
+                    </ReportField>
+                    <ReportField Name="Qty">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="ReasonCode">
+                    </ReportField>
+                    <ReportField Name="ReasonCode_description">
+                    </ReportField>
+                    <ReportField Name="ReasonCode_ReasonCode_descr">
+                    </ReportField>
+                    <ReportField Name="RefNbr">
+                    </ReportField>
+                    <ReportField Name="Released">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="RequireINUpdate">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="RequiresTerms">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="RetainageAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RetainageBal">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RetainagePct">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RetainedTaxableAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RetainedTaxAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="SalesPersonID">
+                    </ReportField>
+                    <ReportField Name="SalesPersonID_description">
+                    </ReportField>
+                    <ReportField Name="SalesPersonID_SalesPerson_descr">
+                    </ReportField>
+                    <ReportField Name="SalesPersonID_Segment1">
+                    </ReportField>
+                    <ReportField Name="Selected">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="SiteID">
+                    </ReportField>
+                    <ReportField Name="SiteID_Segment1">
+                    </ReportField>
+                    <ReportField Name="SOOrderLineNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="SOOrderLineOperation">
+                    </ReportField>
+                    <ReportField Name="SOOrderNbr">
+                    </ReportField>
+                    <ReportField Name="SOOrderSortOrder">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="SOOrderType">
+                    </ReportField>
+                    <ReportField Name="SortOrder">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="SOShipmentLineNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="SOShipmentNbr">
+                    </ReportField>
+                    <ReportField Name="SOShipmentType">
+                    </ReportField>
+                    <ReportField Name="SubID">
+                    </ReportField>
+                    <ReportField Name="SubID_description">
+                    </ReportField>
+                    <ReportField Name="SubID_Segment1">
+                    </ReportField>
+                    <ReportField Name="SubID_Segment2">
+                    </ReportField>
+                    <ReportField Name="SubID_Segment3">
+                    </ReportField>
+                    <ReportField Name="SubID_Segment4">
+                    </ReportField>
+                    <ReportField Name="SubID_Sub_description">
+                    </ReportField>
+                    <ReportField Name="SubItemID">
+                    </ReportField>
+                    <ReportField Name="SubItemID_Segment1">
+                    </ReportField>
+                    <ReportField Name="SubstitutionRequired">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="TaskID">
+                    </ReportField>
+                    <ReportField Name="TaskID_description">
+                    </ReportField>
+                    <ReportField Name="TaskID_PMTask_description">
+                    </ReportField>
+                    <ReportField Name="TaskID_Segment1">
+                    </ReportField>
+                    <ReportField Name="TaxableAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID">
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID_description">
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID_TaxCategory_descr">
+                    </ReportField>
+                    <ReportField Name="TaxID">
+                    </ReportField>
+                    <ReportField Name="TaxID_description">
+                    </ReportField>
+                    <ReportField Name="TaxID_Tax_descr">
+                    </ReportField>
+                    <ReportField Name="TranAmt">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TranBal">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TranClass">
+                    </ReportField>
+                    <ReportField Name="TranCost">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TranCostOrig">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TranDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="TranDate_Day">
+                    </ReportField>
+                    <ReportField Name="TranDate_Hour">
+                    </ReportField>
+                    <ReportField Name="TranDate_Month">
+                    </ReportField>
+                    <ReportField Name="TranDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="TranDesc">
+                    </ReportField>
+                    <ReportField Name="TranPeriodID">
+                    </ReportField>
+                    <ReportField Name="TranType">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                    <ReportField Name="UnassignedQty">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="UnitCost">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="UnitPrice">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="UOM">
+                    </ReportField>
+                </Fields>
+                <FullName>PX.Objects.AR.ARTran</FullName>
             </ReportTable>
             <ReportTable Name="Contact">
                 <Fields>
@@ -1537,6 +2145,10 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="ParentBAccountID_Segment1">
                     </ReportField>
+                    <ReportField Name="ParentBAccountID_Segment2">
+                    </ReportField>
+                    <ReportField Name="ParentBAccountID_Segment3">
+                    </ReportField>
                     <ReportField Name="Phone1">
                     </ReportField>
                     <ReportField Name="Phone1Type">
@@ -1769,8 +2381,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="Included">
                         <DataType>Boolean</DataType>
-                    </ReportField>
-                    <ReportField Name="INDUSTRY_Attributes">
                     </ReportField>
                     <ReportField Name="IsBillContSameAsMain">
                         <DataType>Boolean</DataType>
@@ -3053,86 +3663,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 </Fields>
                 <FullName>PX.SM.UploadFileRevision</FullName>
             </ReportTable>
-            <ReportTable Name="TWNGUIPrintedLineDet">
-                <Fields>
-                    <ReportField Name="Amount">
-                        <DataType>Decimal</DataType>
-                    </ReportField>
-                    <ReportField Name="CreatedByID">
-                    </ReportField>
-                    <ReportField Name="CreatedByID_Creator_displayName">
-                    </ReportField>
-                    <ReportField Name="CreatedByID_Creator_Username">
-                    </ReportField>
-                    <ReportField Name="CreatedByID_description">
-                    </ReportField>
-                    <ReportField Name="CreatedByScreenID">
-                    </ReportField>
-                    <ReportField Name="CreatedDateTime">
-                        <DataType>DateTime</DataType>
-                    </ReportField>
-                    <ReportField Name="CreatedDateTime_Day">
-                    </ReportField>
-                    <ReportField Name="CreatedDateTime_Hour">
-                    </ReportField>
-                    <ReportField Name="CreatedDateTime_Month">
-                    </ReportField>
-                    <ReportField Name="CreatedDateTime_Quarter">
-                    </ReportField>
-                    <ReportField Name="Descr">
-                    </ReportField>
-                    <ReportField Name="GUINbr">
-                    </ReportField>
-                    <ReportField Name="LastModifiedByID">
-                    </ReportField>
-                    <ReportField Name="LastModifiedByID_description">
-                    </ReportField>
-                    <ReportField Name="LastModifiedByID_Modifier_displayName">
-                    </ReportField>
-                    <ReportField Name="LastModifiedByID_Modifier_Username">
-                    </ReportField>
-                    <ReportField Name="LastModifiedByScreenID">
-                    </ReportField>
-                    <ReportField Name="LastModifiedDateTime">
-                        <DataType>DateTime</DataType>
-                    </ReportField>
-                    <ReportField Name="LastModifiedDateTime_Day">
-                    </ReportField>
-                    <ReportField Name="LastModifiedDateTime_Hour">
-                    </ReportField>
-                    <ReportField Name="LastModifiedDateTime_Month">
-                    </ReportField>
-                    <ReportField Name="LastModifiedDateTime_Quarter">
-                    </ReportField>
-                    <ReportField Name="LineNbr">
-                        <DataType>Int32</DataType>
-                    </ReportField>
-                    <ReportField Name="NoteActivity">
-                    </ReportField>
-                    <ReportField Name="NoteFiles">
-                    </ReportField>
-                    <ReportField Name="NoteID">
-                        <DataType>Object</DataType>
-                    </ReportField>
-                    <ReportField Name="NoteImages">
-                    </ReportField>
-                    <ReportField Name="NoteText">
-                    </ReportField>
-                    <ReportField Name="Qty">
-                        <DataType>Decimal</DataType>
-                    </ReportField>
-                    <ReportField Name="Remark">
-                    </ReportField>
-                    <ReportField Name="Tstamp">
-                    </ReportField>
-                    <ReportField Name="UnitPrice">
-                        <DataType>Decimal</DataType>
-                    </ReportField>
-                </Fields>
-                <FullName>eGUICustomizations.DAC.TWNGUIPrintedLineDet</FullName>
-            </ReportTable>
         </Tables>
-        <Version>20221017</Version>
+        <Version>20211215</Version>
         <ViewerFields>
             <ViewerField Name="ARInvoice.DocType">
             </ViewerField>
@@ -3416,6 +3948,12 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
             </PageHeader>
             <Detail Name="detailSection1">
                 <Height>1.25cm</Height>
+                <Variables>
+                    <ReportVariable>
+                        <Name>UnitPrice</Name>
+                        <ValueExpr>=IIf([ARInvoice.UsrTaxNbr] &lt;&gt; NULL, IIf([ARInvoice.TaxCalcMode] = 'G', [ARTran.CuryUnitPrice] / 1.05,#010;								       [ARTran.CuryUnitPrice]),#010;                                    [ARTran.CuryUnitPrice])</ValueExpr>
+                    </ReportVariable>
+                </Variables>
                 <Items>
                     <TextBox Name="textBox32">
                         <CanGrow>True</CanGrow>
@@ -3429,7 +3967,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Left</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=[TWNGUIPrintedLineDet.Descr]</Value>
+                        <Value>=IIf([ARTran.InventoryID]&lt;&gt;Null, Format( '{0}: {1}', [ARTran.InventoryID],[ARTran.TranDesc]),[ARTran.TranDesc])</Value>
                     </TextBox>
                     <TextBox Name="textBox33">
                         <Location>2in, 0cm</Location>
@@ -3442,10 +3980,11 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Right</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=[TWNGUIPrintedLineDet.Qty]</Value>
-                        <VisibleExpr>=[TWNGUIPrintedLineDet.Qty] &lt;&gt; 0#010;/*[ARTran.Qty] &lt;&gt; 0*/</VisibleExpr>
+                        <Value>=[ARTran.Qty]</Value>
+                        <VisibleExpr>=[ARTran.Qty] &lt;&gt; 0</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox34">
+                        <Format>=[ARTran.CuryTranAmt.Format]#010;/*N3*/</Format>
                         <Location>3.16667in, 0cm</Location>
                         <Size>2.54cm, 1.25cm</Size>
                         <Style>
@@ -3456,10 +3995,11 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Right</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=[TWNGUIPrintedLineDet.UnitPrice]</Value>
-                        <VisibleExpr>=IIf([TWNGUIPrintedLineDet.UnitPrice] &lt;&gt; 0, true, false)#010;/*IIf([ARTran.CuryUnitPrice] &lt;&gt; 0, true, false)*/</VisibleExpr>
+                        <Value>=$UnitPrice</Value>
+                        <VisibleExpr>=IIf([ARTran.CuryUnitPrice] &lt;&gt; 0, true, false)</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox35">
+                        <Format>=[ARTran.CuryTranAmt.Format]</Format>
                         <Location>4.16667in, 0cm</Location>
                         <Size>3.38624cm, 1.25cm</Size>
                         <Style>
@@ -3470,7 +4010,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Right</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=[TWNGUIPrintedLineDet.Amount]</Value>
+                        <Value>=IIf([ARTran.LineType] = 'DS', IIf([ARInvoice.TaxCalcMode] = 'G', [ARInvoice.CuryDiscTot] / 1.05 , [ARInvoice.CuryDiscTot]),[ARTran.Qty] * $UnitPrice)</Value>
                     </TextBox>
                     <TextBox Name="textBox36">
                         <CanGrow>True</CanGrow>
@@ -3484,7 +4024,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=[TWNGUIPrintedLineDet.Remark]</Value>
+                        <Value>=IIf([ARTran.LineNbr] &lt;= 1, [TWNGUITrans.Remark], '')</Value>
                     </TextBox>
                 </Items>
             </Detail>
@@ -3589,7 +4129,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <TextAlign>Right</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
-                        <Value>=IIf([TWNGUITrans.OrderNbr] = Null,#010;     IIf([TWNGUITrans.TaxNbr] = Null, [TWNGUITrans.NetAmount] + [TWNGUITrans.TaxAmount], [TWNGUITrans.NetAmount]),#010;     IIf([ARInvoice.UsrTaxNbr] = Null, #010;         Sum([TWNGUIPrintedLineDet.Qty] * IIf([ARInvoice.UsrTaxNbr] &lt;&gt; Null, #010;                                IIf([ARInvoice.TaxCalcMode] = 'G', #010;                                    [TWNGUIPrintedLineDet.UnitPrice] / 1.05, [TWNGUIPrintedLineDet.UnitPrice]),#010;                                    [TWNGUIPrintedLineDet.UnitPrice])),       #010;      [TWNGUITrans.NetAmount])#010;    )#010;     #010;#010;#010;#010;</Value>
+                        <Value>=IIf([TWNGUITrans.OrderNbr] = Null,#010;     IIf([TWNGUITrans.TaxNbr] = Null, [TWNGUITrans.NetAmount] + [TWNGUITrans.TaxAmount], [TWNGUITrans.NetAmount]),#010;     IIf([ARInvoice.UsrTaxNbr] = Null, #010;         Sum([ARTran.Qty] * IIf([ARInvoice.UsrTaxNbr] &lt;&gt; Null, #010;                                IIf([ARInvoice.TaxCalcMode] = 'G', #010;                                    [ARTran.CuryUnitPrice] / 1.05,[ARTran.CuryUnitPrice]),#010;                                    [ARTran.CuryUnitPrice])),       #010;      [TWNGUITrans.NetAmount])#010;    )#010;     #010;#010;#010;#010;</Value>
                         <VisibleExpr>=[PageIndex]=[PageCount]</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox24">
@@ -3848,7 +4388,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <Value>=$RemitAmount</Value>
-                        <VisibleExpr>=IIf([TWNGUIPrintedLineDet.UnitPrice] &lt;&gt; 0, true, false)#010;/*IIf([ARTran.CuryUnitPrice] &lt;&gt; 0, true, false)*/</VisibleExpr>
+                        <VisibleExpr>=IIf([ARTran.CuryUnitPrice] &lt;&gt; 0, true, false)</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox48">
                         <Location>2in, 0cm</Location>

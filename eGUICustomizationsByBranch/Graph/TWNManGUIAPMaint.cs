@@ -16,30 +16,27 @@ namespace eGUICustomizations.Graph
     public class TWNManGUIAPEntry : PXGraph<TWNManGUIAPEntry>
     {
         #region Selects & Setup
-        public PXSave<TWNManualGUIAP> Save;
-        public PXCancel<TWNManualGUIAP> Cancel;
+        public PXSave<TWNGUIManualFilter> Save;
+
+        public PXCancel<TWNGUIManualFilter> Cancel;
+
+        public PXFilter<TWNGUIManualFilter> Filter;
 
         public PXSetup<TWNGUIPreferences> GUIPreferences;
 
         [PXImport(typeof(TWNManualGUIAP))]
         [PXFilterable]
-        public SelectFrom<TWNManualGUIAP>
-                          .Where<TWNManualGUIAP.status.IsEqual<TWNGUIManualStatus.open>>.View manualGUIAP_Open;
+        public SelectFrom<TWNManualGUIAP>.Where<TWNManualGUIAP.status.IsEqual<TWNGUIManualFilter.status.FromCurrent>>.View ManualGUIAP;
 
-        public SelectFrom<TWNManualGUIAP>
-                          .Where<TWNManualGUIAP.status.IsEqual<TWNGUIManualStatus.released>>.View.ReadOnly manualGUIAP_Released;
-
-        public SelectFrom<TWNGUITrans>
-                          .Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAP.gUINbr.FromCurrent>>.View ViewGUITrans;
+        public SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAP.gUINbr.FromCurrent>>.View ViewGUITrans;
         #endregion
 
         #region Actions
-        public PXAction<TWNManualGUIAP> Release;
-        [PXProcessButton]
-        [PXUIField(DisplayName = ActionsMessages.Release)]
-        public IEnumerable release(PXAdapter adapter)
+        public PXAction<TWNGUIManualFilter> release;
+        [PXProcessButton(ImageSet = "main", ImageKey = PX.Web.UI.Sprite.Main.Release), PXUIField(DisplayName = ActionsMessages.Release)]
+        public IEnumerable Release(PXAdapter adapter)
         {
-            TWNManualGUIAP manualGUIAP = manualGUIAP_Open.Current;
+            TWNManualGUIAP manualGUIAP = ManualGUIAP.Current;
 
             if (manualGUIAP is null || string.IsNullOrEmpty(manualGUIAP.GUINbr))
             {
@@ -64,7 +61,7 @@ namespace eGUICustomizations.Graph
                             GUIDirection  = TWNGUIDirection.Receipt,
                             GUIDate       = manualGUIAP.GUIDate,
                             GUIDecPeriod  = manualGUIAP.GUIDecPeriod,
-                            GUITitle      = (string)PXSelectorAttribute.GetField(manualGUIAP_Open.Cache,
+                            GUITitle      = (string)PXSelectorAttribute.GetField(ManualGUIAP.Cache,
                                                                                  manualGUIAP,
                                                                                  typeof(TWNManualGUIAP.vendorID).Name, manualGUIAP.VendorID,
                                                                                  typeof(Vendor.acctName).Name),
@@ -75,11 +72,11 @@ namespace eGUICustomizations.Graph
                             OurTaxNbr     = manualGUIAP.OurTaxNbr,
                             NetAmount     = manualGUIAP.NetAmt,
                             TaxAmount     = manualGUIAP.TaxAmt,
-                            AcctCD        = (string)PXSelectorAttribute.GetField(manualGUIAP_Open.Cache,
+                            AcctCD        = (string)PXSelectorAttribute.GetField(ManualGUIAP.Cache,
                                                                                  manualGUIAP,
                                                                                  typeof(TWNManualGUIAP.vendorID).Name, manualGUIAP.VendorID,
                                                                                  typeof(Vendor.acctCD).Name),
-                            AcctName      = (string)PXSelectorAttribute.GetField(manualGUIAP_Open.Cache,
+                            AcctName      = (string)PXSelectorAttribute.GetField(ManualGUIAP.Cache,
                                                                                  manualGUIAP,
                                                                                  typeof(TWNManualGUIAP.vendorID).Name, manualGUIAP.VendorID,
                                                                                  typeof(Vendor.acctName).Name),
@@ -88,7 +85,7 @@ namespace eGUICustomizations.Graph
                         });
 
                         manualGUIAP.Status = TWNGUIManualStatus.Released;
-                        manualGUIAP_Open.View.Cache.MarkUpdated(manualGUIAP);//.Update(manualGUIAP_Open.Current);
+                        ManualGUIAP.View.Cache.MarkUpdated(manualGUIAP);//.Update(manualGUIAP_Open.Current);
 
                         if (tWNGUITrans != null)
                         {
@@ -110,6 +107,14 @@ namespace eGUICustomizations.Graph
 
         #region Event Handlers
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
+
+        protected virtual void _(Events.RowSelected<TWNGUIManualFilter> e)
+        {
+            bool isOpen = e.Row.Status == TWNGUIManualStatus.Open;
+
+            ManualGUIAP.Cache.AllowDelete = ManualGUIAP.Cache.AllowInsert = ManualGUIAP.Cache.AllowUpdate = isOpen;
+            release.SetEnabled(isOpen);
+        }
 
         protected virtual void _(Events.RowPersisting<TWNManualGUIAP> e)
         {
@@ -171,31 +176,6 @@ namespace eGUICustomizations.Graph
 
             row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
         }
-
-        //protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.gUINbr> e)
-        //{
-        //    var row = (TWNManualGUIAP)e.Row;
-
-        //    tWNGUIValidation.CheckGUINbrExisted(this, (string)e.NewValue, row.VATInCode);
-        //}
-
-        //protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.taxAmt> e)
-        //{
-        //    var row = (TWNManualGUIAP)e.Row;
-
-        //    e.Cache.RaiseExceptionHandling<TWNManualGUIAP.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
-        //}
-
-        //protected void _(Events.FieldUpdated<TWNManualGUIAP, TWNManualGUIAP.netAmt> e)
-        //{
-        //    var row = (TWNManualGUIAP)e.Row;
-
-        //    foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-        //                                                       .And<TaxRev.taxType.IsEqual<TaxRev.taxType>>>.View.Select(this, row.TaxID, "P") ) // P = Group type (Input)
-        //    { 
-        //        row.TaxAmt = row.NetAmt * (taxRev.TaxRate / taxRev.NonDeductibleTaxRate);
-        //    }
-        //}
         #endregion
     }
 }

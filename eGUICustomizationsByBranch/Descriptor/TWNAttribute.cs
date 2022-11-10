@@ -149,7 +149,9 @@ namespace eGUICustomizations.Descriptor
 
                     if (validation.errorOccurred == true)
                     {
-                        throw new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel);
+                        //throw new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel);
+                        sender.RaiseExceptionHandling(this.FieldName, e.Row, e.NewValue,
+                                                      new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel));
                     }
                 }
             }

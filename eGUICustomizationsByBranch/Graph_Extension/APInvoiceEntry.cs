@@ -113,20 +113,23 @@ namespace PX.Objects.AP
         #region TWNManualGUIAPBill
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
 
-        protected void _(Events.FieldDefaulting<TWNManualGUIAPBill.deduction> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.deduction> e)
         {
-            var row = e.Row as TWNManualGUIAPBill;
-
             /// If user doesn't choose a vendor then bring the fixed default value from Attribure "DEDUCTCODE" first record.
-            e.NewValue = row.VendorID == null ? new string1() : e.NewValue;
+            e.NewValue = e.Row.VendorID == null ? new string1() : e.NewValue;
         }
 
-        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill.branchID> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.branchID> e)
         {
             e.NewValue = Base.Document.Current?.BranchID;
 
             // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
             ManualAPBill.Cache.SetValueExt<TWNManualGUIAPBill.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
+        }
+
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.vATInCode> e)
+        {
+            e.NewValue = Base.Document.Current?.DocType == APDocType.DebitAdj ? TWGUIFormatCode.vATInCode23 : e.NewValue;
         }
         #endregion
 

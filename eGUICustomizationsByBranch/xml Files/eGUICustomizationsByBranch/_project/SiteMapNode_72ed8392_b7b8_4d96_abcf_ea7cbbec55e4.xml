@@ -25,15 +25,15 @@
         </layout>
         <data>
             <SiteMap>
-                <row Position="6" Title="Export e-GUI Credit Note To BankPro" Url="~/Pages/TW/TW504000.aspx" ScreenID="TW504000" NodeID="12337dab-8fda-496f-9304-279144f56663" ParentID="e34062ff-1105-4fe9-97a9-6cafc57dc17a">
-                    <MUIScreen IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="642042" SubcategoryID="32130442-2305-4394-9389-cf915b191d2a" />
+                <row Position="21522" Title="GUI Printed Line Details" Url="~/Pages/TW/TW205000.aspx" ScreenID="TW205000" NodeID="72ed8392-b7b8-4d96-abcf-ea7cbbec55e4" ParentID="00000000-0000-0000-0000-000000000000">
+                    <MUIScreen IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="10" SubcategoryID="38d13a6e-3076-42fb-9fce-62fa33897da6" />
                 </row>
             </SiteMap>
             <MUIWorkspace>
                 <row IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="145.25" Title="Taxes" Icon="taxes" AreaID="338edf81-5456-4735-8601-b213458e93fe" ScreenID="WSTX0000" IsSystem="0" />
             </MUIWorkspace>
             <MUISubcategory>
-                <row IsPortal="0" SubcategoryID="32130442-2305-4394-9389-cf915b191d2a" Order="820" Name="Processes" Icon="" IsSystem="0" />
+                <row IsPortal="0" SubcategoryID="38d13a6e-3076-42fb-9fce-62fa33897da6" Order="64" Name="Transactions" Icon="" IsSystem="0" />
             </MUISubcategory>
             <MUIArea>
                 <row IsPortal="0" AreaID="338edf81-5456-4735-8601-b213458e93fe" Order="10" Name="Financials" />

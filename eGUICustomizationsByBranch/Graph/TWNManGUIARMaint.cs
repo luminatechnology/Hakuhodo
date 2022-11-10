@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
@@ -6,6 +8,7 @@ using PX.Objects.AR;
 using PX.Objects.CS;
 using PX.Objects.CR;
 using PX.Objects.TX;
+using PX.Objects.SO;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using eGUICustomizations.Graph_Release;
@@ -17,18 +20,17 @@ namespace eGUICustomizations.Graph
         public TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
 
         #region Selects & Setup
-        public PXSave<TWNManualGUIAR> Save;
-        public PXCancel<TWNManualGUIAR> Cancel;
+        public PXSave<TWNGUIManualFilter> Save;
+
+        public PXCancel<TWNGUIManualFilter> Cancel;
+
+        public PXFilter<TWNGUIManualFilter> Filter;
 
         [PXImport(typeof(TWNManualGUIAR))]
-        [PXFilterable]
-        public SelectFrom<TWNManualGUIAR>
-                          .Where<TWNManualGUIAR.status.IsEqual<TWNStringList.TWNGUIManualStatus.open>>.View manualGUIAR_Open;
-        public SelectFrom<TWNManualGUIAR>
-                          .Where<TWNManualGUIAR.status.IsEqual<TWNStringList.TWNGUIManualStatus.released>>.View.ReadOnly manualGUIAR_Released;
+        [PXFilterable()]
+        public SelectFrom<TWNManualGUIAR>.Where<TWNManualGUIAR.status.IsEqual<TWNGUIManualFilter.status.FromCurrent>>.View ManualGUIAR;
 
-        public SelectFrom<TWNGUITrans>
-                         .Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAR.gUINbr.FromCurrent>>.View ViewGUITrans;
+        public SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAR.gUINbr.FromCurrent>>.View ViewGUITrans;
 
         public PXSetup<TWNGUIPreferences> GUIPreferences;
         #endregion
@@ -36,47 +38,29 @@ namespace eGUICustomizations.Graph
         #region Overrie Methods
         public override void Persist()
         {
-            foreach (TWNManualGUIAR row in manualGUIAR_Open.Cache.Deleted)
+            using (PXTransactionScope ts = new PXTransactionScope())
             {
-                if (tWNGUIValidation.isCreditNote == false && !string.IsNullOrEmpty(row.GUINbr))
+                foreach (TWNManualGUIAR row in ManualGUIAR.Cache.Deleted)
                 {
-                    InsertGUITran(row, Customer.PK.Find(this, row.CustomerID), false);
-
-                    //Customer customer = Customer.PK.Find(this, row.CustomerID);
-                    //rp.CreateGUITrans(new STWNGUITran()
-                    //{
-                    //    VATCode       = row.VatOutCode,
-                    //    GUINbr        = row.GUINbr,
-                    //    GUIStatus     = TWNStringList.TWNGUIStatus.Voided,
-                    //    BranchID      = row.BranchID,
-                    //    GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
-                    //    GUIDate       = row.GUIDate,
-                    //    TaxZoneID     = row.TaxZoneID,
-                    //    TaxCategoryID = row.TaxCategoryID,
-                    //    TaxID         = row.TaxID,
-                    //    TaxNbr        = row.TaxNbr,
-                    //    OurTaxNbr     = row.OurTaxNbr,
-                    //    NetAmount     = 0,
-                    //    TaxAmount     = 0,
-                    //    AcctCD        = customer.AcctCD,
-                    //    AcctName      = customer.AcctName,
-                    //    Remark        = string.Format(TWMessages.DeleteInfo, this.Accessinfo.UserName),
-                    //    eGUIExcluded  = row.VatOutCode == TWGUIFormatCode.vATOutCode32,
-                    //    OrderNbr      = row.GUINbr
-                    //});
+                    if (tWNGUIValidation.isCreditNote == false && !string.IsNullOrEmpty(row.GUINbr))
+                    {
+                        InsertGUITran(row, Customer.PK.Find(this, row.CustomerID), true);
+                    }
                 }
-            }
 
-            base.Persist();
+                base.Persist();
+
+                ts.Complete();
+            }
         }
         #endregion
 
         #region Actions
-        public PXAction<TWNManualGUIAR> Release;
-        [PXProcessButton(), PXUIField(DisplayName = ActionsMessages.Release)]
-        public virtual IEnumerable release(PXAdapter adapter)
+        public PXAction<TWNGUIManualFilter> release;
+        [PXProcessButton(ImageSet = "main", ImageKey = PX.Web.UI.Sprite.Main.Release), PXUIField(DisplayName = ActionsMessages.Release)]
+        public virtual IEnumerable Release(PXAdapter adapter)
         {
-            TWNManualGUIAR manualGUIAR = this.manualGUIAR_Open.Current;
+            TWNManualGUIAR manualGUIAR = this.ManualGUIAR.Current;
 
             if (manualGUIAR == null || string.IsNullOrEmpty(manualGUIAR.GUINbr))
             {
@@ -90,32 +74,10 @@ namespace eGUICustomizations.Graph
                     {
                         TWNGUITrans tWNGUITrans = rp.InitAndCheckOnAR(manualGUIAR.GUINbr, manualGUIAR.VatOutCode);
 
-                        //rp.CreateGUITrans(new STWNGUITran()
-                        //{
-                        //    VATCode       = manualGUIAR.VatOutCode,
-                        //    GUINbr        = manualGUIAR.GUINbr,
-                        //    GUIStatus     = TWNStringList.TWNGUIStatus.Used,
-                        //    BranchID      = manualGUIAR.BranchID,
-                        //    GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
-                        //    GUIDate       = manualGUIAR.GUIDate,
-                        //    GUITitle      = customer.AcctName,
-                        //    TaxZoneID     = manualGUIAR.TaxZoneID,
-                        //    TaxCategoryID = manualGUIAR.TaxCategoryID,
-                        //    TaxID         = manualGUIAR.TaxID,
-                        //    TaxNbr        = manualGUIAR.TaxNbr,
-                        //    OurTaxNbr     = manualGUIAR.OurTaxNbr,
-                        //    NetAmount     = manualGUIAR.NetAmt,
-                        //    TaxAmount     = manualGUIAR.TaxAmt,
-                        //    AcctCD        = customer.AcctCD,
-                        //    AcctName      = customer.AcctName,
-                        //    eGUIExcluded  = manualGUIAR.VatOutCode == TWGUIFormatCode.vATOutCode32,
-                        //    Remark        = manualGUIAR.Remark,
-                        //    OrderNbr      = manualGUIAR.GUINbr
-                        //});
                         InsertGUITran(manualGUIAR, Customer.PK.Find(this, manualGUIAR.CustomerID), false);
 
                         manualGUIAR.Status = TWNStringList.TWNGUIManualStatus.Released;
-                        manualGUIAR_Open.Cache.MarkUpdated(manualGUIAR);
+                        ManualGUIAR.Cache.MarkUpdated(manualGUIAR);
 
                         Actions.PressSave();
 
@@ -133,10 +95,36 @@ namespace eGUICustomizations.Graph
 
             return adapter.Get();
         }
+
+        public PXAction<TWNGUIManualFilter> printGUIInvoice;
+        [PXButton(ImageSet = "main", ImageKey = PX.Web.UI.Sprite.Main.ReportF), PXUIField(DisplayName = "Print GUI Invoice")]
+        public virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
+        {
+            if (ManualGUIAR.Current != null)
+            {
+                Dictionary<string, string> parameters = new Dictionary<string, string>
+                {
+                    [nameof(TWNGUITrans.GUINbr)] = ManualGUIAR.Current.GUINbr
+                };
+
+                throw new PXReportRequiredException(parameters, SOInvoiceEntry_Extension.GUIReportID, SOInvoiceEntry_Extension.GUIReportID);
+            }
+
+            return adapter.Get();
+        }
         #endregion
 
         #region Event Handlers
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
+
+        protected virtual void _(Events.RowSelected<TWNGUIManualFilter> e)
+        {
+            bool isOpen = e.Row.Status == TWNStringList.TWNGUIManualStatus.Open;
+
+            ManualGUIAR.Cache.AllowDelete = ManualGUIAR.Cache.AllowInsert = ManualGUIAR.Cache.AllowUpdate = isOpen;
+            release.SetEnabled(isOpen);
+            printGUIInvoice.SetEnabled(!isOpen);
+        }
 
         protected virtual void _(Events.RowPersisting<TWNManualGUIAR> e)
         {
@@ -201,7 +189,7 @@ namespace eGUICustomizations.Graph
                 BranchID      = data.BranchID,
                 GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
                 GUIDate       = data.GUIDate,
-                GUITitle      = customer.AcctName,
+                GUITitle      = customer?.AcctName,
                 TaxZoneID     = data.TaxZoneID,
                 TaxCategoryID = data.TaxCategoryID,
                 TaxID         = data.TaxID,
@@ -209,13 +197,41 @@ namespace eGUICustomizations.Graph
                 OurTaxNbr     = data.OurTaxNbr,
                 NetAmount     = isDeleted == false ? data.NetAmt : 0m,
                 TaxAmount     = isDeleted == false ? data.TaxAmt : 0m,
-                AcctCD        = customer.AcctCD,
-                AcctName      = customer.AcctName,
+                AcctCD        = customer?.AcctCD,
+                AcctName      = customer?.AcctName,
                 eGUIExcluded  = data.VatOutCode == TWGUIFormatCode.vATOutCode32,
                 Remark        = isDeleted == false ? data.Remark : string.Format(TWMessages.DeleteInfo, this.Accessinfo.UserName),
                 OrderNbr      = data.GUINbr
             });
+
+            #region InsertPrintedLine
+            if (isDeleted == false)
+            {
+                decimal? amount = string.IsNullOrEmpty(data.TaxNbr) ? data.NetAmt + data.TaxAmt : data.NetAmt;
+
+                List<(string, int, string, decimal?, decimal?, decimal?, string)> list = new List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>>();
+
+                list.Add(ValueTuple.Create(data.GUINbr, 1, CSAnswers.PK.Find(this, customer?.NoteID, "REMITDESC")?.Value, 1, amount, amount, data.Remark));
+
+                rp.GeneratePrintedLineDetails(list);
+            }
+            #endregion
         }
         #endregion
     }
+
+    #region Unbound DAC
+    [PXCacheName("Filter Manual Trans")]
+    public partial class TWNGUIManualFilter : GUITransFilter
+    {
+        #region Status
+        [PXDBString(1, IsUnicode = true)]
+        [PXUIField(DisplayName = "Status")]
+        [TWNStringList.TWNGUIManualStatus.List]
+        [PXDefault(TWNStringList.TWNGUIManualStatus.Open)]
+        public virtual string Status { get; set; }
+        public abstract class status : PX.Data.BQL.BqlString.Field<status> { }
+        #endregion
+    }
+    #endregion
 }
