@@ -83,7 +83,8 @@ namespace UCG_Customization
                 PXProcessing<APARTeleTransView>.SetError(msg);
                 throw new PXException(msg);
             }
-            string fileName = GetRocDateStr(param.PayDate) + "-" + param.PayDate?.ToString("yyyyMMdd") + ".data";
+            Branch branch =(Branch) PXSelectorAttribute.Select<MasterTable.branchID>(graph.MasterView.Cache, param);
+            string fileName = branch.BranchCD + "-" + param.PayDate?.ToString("yyyyMMdd") + ".data";
 
             param.SelCount = datas.Count;
             decimal total = 0;
@@ -147,7 +148,9 @@ namespace UCG_Customization
             var curySelTotal = GetStr((param.CurySelTotal ?? 0).ToString("0"), 11, true,'0');//CurySelTotal (11) Left pad with 0
             var payBankBranch = GetStr(datas[0].PayBankBranch, 7, false);//PayBankBranch (7)
             var payAccount = GetStr(datas[0].ExtRefNbr, 16, false);//PayAccount (16)
-            var batchDate = GetStr(GetRocDateStr(sysDate), 7, false);//BatchDate (7) systemDat YYYmmDD (民國年)
+            //2022-10-24 Alton BatchDate改抓param的paymentDate
+            //var batchDate = GetStr(GetRocDateStr(sysDate), 7, false);//BatchDate (7) systemDat YYYmmDD (民國年)
+            var batchDate = GetStr(GetRocDateStr(param.PayDate), 7, false);//BatchDate (7) systemDat YYYmmDD (民國年)
             var reserveField = GetStr("", 7, false);//ReserveField (7) left pad with blank
             var feePayee = GetStr(param.PayTypeID == "TTO" ? "1" : " ", 1, false);//FeePayee (1) if payment method = 'TTO' then 1 ,else blank
             var payName = GetStr("", 80, true);//PayName (80) left pad with blank

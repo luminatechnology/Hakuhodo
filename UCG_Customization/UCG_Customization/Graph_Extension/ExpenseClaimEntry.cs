@@ -6,6 +6,7 @@ namespace PX.Objects.EP
 {
     public class ExpenseClaimEntry_WorkGroupExtension : PXGraphExtension<PX.Objects.EP.ExpenseClaimEntry>
     {
+
         #region Event
         protected void _(Events.RowInserting<EPExpenseClaim> e, PXRowInserting baseHandler)
         {

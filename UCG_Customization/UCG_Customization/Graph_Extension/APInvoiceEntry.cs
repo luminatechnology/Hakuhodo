@@ -24,7 +24,8 @@ namespace PX.Objects.AP
         const string UD_APPROVE5 = "AttributeAPPROVER5";
         #endregion
 
-        #region Event Handlers
+        #region Event
+        #region APRegister
         protected void _(Events.RowPersisting<APRegister> e)
         {
             var row = e.Row;
@@ -51,7 +52,7 @@ namespace PX.Objects.AP
             rowExt.UsrDepartmentID = newValue;
             SetUsrApproveWG(rowExt);
         }
-
+        #endregion
         #endregion
 
         #region Method
@@ -187,5 +188,6 @@ namespace PX.Objects.AP
         }
 
         #endregion
+
     }
 }

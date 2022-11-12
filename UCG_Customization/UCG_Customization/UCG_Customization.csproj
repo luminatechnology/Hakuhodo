@@ -62,18 +62,30 @@
   <ItemGroup>
     <Compile Include="DAC\APARTeleTransView.cs" />
     <Compile Include="DAC_Extension\APRegisterUCGExt.cs" />
+    <Compile Include="DAC_Extension\APTranUCGExt.cs" />
     <Compile Include="DAC_Extension\ARPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\APPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\EPExpenseClaim.cs" />
     <Compile Include="DAC_Extension\EPDepartment.cs" />
+    <Compile Include="DAC_Extension\EPExpenseClaimDetailsUCGExt.cs" />
+    <Compile Include="DAC_Extension\POLineUCGExt.cs" />
+    <Compile Include="Descriptor\Type.cs" />
+    <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
+    <Compile Include="Graph_Extension\ARInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
     <Compile Include="DAC_Extension\APRegisterWorkGroupExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry.cs" />
     <Compile Include="Graph\LMTeleTransProcess.cs" />
+    <Compile Include="Graph_Extension\ExpenseClaimEntryUCGExt.cs" />
+    <Compile Include="Graph_Extension\ProjectEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\RegisterEntry_UCGExt.cs" />
     <Compile Include="Graph_Extension\SubcontractEntry.cs" />
+    <Compile Include="DAC\PMSummaryByBIV.cs" />
+    <Compile Include="Graph_Extension\SubcontractEntryUCGExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\ErrorMsg.cs" />
+    <Compile Include="Utils\SqlFunction.cs" />
     <Compile Include="Utils\TextUtil.cs" />
   </ItemGroup>
   <ItemGroup>
