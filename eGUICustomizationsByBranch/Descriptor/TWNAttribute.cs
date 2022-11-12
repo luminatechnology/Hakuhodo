@@ -5,6 +5,7 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CS;
+using PX.Objects.CR;
 using PX.Objects.TX;
 using eGUICustomizations.DAC;
 
@@ -285,6 +286,37 @@ namespace eGUICustomizations.Descriptor
             Filterable = true;
             DirtyRead = true;
             DescriptionField = typeof(CSAttributeDetail.description);
+        }
+    }
+    #endregion
+
+    #region MultiBAccountSelctorAttribute
+    public class MultiBAccountSelectorAttribute : PXSelectorAttribute
+    {
+        public MultiBAccountSelectorAttribute() : base(typeof(Search<BAccount.bAccountID, Where<BAccount.type.IsIn<BAccountType.customerType,
+                                                                                                                   BAccountType.vendorType>>>),
+                                                       typeof(BAccount.acctCD))
+        {
+            SubstituteKey = typeof(BAccount.acctCD);
+            Filterable = true;
+            DirtyRead = true;
+            DescriptionField = typeof(BAccount.acctName);
+        }
+    }
+    #endregion
+
+    #region MultiBAccountSelctorRawAttribute
+    public class MultiBAccountSelctorRawAttribute : PXSelectorAttribute
+    {
+        public MultiBAccountSelctorRawAttribute() : base(typeof(Search<BAccount.acctCD, Where<BAccount.type.IsIn<BAccountType.customerType,
+                                                                                                                 BAccountType.vendorType,
+                                                                                                                 BAccountType.employeeType,
+                                                                                                                 BAccountType.combinedType>>>),
+                                                         typeof(BAccount.acctName))
+        {
+            Filterable = true;
+            DirtyRead = true;
+            DescriptionField = typeof(BAccount.acctName);
         }
     }
     #endregion

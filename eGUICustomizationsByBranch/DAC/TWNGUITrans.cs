@@ -186,12 +186,7 @@ namespace eGUICustomizations.DAC
         #region CustVend
         [PXDBString(20, IsUnicode = true)]
         [PXUIField(DisplayName = "Customer/Vendor")]
-        [PXSelector(typeof(Search<PX.Objects.CR.BAccount.acctCD,
-                                  Where<PX.Objects.CR.BAccount.type.IsIn<PX.Objects.CR.BAccountType.customerType,
-                                                                         PX.Objects.CR.BAccountType.vendorType,
-                                                                         PX.Objects.CR.BAccountType.employeeType,
-                                                                         PX.Objects.CR.BAccountType.combinedType>>>),
-                    typeof(PX.Objects.CR.BAccount.acctName))]
+        [MultiBAccountSelctorRaw()]
         public virtual string CustVend { get; set; }
         public abstract class custVend : PX.Data.BQL.BqlString.Field<custVend> { }
         #endregion

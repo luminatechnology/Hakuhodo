@@ -27,9 +27,12 @@ namespace eGUICustomizations.DAC
         public virtual string Status { get; set; }
         public abstract class status : PX.Data.BQL.BqlString.Field<status> { }
         #endregion
-    
+
         #region CustomerID
-        [CustomerActive()]
+        //[CustomerActive()]
+        [PXDBInt()]
+        [PXUIField(DisplayName = "Customer/Vendor")]
+        [MultiBAccountSelector]
         public virtual int? CustomerID { get; set; }
         public abstract class customerID : PX.Data.BQL.BqlInt.Field<customerID> { }
         #endregion

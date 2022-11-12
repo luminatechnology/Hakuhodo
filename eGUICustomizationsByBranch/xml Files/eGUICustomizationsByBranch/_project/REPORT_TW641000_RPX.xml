@@ -166,11 +166,12 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <ParentName>TWNGUITrans</ParentName>
             </ReportRelation>
             <ReportRelation>
-                <ChildName>Customer</ChildName>
+                <ChildAlias>CustVend</ChildAlias>
+                <ChildName>BAccount2</ChildName>
                 <Links>
                     <RelationRow>
                         <ChildField>AcctCD</ChildField>
-                        <ParentField>=Trim(CustVend)</ParentField>
+                        <ParentField>=Trim([TWNGUITrans.CustVend])</ParentField>
                     </RelationRow>
                 </Links>
                 <ParentName>TWNGUITrans</ParentName>
@@ -184,20 +185,26 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </RelationRow>
                     <RelationRow>
                         <ChildField>ContactID</ChildField>
-                        <ParentField>DefBillContactID</ParentField>
+                        <ParentField>DefContactID</ParentField>
                     </RelationRow>
                 </Links>
-                <ParentName>Customer</ParentName>
+                <ParentAlias>CustVend</ParentAlias>
+                <ParentName>BAccount2</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Address</ChildName>
                 <Links>
                     <RelationRow>
+                        <ChildField>BAccountID</ChildField>
+                        <ParentField>BAccountID</ParentField>
+                    </RelationRow>
+                    <RelationRow>
                         <ChildField>AddressID</ChildField>
-                        <ParentField>DefBillAddressID</ParentField>
+                        <ParentField>DefAddressID</ParentField>
                     </RelationRow>
                 </Links>
-                <ParentName>Customer</ParentName>
+                <ParentAlias>CustVend</ParentAlias>
+                <ParentName>BAccount2</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Branch</ChildName>
