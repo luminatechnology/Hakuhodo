@@ -1,5 +1,6 @@
 using System;
 using PX.Data;
+using PX.Data.ReferentialIntegrity.Attributes;
 
 namespace UCG_Customization.DAC
 {
@@ -7,6 +8,13 @@ namespace UCG_Customization.DAC
     [PXCacheName("PMSummaryByBIV")]
     public class PMSummaryByBIV : IBqlTable
     {
+        #region Key
+        public new class PK : PrimaryKeyOf<PMSummaryByBIV>.By<contractID>
+        {
+            public static PMSummaryByBIV Find(PXGraph graph, int? contractID) => FindBy(graph, contractID);
+        }
+        #endregion
+
         #region ContractID
         [PXDBInt(IsKey = true)]
         [PXUIField(DisplayName = "Contract ID")]

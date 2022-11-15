@@ -5,6 +5,10 @@ namespace PX.Objects.PM
 {
     public class ProjectEntryUCGExt:PXGraphExtension<ProjectEntry>
     {
+        public static bool IsActive() {
+            return true;
+        }
         public PXSelectReadonly<PMSummaryByBIV,Where<PMSummaryByBIV.contractID,Equal<Current<PMProject.contractID>>>> BISummary;
     }
+
 }

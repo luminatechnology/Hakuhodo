@@ -33,7 +33,7 @@ namespace PX.Objects.AP
                    e.Row.ProjectID,
                    e.Row.TaskID,
                    e.Row.InventoryID,
-                   account.AccountGroupID);
+                   account?.AccountGroupID);
         }
         protected virtual void _(Events.FieldDefaulting<APTran, APTranUCGExt.budgetAmt> e)
         {
@@ -45,7 +45,7 @@ namespace PX.Objects.AP
                    e.Row.ProjectID,
                    e.Row.TaskID,
                    e.Row.InventoryID,
-                   account.AccountGroupID);
+                   account?.AccountGroupID);
         }
 
         #endregion
