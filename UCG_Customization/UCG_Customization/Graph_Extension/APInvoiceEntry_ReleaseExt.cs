@@ -25,10 +25,14 @@ namespace PX.Objects.AP
         const string EPPAYREFNB = "AttributeEPPAYREFNB";
         /// <summary>User Defined - 代墊款/暫借款</summary>
         const string EPPAYTYPE = "AttributeEPPAYTYPE";
+        /// <summary>User Defined - 代墊廠商</summary>
+        const string VENDOR = "AttributeVENDOR";
         /// <summary>員工代墊款-代碼</summary>
         const string EMP_ADV_CODE = "A";
         /// <summary>員工暫借款-代碼</summary>
         const string EMP_TEMP_BOR_CODE = "B";
+        /// <summary>廠商代墊-代碼</summary>
+        const string VEN_ADV_CODE = "C";
         #endregion
         #region Message
         const string MSG_EPREFNBR_NOT_FOUND = "查無暫借款{0}";
@@ -81,7 +85,7 @@ namespace PX.Objects.AP
                     PXCache cache = Base.Document.Cache;
                     string epPayType = (PXStringState)cache.GetValueExt(invoice, EPPAYTYPE);
                     //代墊款/暫借款 是否為 員工暫借款
-                    if (epPayType.IsIn(EMP_ADV_CODE, EMP_TEMP_BOR_CODE))
+                    if (epPayType.IsIn(EMP_ADV_CODE, EMP_TEMP_BOR_CODE, VEN_ADV_CODE))
                     {
                         DoCustRelease(adapter, baseMethod, invoice, cache, epPayType);
                     }
@@ -133,9 +137,23 @@ namespace PX.Objects.AP
                     baseMethod(adapter);
                     CreateAPPayment4TempBor(invoice, epPayAmt);
                 }
-                else if (epPayType == EMP_ADV_CODE)
+                else if (epPayType.IsIn(EMP_ADV_CODE, VEN_ADV_CODE))
                 {
-                    string epLentAP = CreateAPInvoice4Adv(invoice, epPayAmt);
+                    int? vendorID = null;
+                    if (epPayType == EMP_ADV_CODE)
+                    {
+                        //Vendor = 原單 經辦人
+                        BAccount baccount = GetBaccountByDefContact(Base, invoice.EmployeeID);
+                        vendorID = baccount.BAccountID;
+                    }
+                    else {
+                        //代墊廠商
+                        string vendor = (PXStringState)cache.GetValueExt(invoice, VENDOR);
+                        BAccount baccount = GetBaccountByCD(Base, vendor);
+                        vendorID = baccount.BAccountID;
+                    }
+
+                    string epLentAP = CreateAPInvoice4Adv(invoice, epPayAmt, vendorID);
                     cache.SetValueExt<APRegisterUCGExt.usrEPLentAP>(invoice, epLentAP);
                     baseMethod(adapter);
                     CreateAPPayment4Adv(invoice, epPayAmt);
@@ -285,7 +303,7 @@ namespace PX.Objects.AP
 
         }
 
-        private string CreateAPInvoice4Adv(APInvoice inv, decimal epPayAmt)
+        private string CreateAPInvoice4Adv(APInvoice inv, decimal epPayAmt,int? vendorID)
         {
             APInvoiceEntry graph = PXGraph.CreateInstance<APInvoiceEntry>();
             //建立 一張新的AP單
@@ -293,9 +311,9 @@ namespace PX.Objects.AP
             invoice = graph.Document.Update(invoice);
             PXCache cache = graph.Document.Cache;
             cache.SetValueExt<APInvoice.docType>(invoice, APDocType.Invoice);
-            //Vendor = 原單 經辦人
-            BAccount baccount = GetBaccountByDefContact(graph,inv.EmployeeID);
-            cache.SetValueExt<APInvoice.vendorID>(invoice, baccount.BAccountID);
+            ////Vendor = 原單 經辦人
+            //BAccount baccount = GetBaccountByDefContact(graph, inv.EmployeeID);
+            cache.SetValueExt<APInvoice.vendorID>(invoice, vendorID);
             //DocDate = 原單DocDate
             cache.SetValueExt<APInvoice.docDate>(invoice, inv.DocDate);
             //供應商參考 = 原單RefNbr
@@ -315,16 +333,18 @@ namespace PX.Objects.AP
 
             //Item
             #region --Transactions
-            APTran tran = graph.Transactions.Insert();
-            tran = graph.Transactions.Update(tran);
+            APTran tran = new APTran() {
+                RefNbr = invoice.RefNbr,
+                TranType = invoice.DocType
+            };
+            tran = graph.Transactions.Insert(tran);
             PXCache tCache = graph.Transactions.Cache;
             //Branch = 原單Branch
             tCache.SetValueExt<APTran.branchID>(tran, inv.BranchID);
             //TranDesc = ‘員工代墊 -’ +原單DocDesc
             tCache.SetValueExt<APTran.tranDesc>(tran, "員工代墊 - " + inv.DocDesc);
             //成本小計 = 代墊金額
-            tran.Qty = 1;
-            tCache.SetValueExt<APTran.qty>(tran, tran.Qty);
+            tCache.SetValueExt<APTran.qty>(tran, 1m);
             tCache.SetValueExt<APTran.curyUnitCost>(tran, epPayAmt);
 
             //會計科目 = 2229001
@@ -339,6 +359,33 @@ namespace PX.Objects.AP
             //稅務類別 = EXAMPT
             tCache.SetValueExt<APTran.taxCategoryID>(tran, "EXAMPT");
             tran = graph.Transactions.Update(tran);
+
+            #region 原單APTran
+            foreach (APTran item in GetAPTrans(graph, inv.RefNbr, inv.DocType))
+            {
+                APTran orgTran = new APTran()
+                {
+                    RefNbr = invoice.RefNbr,
+                    TranType = invoice.DocType
+                };
+                orgTran = graph.Transactions.Insert(orgTran);
+                //Branch = 原單Branch
+                tCache.SetValueExt<APTran.branchID>(orgTran, inv.BranchID);
+                //TranDesc = ‘員工代墊 -’ +原單DocDesc
+                tCache.SetValueExt<APTran.tranDesc>(orgTran, item.TranDesc);
+                //成本小計 = 代墊金額
+                tCache.SetValueExt<APTran.qty>(orgTran, item.Qty);
+                tCache.SetValueExt<APTran.curyUnitCost>(orgTran, 0m);
+                //會計科目 = 2229001
+                tCache.SetValueExt<APTran.accountID>(orgTran, account.AccountID);
+                //子科目 = 000000000
+                tCache.SetValueExt<APTran.subID>(orgTran, sub.SubID);
+                //稅務類別 = EXAMPT
+                tCache.SetValueExt<APTran.taxCategoryID>(orgTran, "EXAMPT");
+                orgTran = graph.Transactions.Update(orgTran);
+            }
+
+            #endregion
             #endregion
 
             graph.Save.Press();
@@ -414,6 +461,18 @@ namespace PX.Objects.AP
         private BAccount GetBaccountByDefContact(PXGraph graph, int? contactID)
         {
             return SelectFrom<BAccount>.Where<BAccount.defContactID.IsEqual<@P.AsInt>>.View.Select(graph, contactID);
+        }
+
+        private BAccount GetBaccountByCD(PXGraph graph, string acctCD)
+        {
+            return SelectFrom<BAccount>.Where<BAccount.acctCD.IsEqual<@P.AsString>>.View.Select(graph, acctCD);
+        }
+
+        private PXResultset<APTran> GetAPTrans(PXGraph graph, string refNbr, string docType)
+        {
+            return PXSelect<APTran, Where<APTran.refNbr, Equal<Required<APTran.refNbr>>,
+                And<APTran.tranType, Equal<Required<APTran.tranType>>>>>
+                .Select(graph, refNbr, docType);
         }
 
 

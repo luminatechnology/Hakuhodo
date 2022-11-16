@@ -12,6 +12,7 @@ BEGIN
 	DECLARE @AP_Amount decimal(18,3);-- 在途AP & 實際AP (AP明細對應專案 + 專案任務 的金額)
 	DECLARE @AP_SelfAmount decimal(18,3);-- 自建AP (AP明細對應專案 + 專案任務 的 金額)
 	DECLARE @EP_Amount decimal(18,3);-- EP在途 費用申請EP301000 status not in (H,C,R) 明細對應專案 + 專案任務 的 收據總額-稅額)
+
 	DECLARE @ReturnValue decimal(18,3);
 
 	--=== EP在途 ===
@@ -30,11 +31,10 @@ BEGIN
 	And ec.Status not In('H','C','R')
 	--單筆處理
 	And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
-	And(@InventoryID is Null Or e.InventoryID = @InventoryID
-		Or (@AccountGroupID is Null and a.AccountGroupID is null) 
-		Or (a.AccountGroupID = @AccountGroupID)
-		) -- Inventory & AccountGroup
+	And(@InventoryID is Null Or e.InventoryID = @InventoryID)--InventoryID
+	And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
 	;
+	
 
 	--=== PO在途 ===
 	SELECT 
@@ -52,10 +52,8 @@ BEGIN
 		and o.Status not in ('H','V','L','C')
 		--單筆處理
 		And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
-		And(@InventoryID is Null Or l.InventoryID = @InventoryID
-			Or (@AccountGroupID is Null and a.AccountGroupID is null) 
-			Or (a.AccountGroupID = @AccountGroupID)
-			) -- Inventory & AccountGroup	
+		And(@InventoryID is Null Or l.InventoryID = @InventoryID)--InventoryID
+		And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
 	;
 
 	--== 在途+實際AP==
@@ -77,12 +75,9 @@ BEGIN
 		and t.ProjectID = @ProjectID
 		--單筆處理
 		And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
-		And(@InventoryID is Null Or l.InventoryID = @InventoryID
-			Or (@AccountGroupID is Null and a.AccountGroupID is null) 
-			Or (a.AccountGroupID = @AccountGroupID)
-			) -- Inventory & AccountGroup	
+		And(@InventoryID is Null Or apt.InventoryID = @InventoryID)--InventoryID
+		And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
 		;
-
 
 
 	--== 自建AP==
@@ -105,12 +100,10 @@ BEGIN
 		and t.ProjectID = @ProjectID
 		--單筆處理
 		And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
-		And(@InventoryID is Null Or l.InventoryID = @InventoryID
-			Or (@AccountGroupID is Null and a.AccountGroupID is null) 
-			Or (a.AccountGroupID = @AccountGroupID)
-			) -- Inventory & AccountGroup
+		And(@InventoryID is Null Or apt.InventoryID = @InventoryID)--InventoryID
+		And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
 		;
-		--and o.Status not in ('H','V','L','C')
+		
 
 	IF @PO_Amount is null Set @PO_Amount = 0 ;
 	IF @AP_Amount is null Set @AP_Amount = 0 ;

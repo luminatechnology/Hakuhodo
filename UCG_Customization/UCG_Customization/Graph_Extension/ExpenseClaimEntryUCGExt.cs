@@ -1,6 +1,7 @@
 ﻿using PX.Data;
 using PX.Data.Update;
 using PX.Objects.GL;
+using PX.Objects.IN;
 using UCG_Customization.Descriptor;
 using UCG_Customization.Utils;
 
@@ -32,7 +33,26 @@ namespace PX.Objects.EP
 
         }
         #endregion
+
         #region Event
+        #region EPExpenseClaim
+        protected virtual void _(Events.RowSelected<EPExpenseClaim> e)
+        {
+            if (e.Row == null) return;
+            //明細專案不可改，改由表頭專案控制
+            PXUIFieldAttribute.SetReadOnly<EPExpenseClaimDetails.contractID>(Base.ExpenseClaimDetails.Cache, null, true);
+        }
+
+        protected virtual void _(Events.FieldUpdated<EPExpenseClaim, EPExpenseClaimWorkGroupExt.usrProjectID> e)
+        {
+            if (e.Row == null) return;
+            foreach (var item in Base.ExpenseClaimDetails.Select())
+            {
+                Base.ExpenseClaimDetails.Cache.SetValueExt<EPExpenseClaimDetails.contractID>(item, e.Row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
+            }
+        }
+        #endregion
+
         #region EPExpenseClaimDetails
         protected virtual void _(Events.RowPersisted<EPExpenseClaimDetails> e)
         {
@@ -45,6 +65,45 @@ namespace PX.Objects.EP
         {
             if (e.Row == null) return;
             ValidateUsedExpense(e.Row);
+            InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetails.inventoryID>(e.Cache, e.Row);
+
+            //Item是否為雜支
+            bool isMiscExpItem = item?.GetExtension<InventoryItemUCGExt>()?.UsrIsMiscExp == true;
+            SetRequired<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row, isMiscExpItem);
+            PXUIFieldAttribute.SetReadOnly<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row, !isMiscExpItem);
+        }
+
+        protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetails.inventoryID> e, PXFieldUpdated baseMethod)
+        {
+            baseMethod?.Invoke(e.Cache, e.Args);
+            if (e.Row == null) return;
+            InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetails.inventoryID>(e.Cache, e.Row);
+            if (item?.GetExtension<InventoryItemUCGExt>()?.UsrIsMiscExp != true)
+            {
+                e.Cache.SetValueExt<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Row, null);
+            }
+        }
+
+        protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.usrMiscExpItem> e, PXFieldUpdated baseMethod)
+        {
+            if (e.Row == null) return;
+            var rowExt = e.Row.GetExtension<EPExpenseClaimDetailsUCGExt>();
+            if (rowExt.UsrMiscExpItem == null)
+            {
+                e.Cache.SetDefaultExt<EPExpenseClaimDetails.taxCategoryID>(e.Row);
+            }
+            else
+            {
+                InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row);
+                e.Cache.SetValueExt<EPExpenseClaimDetails.taxCategoryID>(e.Row, item.TaxCategoryID);
+            }
+        }
+
+        protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetails.contractID> e, PXFieldDefaulting baseHandler)
+        {
+            baseHandler?.Invoke(e.Cache, e.Args);
+            if (e.Row == null) return;
+            e.NewValue = Base.ExpenseClaim.Current.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID;
         }
 
         protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.usedExpense> e)
@@ -57,7 +116,7 @@ namespace PX.Objects.EP
                    e.Row.ContractID,
                    e.Row.TaskID,
                    e.Row.InventoryID,
-                   account.AccountGroupID);
+                   account?.AccountGroupID);
         }
         protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.budgetAmt> e)
         {
@@ -69,9 +128,15 @@ namespace PX.Objects.EP
                    e.Row.ContractID,
                    e.Row.TaskID,
                    e.Row.InventoryID,
-                   account.AccountGroupID);
+                   account?.AccountGroupID);
         }
 
+        #endregion
+
+        #region CacheAttached
+        //[PXMergeAttributes(Method = MergeMethod.Merge)]
+        //[PXDefault(typeof(EPExpenseClaimWorkGroupExt.usrProjectID))]
+        //protected virtual void _(Events.CacheAttached<EPExpenseClaimDetails.contractID> e) { }
         #endregion
         #endregion
 
@@ -82,6 +147,13 @@ namespace PX.Objects.EP
             var rowExt = item.GetExtension<EPExpenseClaimDetailsUCGExt>();
             if (rowExt.UsedExpense > rowExt.BudgetAmt)
                 ErrorMsg.SetError<EPExpenseClaimDetailsUCGExt.usedExpense>(Base.ExpenseClaimDetails.Cache, item, rowExt.UsedExpense, "超出預算", PXErrorLevel.Warning);
+        }
+
+        protected virtual void SetRequired<Field>(PXCache cache, object item, bool required) where Field : IBqlField
+        {
+            PXPersistingCheck type = required ? PXPersistingCheck.NullOrBlank : PXPersistingCheck.Nothing;
+            PXUIFieldAttribute.SetRequired<Field>(cache, required);
+            PXDefaultAttribute.SetPersistingCheck<Field>(cache, item, type);
         }
         #endregion
     }

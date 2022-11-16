@@ -4,6 +4,7 @@ using PX.Objects.GL;
 using UCG_Customization.Utils;
 using UCG_Customization.Descriptor;
 using PX.Data.Update;
+using PX.Objects.PM;
 
 namespace PX.Objects.CN.Subcontracts.SC.Graphs
 { 
@@ -11,6 +12,15 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
     {
         #region Event
         #region POLine
+        protected void _(Events.RowInserted<POLine> e, PXRowInserted baseHandler)
+        {
+            baseHandler?.Invoke(e.Cache, e.Args);
+            var row = e.Row;
+            if (row == null) return;
+            //[Action AddProjectItem] set TranDesc to PMCostBudget.Description
+            setDesc(ref row);
+        }
+
         protected virtual void _(Events.RowPersisted<POLine> e)
         {
             if (e.Row == null) return;
@@ -34,7 +44,7 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
                    e.Row.ProjectID,
                    e.Row.TaskID,
                    e.Row.InventoryID,
-                   account.AccountGroupID);
+                   account?.AccountGroupID);
         }
         protected virtual void _(Events.FieldDefaulting<POLine, POLineUCGExt.budgetAmt> e)
         {
@@ -46,13 +56,20 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
                    e.Row.ProjectID,
                    e.Row.TaskID,
                    e.Row.InventoryID,
-                   account.AccountGroupID);
+                   account?.AccountGroupID);
         }
 
         #endregion
         #endregion
 
         #region Method
+        private void setDesc(ref POLine row)
+        {
+            Account account = Account.PK.Find(Base, row.ExpenseAcctID);
+            PMCostBudget costBudget = PMCostBudget.PK.Find(Base, row.ProjectID, row.TaskID, account?.AccountGroupID, row.CostCodeID, row.InventoryID);
+            if (costBudget != null) row.TranDesc = costBudget.Description;
+        }
+
         protected virtual void ValidateUsedExpense(POLine item)
         {
             if (item == null) return;
