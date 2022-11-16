@@ -1,0 +1,2922 @@
+﻿<Report Name="tw642001.rpx">
+    <Report version="20211215" Name="report1">
+        <CommonSettings>
+            <ViewPdf>True</ViewPdf>
+        </CommonSettings>
+        <Filters>
+            <FilterExp>
+                <DataField>TWNGUITrans.GUINbr</DataField>
+                <Value>@GUINbr</Value>
+            </FilterExp>
+            <FilterExp>
+                <Condition>Greater</Condition>
+                <DataField>TWNGUITrans.SequenceNo</DataField>
+                <Value>0</Value>
+            </FilterExp>
+        </Filters>
+        <PageSettings>
+            <Landscape>True</Landscape>
+            <Margins>
+                <Bottom>0px</Bottom>
+                <Left>0.05cm</Left>
+                <Right>0cm</Right>
+                <Top>0.05cm</Top>
+            </Margins>
+            <PaperKind>Custom</PaperKind>
+            <PaperSize>21cm, 14.8cm</PaperSize>
+        </PageSettings>
+        <Parameters>
+            <ReportParameter>
+                <Name>GUINbr</Name>
+                <Prompt>GUI Nbr</Prompt>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNGUITrans.GUINbr')</ViewName>
+            </ReportParameter>
+            <ReportParameter>
+                <Name>DocDate</Name>
+                <Required>True</Required>
+                <Type>DateTime</Type>
+            </ReportParameter>
+            <ReportParameter>
+                <Name>CommentNbr</Name>
+                <Type>Integer</Type>
+            </ReportParameter>
+        </Parameters>
+        <Relations>
+            <ReportRelation>
+                <ChildName>Branch</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>BranchID</ChildField>
+                        <ParentField>BranchID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildAlias>Company</ChildAlias>
+                <ChildName>BAccount</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>BAccountID</ChildField>
+                        <ParentField>BAccountID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>Branch</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildAlias>CompanyAddress</ChildAlias>
+                <ChildName>Address</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>AddressID</ChildField>
+                        <ParentField>DefAddressID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentAlias>Company</ParentAlias>
+                <ParentName>BAccount</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>NoteDoc</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>NoteID</ChildField>
+                        <ParentField>NoteID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentAlias>Company</ParentAlias>
+                <ParentName>BAccount</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>UploadFile</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>FileID</ChildField>
+                        <ParentField>FileID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>NoteDoc</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>UploadFileRevision</ChildName>
+                <JoinType>Inner</JoinType>
+                <Links>
+                    <RelationRow>
+                        <ChildField>FileID</ChildField>
+                        <ParentField>FileID</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>='GUI'</ChildField>
+                        <ParentField>UploadFileRevision.Comment</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>UploadFile</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildAlias>Customer</ChildAlias>
+                <ChildName>BAccount</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>AcctCD</ChildField>
+                        <ParentField>=Trim([TWNGUITrans.CustVend])</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildAlias>CRAddress</ChildAlias>
+                <ChildName>Address</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>AddressID</ChildField>
+                        <ParentField>DefAddressID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentAlias>Customer</ParentAlias>
+                <ParentName>BAccount</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>TWNGUIPrintedLineDet</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>GUINbr</ChildField>
+                        <ParentField>GUINbr</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
+        </Relations>
+        <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>
+        <Style>
+            <BorderStyle>
+                <Default>Solid</Default>
+            </BorderStyle>
+            <BorderWidth>
+                <Default>1px</Default>
+            </BorderWidth>
+        </Style>
+        <StylesTemplate>TemplateFormExternal.rpx</StylesTemplate>
+        <Tables>
+            <ReportTable Name="TWNGUITrans">
+                <Fields>
+                    <ReportField Name="B2CPrinted">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="BatchNbr">
+                    </ReportField>
+                    <ReportField Name="BatchNbr_Batch_description">
+                    </ReportField>
+                    <ReportField Name="BatchNbr_description">
+                    </ReportField>
+                    <ReportField Name="BranchID">
+                    </ReportField>
+                    <ReportField Name="BranchID_Branch_acctName">
+                    </ReportField>
+                    <ReportField Name="BranchID_description">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment1">
+                    </ReportField>
+                    <ReportField Name="CarrierID">
+                    </ReportField>
+                    <ReportField Name="CarrierType">
+                    </ReportField>
+                    <ReportField Name="ChineseAmt">
+                    </ReportField>
+                    <ReportField Name="ClearingDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Day">
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Hour">
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Month">
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="CustomType">
+                    </ReportField>
+                    <ReportField Name="CustVend">
+                    </ReportField>
+                    <ReportField Name="CustVend_BAccount_acctName">
+                    </ReportField>
+                    <ReportField Name="CustVend_description">
+                    </ReportField>
+                    <ReportField Name="CustVendName">
+                    </ReportField>
+                    <ReportField Name="DeductionCode">
+                    </ReportField>
+                    <ReportField Name="DeductionCode_CSAttributeDetail_description">
+                    </ReportField>
+                    <ReportField Name="DeductionCode_description">
+                    </ReportField>
+                    <ReportField Name="DocType">
+                    </ReportField>
+                    <ReportField Name="EGUIExcluded">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="EGUIExported">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="ExportMethods">
+                    </ReportField>
+                    <ReportField Name="ExportMethods_description">
+                    </ReportField>
+                    <ReportField Name="ExportMethods_TWNExportMethods_description">
+                    </ReportField>
+                    <ReportField Name="ExportTicketNbr">
+                    </ReportField>
+                    <ReportField Name="ExportTicketType">
+                    </ReportField>
+                    <ReportField Name="ExportTicketType_description">
+                    </ReportField>
+                    <ReportField Name="ExportTicketType_TWNExportTicketTypes_description">
+                    </ReportField>
+                    <ReportField Name="GUIControlCode">
+                    </ReportField>
+                    <ReportField Name="GUIDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDate_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDate_Day">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Hour">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Month">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Day">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Hour">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Month">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Quarter">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDirection">
+                    </ReportField>
+                    <ReportField Name="GUIFormatcode">
+                    </ReportField>
+                    <ReportField Name="GUINbr">
+                    </ReportField>
+                    <ReportField Name="GUIStatus">
+                    </ReportField>
+                    <ReportField Name="GUITitle">
+                    </ReportField>
+                    <ReportField Name="IdentityID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="NetAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NetAmtRemain">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="NPONbr">
+                    </ReportField>
+                    <ReportField Name="NPONbr_description">
+                    </ReportField>
+                    <ReportField Name="NPONbr_TWNNPOTable_descr">
+                    </ReportField>
+                    <ReportField Name="OrderNbr">
+                    </ReportField>
+                    <ReportField Name="OurTaxNbr">
+                    </ReportField>
+                    <ReportField Name="PrintCount">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="PrintedDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Day">
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Hour">
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Month">
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="QREncrypter">
+                    </ReportField>
+                    <ReportField Name="Remark">
+                    </ReportField>
+                    <ReportField Name="Selected">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="SequenceNo">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxAmtRemain">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID">
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID_description">
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID_TaxCategory_descr">
+                    </ReportField>
+                    <ReportField Name="TaxID">
+                    </ReportField>
+                    <ReportField Name="TaxID_description">
+                    </ReportField>
+                    <ReportField Name="TaxID_Tax_descr">
+                    </ReportField>
+                    <ReportField Name="TaxNbr">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID_description">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID_TaxZone_descr">
+                    </ReportField>
+                    <ReportField Name="TransDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="TransDate_Day">
+                    </ReportField>
+                    <ReportField Name="TransDate_Hour">
+                    </ReportField>
+                    <ReportField Name="TransDate_Month">
+                    </ReportField>
+                    <ReportField Name="TransDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                    <ReportField Name="VATType">
+                    </ReportField>
+                </Fields>
+                <FullName>eGUICustomizations.DAC.TWNGUITrans</FullName>
+            </ReportTable>
+            <ReportTable Name="TWNGUIPrintedLineDet">
+                <Fields>
+                    <ReportField Name="Amount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="Descr">
+                    </ReportField>
+                    <ReportField Name="GUINbr">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="LineNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="Qty">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="Remark">
+                    </ReportField>
+                    <ReportField Name="Tstamp">
+                    </ReportField>
+                    <ReportField Name="UnitPrice">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                </Fields>
+                <FullName>eGUICustomizations.DAC.TWNGUIPrintedLineDet</FullName>
+            </ReportTable>
+            <ReportTable Name="Branch">
+                <Fields>
+                    <ReportField Name="AcctMapNbr">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="AcctName">
+                    </ReportField>
+                    <ReportField Name="Active">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="BAccountID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="BaseCuryID">
+                    </ReportField>
+                    <ReportField Name="BranchCD">
+                    </ReportField>
+                    <ReportField Name="BranchCD_Segment1">
+                    </ReportField>
+                    <ReportField Name="BranchID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="BranchOrOrganizationLogoNameReport">
+                    </ReportField>
+                    <ReportField Name="CarrierFacility">
+                    </ReportField>
+                    <ReportField Name="CEmail">
+                    </ReportField>
+                    <ReportField Name="CFSFiler">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="ContactName">
+                    </ReportField>
+                    <ReportField Name="CountryID">
+                    </ReportField>
+                    <ReportField Name="CountryID_Country_description">
+                    </ReportField>
+                    <ReportField Name="CountryID_description">
+                    </ReportField>
+                    <ReportField Name="CTelNumber">
+                    </ReportField>
+                    <ReportField Name="DefaultPrinterID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="DefaultPrinterID_description">
+                    </ReportField>
+                    <ReportField Name="DefaultPrinterID_SMPrinter_printerName">
+                    </ReportField>
+                    <ReportField Name="ForeignEntity">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="GroupMask">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="Included">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="LedgerCD">
+                    </ReportField>
+                    <ReportField Name="LedgerID">
+                    </ReportField>
+                    <ReportField Name="LedgerID_description">
+                    </ReportField>
+                    <ReportField Name="LedgerID_Ledger_descr">
+                    </ReportField>
+                    <ReportField Name="LogoName">
+                    </ReportField>
+                    <ReportField Name="LogoNameReport">
+                    </ReportField>
+                    <ReportField Name="MainLogoName">
+                    </ReportField>
+                    <ReportField Name="NameControl">
+                    </ReportField>
+                    <ReportField Name="OrganizationID">
+                    </ReportField>
+                    <ReportField Name="OrganizationID_description">
+                    </ReportField>
+                    <ReportField Name="OrganizationID_Organization_organizationName">
+                    </ReportField>
+                    <ReportField Name="OrganizationID_Segment1">
+                    </ReportField>
+                    <ReportField Name="OrganizationLogoNameReport">
+                    </ReportField>
+                    <ReportField Name="OverrideThemeVariables">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="ParentBranchID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="PhoneMask">
+                    </ReportField>
+                    <ReportField Name="Reporting1099">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="RoleName">
+                    </ReportField>
+                    <ReportField Name="RoleName_description">
+                    </ReportField>
+                    <ReportField Name="RoleName_Roles_descr">
+                    </ReportField>
+                    <ReportField Name="Secured">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="TCC">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                </Fields>
+                <FullName>PX.Objects.GL.Branch</FullName>
+            </ReportTable>
+            <ReportTable Name="Address">
+                <Fields>
+                    <ReportField Name="AddressID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="AddressLine1">
+                    </ReportField>
+                    <ReportField Name="AddressLine2">
+                    </ReportField>
+                    <ReportField Name="AddressLine3">
+                    </ReportField>
+                    <ReportField Name="AddressType">
+                    </ReportField>
+                    <ReportField Name="BAccountID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="City">
+                    </ReportField>
+                    <ReportField Name="CountryID">
+                    </ReportField>
+                    <ReportField Name="CountryID_Country_description">
+                    </ReportField>
+                    <ReportField Name="CountryID_description">
+                    </ReportField>
+                    <ReportField Name="County">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="DisplayName">
+                    </ReportField>
+                    <ReportField Name="IsValidated">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="Latitude">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="Longitude">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="PostalCode">
+                    </ReportField>
+                    <ReportField Name="PseudonymizationStatus">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="RevisionID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="Selected">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="State">
+                    </ReportField>
+                    <ReportField Name="State_description">
+                    </ReportField>
+                    <ReportField Name="State_State_name">
+                    </ReportField>
+                    <ReportField Name="TaxLocationCode">
+                    </ReportField>
+                    <ReportField Name="TaxMunicipalCode">
+                    </ReportField>
+                    <ReportField Name="TaxSchoolCode">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                </Fields>
+                <FullName>PX.Objects.CR.Address</FullName>
+            </ReportTable>
+            <ReportTable Name="NoteDoc">
+                <Fields>
+                    <ReportField Name="EntityName">
+                    </ReportField>
+                    <ReportField Name="EntityRowValues">
+                    </ReportField>
+                    <ReportField Name="EntityType">
+                    </ReportField>
+                    <ReportField Name="FileID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                </Fields>
+                <FullName>PX.Data.NoteDoc</FullName>
+            </ReportTable>
+            <ReportTable Name="UploadFile">
+                <Fields>
+                    <ReportField Name="CheckedOutBy">
+                    </ReportField>
+                    <ReportField Name="CheckedOutComment">
+                    </ReportField>
+                    <ReportField Name="Comment">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="Data">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="Extansion">
+                    </ReportField>
+                    <ReportField Name="FileID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="FileRevisionID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="IsAccessRightsFromEntities">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsHidden">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsPublic">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsSystem">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="LastRevisionID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="Name">
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="OriginalName">
+                    </ReportField>
+                    <ReportField Name="PrimaryPageID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="PrimaryScreenID">
+                    </ReportField>
+                    <ReportField Name="SourceIsFolder">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate_Day">
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate_Hour">
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate_Month">
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="SourceLastExportDate_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate_Day">
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate_Hour">
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate_Month">
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="SourceLastImportDate_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="SourceLogin">
+                    </ReportField>
+                    <ReportField Name="SourceMask">
+                    </ReportField>
+                    <ReportField Name="SourceNamingFormat">
+                    </ReportField>
+                    <ReportField Name="SourcePassword">
+                    </ReportField>
+                    <ReportField Name="SourceType">
+                    </ReportField>
+                    <ReportField Name="SourceUri">
+                    </ReportField>
+                    <ReportField Name="SshCertificateName">
+                    </ReportField>
+                    <ReportField Name="Synchronizable">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                    <ReportField Name="Versioned">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                </Fields>
+                <FullName>PX.SM.UploadFile</FullName>
+            </ReportTable>
+            <ReportTable Name="BAccount">
+                <Fields>
+                    <ReportField Name="AcctCD">
+                    </ReportField>
+                    <ReportField Name="AcctCD_Segment1">
+                    </ReportField>
+                    <ReportField Name="AcctName">
+                    </ReportField>
+                    <ReportField Name="AcctReferenceNbr">
+                    </ReportField>
+                    <ReportField Name="BAccountID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="BaseCuryID">
+                    </ReportField>
+                    <ReportField Name="CampaignSourceID">
+                    </ReportField>
+                    <ReportField Name="CampaignSourceID_CRCampaign_campaignName">
+                    </ReportField>
+                    <ReportField Name="CampaignSourceID_description">
+                    </ReportField>
+                    <ReportField Name="CasesCount">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="ClassID">
+                    </ReportField>
+                    <ReportField Name="ClassID_CRCustomerClass_description">
+                    </ReportField>
+                    <ReportField Name="ClassID_description">
+                    </ReportField>
+                    <ReportField Name="ConsolidateToParent">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="ConsolidatingBAccountID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="COrgBAccountID">
+                    </ReportField>
+                    <ReportField Name="COrgBAccountID_BranchItem_acctName">
+                    </ReportField>
+                    <ReportField Name="COrgBAccountID_description">
+                    </ReportField>
+                    <ReportField Name="Count">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="DefAddressID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="DefAddressID_Address_displayName">
+                    </ReportField>
+                    <ReportField Name="DefAddressID_description">
+                    </ReportField>
+                    <ReportField Name="DefContactID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="DefLocationID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="DefLocationID_description">
+                    </ReportField>
+                    <ReportField Name="DefLocationID_Location_locationCD">
+                    </ReportField>
+                    <ReportField Name="EntityTypeID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="GroupMask">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="HSEntityTypeID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="IsBranch">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="IsCustomerOrCombined">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="LastActivity">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="LegalName">
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NotePopupText">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="OwnerID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="OwnerID_description">
+                    </ReportField>
+                    <ReportField Name="OwnerID_Owner_displayName">
+                    </ReportField>
+                    <ReportField Name="ParentBAccountID">
+                    </ReportField>
+                    <ReportField Name="ParentBAccountID_BAccountR_acctName">
+                    </ReportField>
+                    <ReportField Name="ParentBAccountID_description">
+                    </ReportField>
+                    <ReportField Name="ParentBAccountID_Segment1">
+                    </ReportField>
+                    <ReportField Name="PreviewHtml">
+                    </ReportField>
+                    <ReportField Name="PrimaryContactID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="PseudonymizationStatus">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="Secured">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="Selected">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="Status">
+                    </ReportField>
+                    <ReportField Name="TaxRegistrationID">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID_description">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID_TaxZone_descr">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                    <ReportField Name="Type">
+                    </ReportField>
+                    <ReportField Name="UsrAddressLine">
+                    </ReportField>
+                    <ReportField Name="UsrAESKey">
+                    </ReportField>
+                    <ReportField Name="UsrCompanyName">
+                    </ReportField>
+                    <ReportField Name="UsrOurTaxNbr">
+                    </ReportField>
+                    <ReportField Name="UsrTaxRegistrationID">
+                    </ReportField>
+                    <ReportField Name="UsrWHTTaxAuthority">
+                    </ReportField>
+                    <ReportField Name="UsrZeroTaxTaxCntry">
+                    </ReportField>
+                    <ReportField Name="ViewInCrm">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="VOrgBAccountID">
+                    </ReportField>
+                    <ReportField Name="VOrgBAccountID_BranchItem_acctName">
+                    </ReportField>
+                    <ReportField Name="VOrgBAccountID_description">
+                    </ReportField>
+                    <ReportField Name="VStatus">
+                    </ReportField>
+                    <ReportField Name="WorkgroupID">
+                    </ReportField>
+                    <ReportField Name="WorkgroupID_description">
+                    </ReportField>
+                    <ReportField Name="WorkgroupID_EPCompanyTree_description">
+                    </ReportField>
+                </Fields>
+                <FullName>PX.Objects.CR.BAccount</FullName>
+            </ReportTable>
+            <ReportTable Name="UploadFileRevision">
+                <Fields>
+                    <ReportField Name="BlobData">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="BlobHandler">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="Comment">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="FileID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="FileRevisionID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="OriginalName">
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp_Day">
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp_Hour">
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp_Month">
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp_Quarter">
+                    </ReportField>
+                    <ReportField Name="OriginalTimestamp_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="Size">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                </Fields>
+                <FullName>PX.SM.UploadFileRevision</FullName>
+            </ReportTable>
+        </Tables>
+        <Version>20211215</Version>
+        <Width>20.97672cm</Width>
+        <Sections>
+            <Detail Name="detailSection1">
+                <Height>1.01cm</Height>
+                <Variables>
+                    <ReportVariable>
+                        <Name>LineNbr</Name>
+                        <ValueExpr>=$LineNbr + 1</ValueExpr>
+                    </ReportVariable>
+                </Variables>
+                <VisibleExpr>=$LineNbr &lt; 6</VisibleExpr>
+                <Items>
+                    <Line Name="line16">
+                        <Location>0px, 1.02cm</Location>
+                        <Size>792px, 2px</Size>
+                    </Line>
+                    <TextBox Name="textBox30">
+                        <Location>0px, 0px</Location>
+                        <Size>22px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUITrans.GUIFormatcode]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox33">
+                        <Location>22px, 0px</Location>
+                        <Size>20px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=Year([TWNGUITrans.GUIDate]) - 1911</Value>
+                    </TextBox>
+                    <TextBox Name="textBox34">
+                        <Location>42px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=Month([TWNGUITrans.GUIDate])</Value>
+                    </TextBox>
+                    <TextBox Name="textBox44">
+                        <Location>60px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=Day([TWNGUITrans.GUIDate])</Value>
+                    </TextBox>
+                    <TextBox Name="textBox45">
+                        <Location>78px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=Substring([TWNGUITrans.GUINbr], 0, 2)</Value>
+                    </TextBox>
+                    <TextBox Name="textBox46">
+                        <Location>96px, 0px</Location>
+                        <Size>64px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=Substring([TWNGUITrans.GUINbr], 2, 8)</Value>
+                    </TextBox>
+                    <TextBox Name="textBox47">
+                        <CanShrink>True</CanShrink>
+                        <Location>160px, 0px</Location>
+                        <Size>128px, 38px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUIPrintedLineDet.Descr]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox48">
+                        <Location>288px, 0px</Location>
+                        <Size>56px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUIPrintedLineDet.Qty]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox49">
+                        <Format>N0</Format>
+                        <Location>568px, 0px</Location>
+                        <Size>80px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUIPrintedLineDet.Amount] * 0.05</Value>
+                    </TextBox>
+                    <TextBox Name="textBox50">
+                        <Location>344px, 0px</Location>
+                        <Size>88px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUIPrintedLineDet.UnitPrice]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox51">
+                        <Format>N0</Format>
+                        <Location>432px, 0px</Location>
+                        <Size>136px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUIPrintedLineDet.Amount]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox52">
+                        <Location>648px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=IIf([TWNGUITrans.VATType] = '05', 'V', '')</Value>
+                    </TextBox>
+                    <TextBox Name="textBox53">
+                        <Location>744px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=IIf([TWNGUITrans.VATType] = 'EX', 'V', '')</Value>
+                    </TextBox>
+                    <TextBox Name="textBox54">
+                        <Location>696px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=IIf([TWNGUITrans.VATType] = '00', 'V', '')</Value>
+                    </TextBox>
+                </Items>
+            </Detail>
+            <ReportHeader Name="reportHeaderSection1">
+                <Height>3.6cm</Height>
+                <Items>
+                    <Panel Name="panel1">
+                        <Location>0px, 0px</Location>
+                        <Size>336px, 72px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Default>2px</Default>
+                            </BorderWidth>
+                        </Style>
+                        <Items>
+                            <TextBox Name="textBox1">
+                                <Location>0px, 0px</Location>
+                                <Size>24px, 64px</Size>
+                                <Style>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>='原' + '{br}'#010;+'開' + '{br}'#010;+'立' + '{br}'#010;+'銷' + '{br}'#010;+'貨' + '{br}'</Value>
+                            </TextBox>
+                            <TextBox Name="textBox2">
+                                <Location>24px, 0px</Location>
+                                <Size>24px, 58px</Size>
+                                <Style>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>='發' + '{br}'#010;+'票' + '{br}'#010;+'單' + '{br}'#010;+'位'</Value>
+                            </TextBox>
+                            <TextBox Name="textBox3">
+                                <Location>48px, 0px</Location>
+                                <Size>104px, 24px</Size>
+                                <Style>
+                                    <BorderStyle>
+                                        <Bottom>Solid</Bottom>
+                                        <Left>Solid</Left>
+                                        <Right>Solid</Right>
+                                    </BorderStyle>
+                                    <BorderWidth>
+                                        <Bottom>1px</Bottom>
+                                        <Left>1px</Left>
+                                        <Right>1px</Right>
+                                    </BorderWidth>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>名稱</Value>
+                            </TextBox>
+                            <TextBox Name="textBox4">
+                                <Location>48px, 24px</Location>
+                                <Size>104px, 24px</Size>
+                                <Style>
+                                    <BorderStyle>
+                                        <Bottom>Solid</Bottom>
+                                        <Left>Solid</Left>
+                                        <Right>Solid</Right>
+                                    </BorderStyle>
+                                    <BorderWidth>
+                                        <Bottom>1px</Bottom>
+                                        <Left>1px</Left>
+                                        <Right>1px</Right>
+                                    </BorderWidth>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>營利事業統一編號</Value>
+                            </TextBox>
+                            <TextBox Name="textBox5">
+                                <Location>48px, 48px</Location>
+                                <Size>104px, 24px</Size>
+                                <Style>
+                                    <BorderStyle>
+                                        <Left>Solid</Left>
+                                        <Right>Solid</Right>
+                                    </BorderStyle>
+                                    <BorderWidth>
+                                        <Left>1px</Left>
+                                        <Right>1px</Right>
+                                    </BorderWidth>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>營業所在地址</Value>
+                            </TextBox>
+                            <TextBox Name="textBox6">
+                                <Location>152px, 0px</Location>
+                                <Size>184px, 24px</Size>
+                                <Style>
+                                    <BorderStyle>
+                                        <Bottom>Solid</Bottom>
+                                    </BorderStyle>
+                                    <BorderWidth>
+                                        <Bottom>1px</Bottom>
+                                    </BorderWidth>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>=[TWNGUITrans.BranchID_Branch_acctName]</Value>
+                            </TextBox>
+                            <TextBox Name="textBox7">
+                                <Location>152px, 24px</Location>
+                                <Size>184px, 24px</Size>
+                                <Style>
+                                    <BorderStyle>
+                                        <Bottom>Solid</Bottom>
+                                    </BorderStyle>
+                                    <BorderWidth>
+                                        <Bottom>1px</Bottom>
+                                    </BorderWidth>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>=[TWNGUITrans.OurTaxNbr]</Value>
+                            </TextBox>
+                            <TextBox Name="textBox8">
+                                <Location>152px, 48px</Location>
+                                <Size>184px, 24px</Size>
+                                <Style>
+                                    <TextAlign>Center</TextAlign>
+                                    <VerticalAlign>Middle</VerticalAlign>
+                                </Style>
+                                <StyleName>Normal</StyleName>
+                                <Value>=[CompanyAddress.AddressLine1]</Value>
+                            </TextBox>
+                        </Items>
+                    </Panel>
+                    <TextBox Name="textBox10">
+                        <Location>344px, 56px</Location>
+                        <Size>448px, 16px</Size>
+                        <Style>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=Concat('中華民國     ', Year([@DocDate]) - 1911, '  年  ', Month([@DocDate]), '  月  ', Day([@DocDate]), '  日')</Value>
+                    </TextBox>
+                    <TextBox Name="textBox12">
+                        <Location>0px, 80px</Location>
+                        <Size>160px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                                <Top>Solid</Top>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                                <Top>2px</Top>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>開立發票</Value>
+                    </TextBox>
+                    <TextBox Name="textBox13">
+                        <Location>160px, 80px</Location>
+                        <Size>488px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                                <Top>Solid</Top>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                                <Top>2px</Top>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>退貨或折讓內容</Value>
+                    </TextBox>
+                    <TextBox Name="textBox14">
+                        <Location>648px, 80px</Location>
+                        <Size>144px, 40px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                                <Top>Solid</Top>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>2px</Right>
+                                <Top>2px</Top>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>(打V處)#010; 備註</Value>
+                    </TextBox>
+                    <TextBox Name="textBox15">
+                        <Location>0px, 104px</Location>
+                        <Size>22px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>='聯' + '{br}'#010;+'式'</Value>
+                    </TextBox>
+                    <TextBox Name="textBox16">
+                        <Location>22px, 104px</Location>
+                        <Size>20px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>年</Value>
+                    </TextBox>
+                    <TextBox Name="textBox17">
+                        <Location>42px, 104px</Location>
+                        <Size>18px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>月</Value>
+                    </TextBox>
+                    <TextBox Name="textBox18">
+                        <Location>60px, 104px</Location>
+                        <Size>18px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>日</Value>
+                    </TextBox>
+                    <TextBox Name="textBox19">
+                        <Location>78px, 104px</Location>
+                        <Size>18px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>='字' + '{br}'#010;+'軌'</Value>
+                    </TextBox>
+                    <TextBox Name="textBox20">
+                        <Location>96px, 104px</Location>
+                        <Size>64px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>號碼</Value>
+                    </TextBox>
+                    <TextBox Name="textBox21">
+                        <Location>160px, 104px</Location>
+                        <Size>128px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>品名</Value>
+                    </TextBox>
+                    <TextBox Name="textBox22">
+                        <Location>288px, 104px</Location>
+                        <Size>56px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>數量</Value>
+                    </TextBox>
+                    <TextBox Name="textBox23">
+                        <Location>344px, 104px</Location>
+                        <Size>88px, 32px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>單價</Value>
+                    </TextBox>
+                    <TextBox Name="textBox24">
+                        <Location>432px, 104px</Location>
+                        <Size>216px, 16px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>退出或折讓</Value>
+                    </TextBox>
+                    <TextBox Name="textBox25">
+                        <Location>432px, 120px</Location>
+                        <Size>136px, 16px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>金額(不含稅之進貨額)</Value>
+                    </TextBox>
+                    <TextBox Name="textBox26">
+                        <Location>568px, 120px</Location>
+                        <Size>80px, 16px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>營業稅額</Value>
+                    </TextBox>
+                    <TextBox Name="textBox27">
+                        <Location>648px, 120px</Location>
+                        <Size>48px, 16px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>應稅</Value>
+                    </TextBox>
+                    <TextBox Name="textBox28">
+                        <Location>744px, 120px</Location>
+                        <Size>48px, 16px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>免稅</Value>
+                    </TextBox>
+                    <TextBox Name="textBox29">
+                        <Location>696px, 120px</Location>
+                        <Size>48px, 16px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>1px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>零稅率</Value>
+                    </TextBox>
+                    <TextBox Name="textBox9">
+                        <Location>344px, 32px</Location>
+                        <Size>448px, 24px</Size>
+                        <Style>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Report Name</StyleName>
+                        <Value>營業人銷貨退回進貨退出或折讓證明單</Value>
+                    </TextBox>
+                </Items>
+            </ReportHeader>
+            <ReportFooter Name="reportFooterSection1">
+                <Height>1.01cm</Height>
+                <VisibleExpr>=$LineNbr &lt; 2</VisibleExpr>
+                <Items>
+                    <Line Name="line18">
+                        <Location>0px, 1.02cm</Location>
+                        <Size>792px, 2px</Size>
+                    </Line>
+                    <TextBox Name="textBox11">
+                        <Location>696px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox31">
+                        <Location>744px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox32">
+                        <Location>648px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox35">
+                        <Location>432px, 0px</Location>
+                        <Size>136px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox36">
+                        <Location>344px, 0px</Location>
+                        <Size>88px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox37">
+                        <Location>568px, 0px</Location>
+                        <Size>80px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox38">
+                        <Location>288px, 0px</Location>
+                        <Size>56px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox39">
+                        <CanShrink>True</CanShrink>
+                        <Location>160px, 0px</Location>
+                        <Size>128px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox40">
+                        <Location>96px, 0px</Location>
+                        <Size>64px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox41">
+                        <Location>78px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox42">
+                        <Location>60px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox43">
+                        <Location>42px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox55">
+                        <Location>22px, 0px</Location>
+                        <Size>20px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox56">
+                        <Location>0px, 0px</Location>
+                        <Size>22px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                </Items>
+            </ReportFooter>
+            <ReportFooter Name="reportFooterSection2">
+                <Height>1.01cm</Height>
+                <VisibleExpr>=$LineNbr &lt; 3</VisibleExpr>
+                <Items>
+                    <Line Name="line17">
+                        <Location>0px, 1.02cm</Location>
+                        <Size>792px, 2px</Size>
+                    </Line>
+                    <TextBox Name="textBox57">
+                        <Location>696px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox58">
+                        <Location>744px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox59">
+                        <Location>648px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox60">
+                        <Location>432px, 0px</Location>
+                        <Size>136px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox61">
+                        <Location>344px, 0px</Location>
+                        <Size>88px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox62">
+                        <Location>568px, 0px</Location>
+                        <Size>80px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox63">
+                        <Location>288px, 0px</Location>
+                        <Size>56px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox64">
+                        <CanShrink>True</CanShrink>
+                        <Location>160px, 0px</Location>
+                        <Size>128px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox65">
+                        <Location>96px, 0px</Location>
+                        <Size>64px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox66">
+                        <Location>78px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox67">
+                        <Location>60px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox68">
+                        <Location>42px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox69">
+                        <Location>22px, 0px</Location>
+                        <Size>20px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox70">
+                        <Location>0px, 0px</Location>
+                        <Size>22px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                </Items>
+            </ReportFooter>
+            <ReportFooter Name="reportFooterSection3">
+                <Height>1.01cm</Height>
+                <VisibleExpr>=$LineNbr &lt; 4</VisibleExpr>
+                <Items>
+                    <Line Name="line19">
+                        <Location>0px, 1.02cm</Location>
+                        <Size>792px, 2px</Size>
+                    </Line>
+                    <TextBox Name="textBox100">
+                        <Location>0px, 0px</Location>
+                        <Size>22px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox71">
+                        <Location>696px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox72">
+                        <Location>744px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox89">
+                        <Location>648px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox90">
+                        <Location>432px, 0px</Location>
+                        <Size>136px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox91">
+                        <Location>344px, 0px</Location>
+                        <Size>88px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox92">
+                        <Location>568px, 0px</Location>
+                        <Size>80px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox93">
+                        <Location>288px, 0px</Location>
+                        <Size>56px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox94">
+                        <CanShrink>True</CanShrink>
+                        <Location>160px, 0px</Location>
+                        <Size>128px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox95">
+                        <Location>96px, 0px</Location>
+                        <Size>64px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox96">
+                        <Location>78px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox97">
+                        <Location>60px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox98">
+                        <Location>42px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox99">
+                        <Location>22px, 0px</Location>
+                        <Size>20px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                </Items>
+            </ReportFooter>
+            <ReportFooter Name="reportFooterSection4">
+                <Height>1.01cm</Height>
+                <VisibleExpr>=$LineNbr &lt; 5</VisibleExpr>
+                <Items>
+                    <Line Name="line20">
+                        <Location>0px, 1.02cm</Location>
+                        <Size>792px, 2px</Size>
+                    </Line>
+                    <TextBox Name="textBox101">
+                        <Location>696px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox102">
+                        <Location>744px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox103">
+                        <Location>648px, 0px</Location>
+                        <Size>48px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox104">
+                        <Location>432px, 0px</Location>
+                        <Size>136px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox105">
+                        <Location>344px, 0px</Location>
+                        <Size>88px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox106">
+                        <Location>568px, 0px</Location>
+                        <Size>80px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox107">
+                        <Location>288px, 0px</Location>
+                        <Size>56px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox108">
+                        <CanShrink>True</CanShrink>
+                        <Location>160px, 0px</Location>
+                        <Size>128px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox109">
+                        <Location>96px, 0px</Location>
+                        <Size>64px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox110">
+                        <Location>78px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox111">
+                        <Location>60px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox112">
+                        <Location>42px, 0px</Location>
+                        <Size>18px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox113">
+                        <Location>22px, 0px</Location>
+                        <Size>20px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox114">
+                        <Location>0px, 0px</Location>
+                        <Size>22px, 38px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                </Items>
+            </ReportFooter>
+            <ReportFooter Name="reportFooterSection6">
+                <Height>5cm</Height>
+                <Items>
+                    <PictureBox Name="pictureBox2">
+                        <Location>224px, 48px</Location>
+                        <MimeType>image/png</MimeType>
+                        <QRCodeSettings />
+                        <Size>88px, 56px</Size>
+                        <Source>Database</Source>
+                        <Value>=[UploadFile.Name]</Value>
+                    </PictureBox>
+                    <TextBox Name="textBox115">
+                        <Location>352px, 104px</Location>
+                        <Size>440px, 16px</Size>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>=IIf([@CommentNbr] = 1, '第一聯：交付原銷貨人作為銷項稅額之扣減憑證', IIf([@CommentNbr] = 2, '第二聯：交付原銷貨人作為記帳憑證', IIf([@CommentNbr] = 3, '第三聯：由進貨人作為進項稅額之扣減憑證', '第四聯：由進貨人作為記帳憑證')))</Value>
+                    </TextBox>
+                    <TextBox Name="textBox73">
+                        <Location>744px, 0px</Location>
+                        <Size>48px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>2px</Bottom>
+                                <Right>2px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox74">
+                        <Location>696px, 0px</Location>
+                        <Size>48px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>2px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox75">
+                        <Location>648px, 0px</Location>
+                        <Size>48px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>2px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                    </TextBox>
+                    <TextBox Name="textBox76">
+                        <Format>N0</Format>
+                        <Location>568px, 0px</Location>
+                        <Size>80px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>2px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUITrans.NetAmount] + [TWNGUITrans.TaxAmount]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox77">
+                        <Location>400px, 32px</Location>
+                        <Size>392px, 48px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[CRAddress.AddressLine1]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox78">
+                        <Location>352px, 32px</Location>
+                        <Size>48px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>地址：</Value>
+                    </TextBox>
+                    <TextBox Name="textBox79">
+                        <Location>0px, 96px</Location>
+                        <Size>104px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>營利事業統一編號：</Value>
+                    </TextBox>
+                    <TextBox Name="textBox80">
+                        <Location>312px, 48px</Location>
+                        <Size>40px, 32px</Size>
+                        <Style>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>(蓋章)</Value>
+                    </TextBox>
+                    <TextBox Name="textBox81">
+                        <Location>80px, 48px</Location>
+                        <Size>48px, 16px</Size>
+                        <Style>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>名稱：</Value>
+                    </TextBox>
+                    <TextBox Name="textBox82">
+                        <Location>0px, 64px</Location>
+                        <Size>80px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>(或原買受人)</Value>
+                    </TextBox>
+                    <TextBox Name="textBox83">
+                        <Location>0px, 48px</Location>
+                        <Size>80px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>原進貨營業人</Value>
+                    </TextBox>
+                    <TextBox Name="textBox84">
+                        <Location>0px, 32px</Location>
+                        <Size>352px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>本證明單所列銷貨退回進貨退出或折讓，確實事實，特此證明。</Value>
+                    </TextBox>
+                    <TextBox Name="textBox85">
+                        <Location>0px, 0px</Location>
+                        <Size>432px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Left>Solid</Left>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>2px</Bottom>
+                                <Left>2px</Left>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Item Normal Big</StyleName>
+                        <Value>合計</Value>
+                    </TextBox>
+                    <TextBox Name="textBox86">
+                        <CanGrow>True</CanGrow>
+                        <CanSplit>True</CanSplit>
+                        <Location>128px, 48px</Location>
+                        <Size>96px, 16px</Size>
+                        <Style>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUITrans.GUITitle]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox87">
+                        <Location>104px, 96px</Location>
+                        <Size>96px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUITrans.TaxNbr]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox88">
+                        <Format>N0</Format>
+                        <Location>432px, 0px</Location>
+                        <Size>136px, 24px</Size>
+                        <Style>
+                            <BorderStyle>
+                                <Bottom>Solid</Bottom>
+                                <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderWidth>
+                                <Bottom>2px</Bottom>
+                                <Right>1px</Right>
+                            </BorderWidth>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                        </Style>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[TWNGUITrans.NetAmount]</Value>
+                    </TextBox>
+                </Items>
+            </ReportFooter>
+        </Sections>
+        <Items>
+            <Line Name="line1">
+                <Direction>Vertical</Direction>
+                <Location>287px, 160px</Location>
+                <OverlayShift>24px</OverlayShift>
+                <Size>1px, 36px</Size>
+            </Line>
+        </Items>
+    </Report>
+</Report>
