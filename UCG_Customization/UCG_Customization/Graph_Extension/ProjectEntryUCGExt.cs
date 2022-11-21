@@ -8,7 +8,9 @@ namespace PX.Objects.PM
         public static bool IsActive() {
             return true;
         }
-        public PXSelectReadonly<PMSummaryByBIV,Where<PMSummaryByBIV.contractID,Equal<Current<PMProject.contractID>>>> BISummary;
+
+        [PXViewName("PM Summary By BIV")]
+        public PXSelect<PMSummaryByBIV,Where<PMSummaryByBIV.contractID,Equal<Current<PMProject.contractID>>>> BISummary;
     }
 
 }

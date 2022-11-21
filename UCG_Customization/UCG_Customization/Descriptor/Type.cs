@@ -17,4 +17,8 @@ namespace UCG_Customization.Descriptor
         USED_EXPENSE,
 
     }
+
+    public enum SPParameterType { 
+        IN,OUT,IN_OUT
+    }
 }

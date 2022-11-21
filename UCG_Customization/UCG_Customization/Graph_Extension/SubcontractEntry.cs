@@ -29,6 +29,14 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
             SetUsrApproveWG(e.Cache, e.Row);
         }
 
+        protected void _(Events.FieldUpdated<POOrder, POOrder.projectID> e, PXFieldUpdated baseHandler)
+        {
+            baseHandler?.Invoke(e.Cache, e.Args);
+            if (e.Row == null) return;
+            // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
+            SetUsrApproveWG(e.Cache, e.Row);
+        }
+
         #endregion
 
         #region Method
@@ -37,7 +45,7 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
             if (cache.GetStatus(row) == PXEntryStatus.Deleted) return;
             int? projectID = row.ProjectID;
             var emp = EPEmployee.PK.Find(Base, row.EmployeeID);
-            ApproveWGUtil.SetUsrApproveWG(cache, row, emp.DepartmentID, emp.AcctCD , projectID);
+            ApproveWGUtil.SetUsrApproveWG(cache, row, emp.DepartmentID, emp.AcctCD?.Trim() , projectID);
         }
         #endregion
 

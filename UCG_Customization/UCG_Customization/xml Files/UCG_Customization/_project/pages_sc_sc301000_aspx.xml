@@ -16,4 +16,7 @@
             <PXGridColumn DataField="AlternateID" OriginalIndex="22" />
         </Children>
     </PXGridLevel>
+    <PXSelector DataField="ProjectID" ParentId="phF_form_edProjectID" TypeFullName="PX.Web.UI.PXSelector">
+        <Prop Key="AutoRefresh" Value="True" />
+    </PXSelector>
 </Page>

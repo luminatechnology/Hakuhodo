@@ -9,6 +9,14 @@ namespace PX.Objects.AP
     public class APInvoiceEntryUCGExt : PXGraphExtension<PX.Objects.AP.APInvoiceEntry>
     {
         #region Event
+        #region APInvoice
+        protected virtual void _(Events.FieldUpdated<APInvoice,APInvoice.branchID> e)
+        {
+            if (e.Row == null) return;
+            e.Cache.SetValueExt<APInvoice.projectID>(e.Row,null);
+        }
+        #endregion
+
         #region APTran
         protected virtual void _(Events.RowPersisted<APTran> e)
         {
