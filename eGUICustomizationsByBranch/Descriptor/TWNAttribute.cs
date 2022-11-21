@@ -308,15 +308,15 @@ namespace eGUICustomizations.Descriptor
     #region MultiBAccountSelctorRawAttribute
     public class MultiBAccountSelctorRawAttribute : PXSelectorAttribute
     {
-        public MultiBAccountSelctorRawAttribute() : base(typeof(Search<BAccount.acctCD, Where<BAccount.type.IsIn<BAccountType.customerType,
-                                                                                                                 BAccountType.vendorType,
-                                                                                                                 BAccountType.employeeType,
-                                                                                                                 BAccountType.combinedType>>>),
-                                                         typeof(BAccount.acctName))
+        public MultiBAccountSelctorRawAttribute() : base(typeof(Search<BAccount2.acctCD, Where<BAccount2.type.IsIn<BAccountType.customerType,
+                                                                                                                   BAccountType.vendorType,
+                                                                                                                   BAccountType.employeeType,
+                                                                                                                   BAccountType.combinedType>>>),
+                                                         typeof(BAccount2.acctName))
         {
             Filterable = true;
             DirtyRead = true;
-            DescriptionField = typeof(BAccount.acctName);
+            DescriptionField = typeof(BAccount2.acctName);
         }
     }
     #endregion
