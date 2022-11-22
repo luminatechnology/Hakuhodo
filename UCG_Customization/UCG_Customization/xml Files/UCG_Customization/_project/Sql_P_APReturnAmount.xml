@@ -44,7 +44,7 @@ BEGIN
 			and dt.BranchID = @BranchID
 			and dt.ProjectID = @ProjectID
 			and dt.InventoryID = @InventoryID
-			and dt.TaskID = @TaskID
+			and (dt.TaskID = @TaskID Or (dt.TaskID is null And @TaskID is null))
 
 	IF @ReturnValue Is Null Set @ReturnValue = 0;
 	RETURN;
