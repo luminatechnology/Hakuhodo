@@ -39,9 +39,9 @@ namespace PX.Objects.EP
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            if (Base.ExpenseClaimCurrent.Current != null)
+            if (e.Row != null)
             {
-                decimal? taxSum = null;
+                decimal taxSum = 0;
 
                 foreach (TWNManualGUIExpense row in manGUIExpense.Select())
                 {
@@ -49,15 +49,15 @@ namespace PX.Objects.EP
 
                     if (tWNGUIValidation.errorOccurred.Equals(true))
                     {
-                        e.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(e.Row, row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
+                        manGUIExpense.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(row, row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
                     }
 
-                    taxSum = (taxSum ?? 0m) + row.TaxAmt.Value;
+                    taxSum += row.TaxAmt.Value;
                 }
 
-                if (taxSum != null && taxSum != Base.ExpenseClaimCurrent.Current.TaxTotal)
+                if (taxSum != 0m && !taxSum.Equals(e.Row.TaxTotal))
                 {
-                    throw new PXException(TWMessages.ChkTotalGUIAmt);
+                    manGUIExpense.Cache.RaiseExceptionHandling<TWNManualGUIExpense.taxAmt>(manGUIExpense.Current, taxSum, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
                 }
             }
         }
