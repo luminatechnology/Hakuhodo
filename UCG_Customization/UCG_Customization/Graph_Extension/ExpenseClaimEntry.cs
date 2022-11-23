@@ -9,6 +9,13 @@ namespace PX.Objects.EP
     {
 
         #region Event
+        #region EPExpenseClaim
+        protected virtual void _(Events.FieldUpdated<EPExpenseClaim, EPExpenseClaim.branchID> e)
+        {
+            if (e.Row == null) return;
+            e.Cache.SetValueExt<EPExpenseClaimWorkGroupExt.usrProjectID>(e.Row, null);
+        }
+
         protected void _(Events.RowInserting<EPExpenseClaim> e, PXRowInserting baseHandler)
         {
             baseHandler?.Invoke(e.Cache, e.Args);
@@ -16,7 +23,7 @@ namespace PX.Objects.EP
             if (row == null) return;
             var emp = EPEmployee.PK.Find(Base, row.EmployeeID);
             // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
-            ApproveWGUtil.SetUsrApproveWG(e.Cache, row, row.DepartmentID, emp.AcctCD, row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
+            ApproveWGUtil.SetUsrApproveWG(e.Cache, row, row.DepartmentID, emp.AcctCD?.Trim(), row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
         }
 
         protected void _(Events.FieldUpdated<EPExpenseClaim.departmentID> e, PXFieldUpdated baseHandler)
@@ -26,7 +33,7 @@ namespace PX.Objects.EP
             if (row == null) return;
             var emp = EPEmployee.PK.Find(Base, row.EmployeeID);
             // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
-            ApproveWGUtil.SetUsrApproveWG(e.Cache, row, row.DepartmentID, emp.AcctCD, row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
+            ApproveWGUtil.SetUsrApproveWG(e.Cache, row, row.DepartmentID, emp.AcctCD?.Trim(), row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
         }
 
         protected void _(Events.FieldUpdated<EPExpenseClaim, EPExpenseClaimWorkGroupExt.usrProjectID> e, PXFieldUpdated baseHandler)
@@ -36,15 +43,10 @@ namespace PX.Objects.EP
             if (row == null) return;
             var emp = EPEmployee.PK.Find(Base, row.EmployeeID);
             // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
-            ApproveWGUtil.SetUsrApproveWG(e.Cache, row, row.DepartmentID, emp.AcctCD , row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
+            ApproveWGUtil.SetUsrApproveWG(e.Cache, row, row.DepartmentID, emp.AcctCD?.Trim(), row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
         }
-
+        #endregion
         #endregion
 
-        #region Method
-        #endregion
-
-        #region BQL
-        #endregion
     }
 }

@@ -1,0 +1,52 @@
+﻿<Sql TableName="P_APReturnAmount" SqlScriptPriority="2" CustomScript="#CDATA">
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER PROCEDURE dbo.P_APReturnAmount(
+	@CompanyID int,
+	@RefNbr nvarchar(15),
+	@DocType nvarchar(5),
+	@ProjectID int = null,
+	@BranchID int = null,
+	@TaskID int = null,
+	@InventoryID int = null,
+	@ReturnValue decimal(18,3) out
+)
+AS
+BEGIN
+	IF @ProjectID is null
+		SELECT @ReturnValue = dr.CuryOrigDocAmt FROM APRegister r
+		Inner Join APRegisterKvExt rx 
+			on r.CompanyID = rx.CompanyID
+			and r.NoteID =rx.RecordID
+			and rx.FieldName = 'AttributeDJNBR'
+		Inner Join APRegister dr 
+			on r.CompanyID = dr.CompanyID
+			and rx.ValueString = dr.RefNbr
+			and dr.DocType = 'ADR'
+		Where r.CompanyID = @CompanyID
+			and r.RefNbr = @RefNbr
+			and r.DocType = @DocType
+	ELSE 
+		SELECT @ReturnValue = Sum(dt.CuryTranAmt) FROM APRegister r
+		Inner Join APRegisterKvExt rx 
+			on r.CompanyID = rx.CompanyID
+			and r.NoteID =rx.RecordID
+			and rx.FieldName = 'AttributeDJNBR'
+		Inner Join APRegister dr 
+			on r.CompanyID = dr.CompanyID
+			and rx.ValueString = dr.RefNbr
+			and dr.DocType = 'ADR'
+		Inner Join APTran dt
+			on dr.CompanyID = dt.CompanyID
+			and dr.RefNbr = dt.RefNbr
+			and dr.DocType = dt.TranType
+		Where r.CompanyID = @CompanyID
+			and r.RefNbr = @RefNbr
+			and r.DocType = @DocType
+			and dt.BranchID = @BranchID
+			and dt.ProjectID = @ProjectID
+			and dt.InventoryID = @InventoryID
+			and (dt.TaskID = @TaskID Or (dt.TaskID is null And @TaskID is null))
+
+	IF @ReturnValue Is Null Set @ReturnValue = 0;
+	RETURN;
+END]]></CDATA>
+</Sql>

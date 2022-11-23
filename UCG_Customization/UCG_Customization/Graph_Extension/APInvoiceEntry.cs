@@ -1,4 +1,5 @@
 using PX.Data;
+using PX.Objects.CT;
 using PX.Objects.EP;
 using PX.Objects.PM;
 using PX.TM;
@@ -17,6 +18,17 @@ namespace PX.Objects.AP
 
         #region Event
         #region APRegister
+        protected void _(Events.RowSelected<APRegister> e)
+        {
+            var row = e.Row;
+            if (row == null) return;
+
+            string docType = row.DocType;
+            bool isShowReturnAmt = docType == APDocType.Invoice;
+            PXUIFieldAttribute.SetVisible<APRegisterUCGExt.returnAmount>(e.Cache,row,isShowReturnAmt);
+            PXUIFieldAttribute.SetVisible<APTranUCGExt.returnAmt>(Base.Transactions.Cache, null, isShowReturnAmt);
+        }
+
         protected void _(Events.RowPersisting<APRegister> e)
         {
             var row = e.Row;
@@ -45,10 +57,16 @@ namespace PX.Objects.AP
         #endregion
         #endregion
 
+        #region CacheAttached
+        [PXMergeAttributes(Method = MergeMethod.Append)]
+        [PXRestrictor(typeof(Where<Contract.defaultBranchID, Equal<Current<APInvoice.branchID>>, Or<Contract.defaultBranchID, IsNull>>), "專案所屬分公司與分公司不相符")]
+        protected virtual void _(Events.CacheAttached<APInvoice.projectID> e) { }
+        #endregion
+
         #region Method
         private void SetUsrApproveWG(PXCache cache, APRegister row)
         {
-            int? projectID = null;
+            int? projectID = row.ProjectID;
             if (row.Hold == true && cache.GetStatus(row) == PXEntryStatus.Deleted) return;
             if (row.DocType == APDocType.Prepayment) { 
                 var projectCD = (PXStringState)cache.GetValueExt(row, UD_PROJECT);
@@ -56,7 +74,7 @@ namespace PX.Objects.AP
                 projectID = pmProject.ContractID;
             }
             var emp = GetEmployee(row.EmployeeID);
-            ApproveWGUtil.SetUsrApproveWG(cache,row, row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID, emp.AcctCD , projectID);
+            ApproveWGUtil.SetUsrApproveWG(cache,row, row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID, emp.AcctCD?.Trim(), projectID);
         }
 
         #endregion

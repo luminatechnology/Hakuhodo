@@ -71,7 +71,10 @@
     <Compile Include="DAC_Extension\InventoryItemUCGExt.cs" />
     <Compile Include="DAC_Extension\POLineUCGExt.cs" />
     <Compile Include="DAC_Extension\POOrderUCGExt.cs" />
+    <Compile Include="Descriptor\APReturnAmountAttribute.cs" />
     <Compile Include="Descriptor\Type.cs" />
+    <Compile Include="Descriptor\ProcedureAttribute.cs" />
+    <Compile Include="Descriptor\UserDefinedFieldAttribute.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntry_ReleaseExt.cs" />
@@ -99,7 +102,9 @@
       <Version>5.0.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AdditionalFiles Include="UCG_Customization.acuminator" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

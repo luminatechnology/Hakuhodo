@@ -35,6 +35,7 @@
                     <Prop Key="ID" Value="CstPXSegmentMask2" />
                     <Prop Key="DataField" Value="UsrProjectID" />
                     <Prop Key="CommitChanges" Value="True" />
+                    <Prop Key="AutoRefresh" Value="True" />
                 </PXSegmentMask>
             </AddItem>
             <PXSegmentMask DataField="CustomerID" OriginalIndex="1" />

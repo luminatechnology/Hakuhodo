@@ -41,14 +41,28 @@ namespace PX.Objects.EP
             if (e.Row == null) return;
             //明細專案不可改，改由表頭專案控制
             PXUIFieldAttribute.SetReadOnly<EPExpenseClaimDetails.contractID>(Base.ExpenseClaimDetails.Cache, null, true);
+
+            //2022-11-17 Alton mark:[未來CR]
+            //PXCache detailCache = Base.ExpenseClaimDetails.Cache;
+            //foreach (EPExpenseClaimDetails detail in Base.ExpenseClaimDetails.Select())
+            //{
+            //    InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetails.inventoryID>(detailCache, detail);
+            //    //Item是否為雜支
+            //    bool isMiscExpItem = item?.GetExtension<InventoryItemUCGExt>()?.UsrIsMiscExp == true;
+            //    SetRequired<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(detailCache, detail, isMiscExpItem);
+            //    PXUIFieldAttribute.SetReadOnly<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(detailCache, detail, !isMiscExpItem);
+            //}
+
         }
 
         protected virtual void _(Events.FieldUpdated<EPExpenseClaim, EPExpenseClaimWorkGroupExt.usrProjectID> e)
         {
             if (e.Row == null) return;
-            foreach (var item in Base.ExpenseClaimDetails.Select())
+            foreach (EPExpenseClaimDetails item in Base.ExpenseClaimDetails.Select())
             {
-                Base.ExpenseClaimDetails.Cache.SetValueExt<EPExpenseClaimDetails.contractID>(item, e.Row.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID);
+                Base.ExpenseClaimDetails.Cache.SetDefaultExt<EPExpenseClaimDetails.contractID>(item);
+                Base.ExpenseClaimDetails.Cache.SetDefaultExt<EPExpenseClaimDetails.taskID>(item);
+                Base.ExpenseClaimDetails.Cache.SetStatus(item, PXEntryStatus.Updated);
             }
         }
         #endregion
@@ -65,39 +79,35 @@ namespace PX.Objects.EP
         {
             if (e.Row == null) return;
             ValidateUsedExpense(e.Row);
-            InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetails.inventoryID>(e.Cache, e.Row);
-
-            //Item是否為雜支
-            bool isMiscExpItem = item?.GetExtension<InventoryItemUCGExt>()?.UsrIsMiscExp == true;
-            SetRequired<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row, isMiscExpItem);
-            PXUIFieldAttribute.SetReadOnly<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row, !isMiscExpItem);
         }
 
         protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetails.inventoryID> e, PXFieldUpdated baseMethod)
         {
             baseMethod?.Invoke(e.Cache, e.Args);
             if (e.Row == null) return;
-            InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetails.inventoryID>(e.Cache, e.Row);
-            if (item?.GetExtension<InventoryItemUCGExt>()?.UsrIsMiscExp != true)
-            {
-                e.Cache.SetValueExt<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Row, null);
-            }
+            //2022-11-17 Alton mark:[未來CR]
+            //InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetails.inventoryID>(e.Cache, e.Row);
+            //if (item?.GetExtension<InventoryItemUCGExt>()?.UsrIsMiscExp != true)
+            //{
+            //    e.Cache.SetValueExt<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Row, null);
+            //}
         }
 
-        protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.usrMiscExpItem> e, PXFieldUpdated baseMethod)
-        {
-            if (e.Row == null) return;
-            var rowExt = e.Row.GetExtension<EPExpenseClaimDetailsUCGExt>();
-            if (rowExt.UsrMiscExpItem == null)
-            {
-                e.Cache.SetDefaultExt<EPExpenseClaimDetails.taxCategoryID>(e.Row);
-            }
-            else
-            {
-                InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row);
-                e.Cache.SetValueExt<EPExpenseClaimDetails.taxCategoryID>(e.Row, item.TaxCategoryID);
-            }
-        }
+        //2022-11-17 Alton mark:[未來CR]
+        //protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.usrMiscExpItem> e, PXFieldUpdated baseMethod)
+        //{
+        //    if (e.Row == null) return;
+        //    var rowExt = e.Row.GetExtension<EPExpenseClaimDetailsUCGExt>();
+        //    if (rowExt.UsrMiscExpItem == null)
+        //    {
+        //        e.Cache.SetDefaultExt<EPExpenseClaimDetails.taxCategoryID>(e.Row);
+        //    }
+        //    else
+        //    {
+        //        InventoryItem item = (InventoryItem)PXSelectorAttribute.Select<EPExpenseClaimDetailsUCGExt.usrMiscExpItem>(e.Cache, e.Row);
+        //        e.Cache.SetValueExt<EPExpenseClaimDetails.taxCategoryID>(e.Row, item.TaxCategoryID);
+        //    }
+        //}
 
         protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetails.contractID> e, PXFieldDefaulting baseHandler)
         {
@@ -134,9 +144,9 @@ namespace PX.Objects.EP
         #endregion
 
         #region CacheAttached
-        //[PXMergeAttributes(Method = MergeMethod.Merge)]
-        //[PXDefault(typeof(EPExpenseClaimWorkGroupExt.usrProjectID))]
-        //protected virtual void _(Events.CacheAttached<EPExpenseClaimDetails.contractID> e) { }
+        [PXMergeAttributes(Method = MergeMethod.Merge)]
+        [PXDefault(typeof(EPExpenseClaimWorkGroupExt.usrProjectID))]
+        protected virtual void _(Events.CacheAttached<EPExpenseClaimDetails.contractID> e) { }
         #endregion
         #endregion
 

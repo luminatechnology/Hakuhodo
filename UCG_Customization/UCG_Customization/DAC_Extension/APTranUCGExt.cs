@@ -21,5 +21,14 @@ namespace PX.Objects.AP
         public virtual decimal? BudgetAmt { get; set; }
         public abstract class budgetAmt : PX.Data.BQL.BqlDecimal.Field<budgetAmt> { }
         #endregion
+
+        #region ReturnAmt 
+        [PXDecimal(0)]
+        [PXUIField(DisplayName = "Return Amount", IsReadOnly = true)]
+        [APReturnAmount(APReturnAmountAttribute.Type.DETAIL)]
+
+        public virtual decimal? ReturnAmt { get; set; }
+        public abstract class returnAmt : PX.Data.BQL.BqlDecimal.Field<returnAmt> { }
+        #endregion
     }
 }

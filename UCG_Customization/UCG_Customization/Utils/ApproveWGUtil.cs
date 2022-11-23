@@ -100,7 +100,7 @@ namespace UCG_Customization.Utils
             int j = 0;
             for (int i = tempAcctCDs.Count - 1; i >= 0; i--)
             {
-                saveAcctCDs[j++] = GetTreeMasterEmpCD(graph, tempAcctCDs[i]);
+                saveAcctCDs[j++] = GetTreeMasterEmpCD(graph, tempAcctCDs[i])?.Trim();
             }
             return saveAcctCDs;
         }

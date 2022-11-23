@@ -123,6 +123,7 @@ namespace PX.Objects.EP
                              ValidComboRequired = true,
                              CacheGlobal = true,
                              DescriptionField = typeof(Contract.description))]
+        [PXRestrictor(typeof(Where<Contract.defaultBranchID, Equal<Current<EPExpenseClaim.branchID>>, Or<Contract.defaultBranchID, IsNull>>), "專案所屬分公司與分公司不相符")]
         public virtual int? UsrProjectID { get; set; }
         public abstract class usrProjectID : PX.Data.BQL.BqlInt.Field<usrProjectID> { }
         #endregion

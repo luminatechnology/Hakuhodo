@@ -5,12 +5,23 @@ using UCG_Customization.Utils;
 using UCG_Customization.Descriptor;
 using PX.Data.Update;
 using PX.Objects.PM;
+using PMX = PX.Objects.PM;
+using PX.Objects.CT;
 
 namespace PX.Objects.CN.Subcontracts.SC.Graphs
 { 
     public class SubcontractEntryUCGExt:PXGraphExtension<SubcontractEntry>
     {
         #region Event
+        #region POOrder
+        protected virtual void _(Events.FieldUpdated<POOrder, POOrder.branchID> e)
+        {
+            if (e.Row == null) return;
+            e.Cache.SetValueExt<POOrder.projectID>(e.Row, null);
+        }
+        #endregion
+
+
         #region POLine
         protected void _(Events.RowInserted<POLine> e, PXRowInserted baseHandler)
         {
@@ -60,6 +71,12 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
         }
 
         #endregion
+        #endregion
+
+        #region CacheAttached
+        [PXMergeAttributes(Method = MergeMethod.Append)]
+        [PXRestrictor(typeof(Where<PMProject.defaultBranchID,Equal<Current<POOrder.branchID>>,Or<PMProject.defaultBranchID,IsNull>>), "專案所屬分公司與分公司不相符")]
+        protected virtual void _(Events.CacheAttached<POOrder.projectID> e) { }
         #endregion
 
         #region Method
