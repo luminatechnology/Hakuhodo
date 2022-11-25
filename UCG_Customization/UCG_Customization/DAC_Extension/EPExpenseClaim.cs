@@ -128,5 +128,14 @@ namespace PX.Objects.EP
         public abstract class usrProjectID : PX.Data.BQL.BqlInt.Field<usrProjectID> { }
         #endregion
 
+        #region unbound
+        #region IsApproving 
+        [PXBool]
+        [PXUIField(DisplayName = "IsApproving")]
+        public virtual bool? IsApproving { get; set; }
+        public abstract class isApproving : PX.Data.BQL.BqlBool.Field<isApproving> { }
+        #endregion
+        #endregion
+
     }
 }

@@ -71,6 +71,7 @@
     <Compile Include="DAC_Extension\InventoryItemUCGExt.cs" />
     <Compile Include="DAC_Extension\POLineUCGExt.cs" />
     <Compile Include="DAC_Extension\POOrderUCGExt.cs" />
+    <Compile Include="DAC_Extension\RelationGroupUCGExt.cs" />
     <Compile Include="Descriptor\APReturnAmountAttribute.cs" />
     <Compile Include="Descriptor\Type.cs" />
     <Compile Include="Descriptor\ProcedureAttribute.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Graph_Extension\ExpenseClaimEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ProjectEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\RegisterEntry_UCGExt.cs" />
+    <Compile Include="Graph_Extension\RelationGroupUCGExt.cs" />
     <Compile Include="Graph_Extension\SubcontractEntry.cs" />
     <Compile Include="DAC\PMSummaryByBIV.cs" />
     <Compile Include="Graph_Extension\SubcontractEntryUCGExt.cs" />

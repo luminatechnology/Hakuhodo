@@ -37,7 +37,7 @@ namespace UCG_Customization.Descriptor
 
         protected void SetValue(PXCache sender, object item)
         {
-            if (item == null && !PreCallSP(sender,item)) return;
+            if (item == null && !PreCallSP(sender, item)) return;
             List<PXSPParameter> _params = new List<PXSPParameter>();
             for (int i = 0; i < _procedureParam.Length; i++)
             {
@@ -68,11 +68,14 @@ namespace UCG_Customization.Descriptor
             //_params.Add(new PXSPInParameter("CompanyID", PXInstanceHelper.CurrentCompany));
 
 
-            var obj = PXDatabase.Execute(_procedureName, _params.ToArray());
             object outValue = null;
-            if (obj.Length > 0)
+            using (new PXConnectionScope())
             {
-                outValue = obj[0];
+                var obj = PXDatabase.Execute(_procedureName, _params.ToArray());
+                if (obj.Length > 0)
+                {
+                    outValue = obj[0];
+                }
             }
             sender.SetValue(item, _FieldName, outValue);
         }
