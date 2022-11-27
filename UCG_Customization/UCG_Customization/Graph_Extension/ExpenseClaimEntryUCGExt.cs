@@ -2,6 +2,7 @@
 using PX.Data.Update;
 using PX.Objects.GL;
 using PX.Objects.IN;
+using System;
 using UCG_Customization.Descriptor;
 using UCG_Customization.Utils;
 
@@ -17,18 +18,10 @@ namespace PX.Objects.EP
             var now = Base.ExpenseClaim.Current;
             baseMethod();
             if (now == null) return;
-            var old = EPExpenseClaim.PK.Find(new PXGraph(), now.RefNbr);
-            if (old != null)
+            //當Approved || Rejected 時，回到EP503010
+            if (now.GetExtension<EPExpenseClaimWorkGroupExt>()?.IsApproving == true && Base.Accessinfo.ScreenID == "EP.30.10.00")
             {
-                //if (Base.Actions.Contains("CancelCloseToList"))
-                //var xx = Base.Actions["CancelCloseToList"];
-                bool isApproved = old.Approved != true && now.Approved == true;
-                bool isRejected = old.Rejected != true && now.Rejected == true;
-                //當Approved || Rejected 時，回到EP503010
-                if ((isApproved || isRejected) && Base.Accessinfo.ScreenID == "EP.30.10.00")
-                {
-                    throw new PXRedirectRequiredException(PXGraph.CreateInstance<EPApprovalProcess>(), "EPApprovalProcess");
-                }
+                throw new PXRedirectRequiredException(PXGraph.CreateInstance<EPApprovalProcess>(), "EPApprovalProcess");
             }
 
         }
@@ -164,6 +157,37 @@ namespace PX.Objects.EP
             PXPersistingCheck type = required ? PXPersistingCheck.NullOrBlank : PXPersistingCheck.Nothing;
             PXUIFieldAttribute.SetRequired<Field>(cache, required);
             PXDefaultAttribute.SetPersistingCheck<Field>(cache, item, type);
+        }
+
+        /// <summary>
+        /// 判斷是否簽核中
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool IsApproving()
+        {
+            foreach (EPApproval approval in Base.Approval.Select())
+            {
+                if (approval.Status == EPApprovalStatus.Approved || approval.Status == EPApprovalStatus.Rejected)
+                {
+                    EPApproval old = GetOldEPApproval(approval.ApprovalID);
+                    if (old?.Status == EPApprovalStatus.Pending)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region BQL
+        protected virtual PXResultset<EPApproval> GetOldEPApproval(int? approvalID)
+        {
+            // Acuminator disable once PX1072 PXGraphCreationForBqlQueries [Justification]
+            // Acuminator disable once PX1003 NonSpecificPXGraphCreateInstance [Justification]
+            return PXSelect<EPApproval, Where<EPApproval.approvalID, Equal<Required<EPApproval.approvalID>>>>
+                .Select(new PXGraph(), approvalID);
         }
         #endregion
     }

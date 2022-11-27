@@ -5,7 +5,7 @@ AS
 BEGIN
 	DECLARE @PM_Amount decimal(18,3);-- PM在途&實際收入
 	DECLARE @AR_Amount decimal(18,3);-- AR在途&實際收入
-	DECLARE @AR_CMAmount decimal(18,3);-- AR在途&實際 折讓
+	--DECLARE @AR_CMAmount decimal(18,3);-- AR在途&實際 折讓
 	DECLARE @ReturnValue decimal(18,3);
 
 	--=== PM在途&實際收入 ===
@@ -19,44 +19,22 @@ BEGIN
 
 	--=== AR在途&實際收入 & 折讓===
     SELECT 
-		@AR_Amount = SUM(t.CuryTranAmt) ,
-		@AR_CMAmount =  Sum(cmr.Amt)
+		@AR_Amount =SUM(t.CuryTranAmt * (case when r.DocType = 'CRM' then -1 else 1 end)) 
 	FROM PMProforma p
 	Inner Join ARRegister r on p.CompanyID = r.CompanyID
 		and p.ARInvoiceRefNbr = r.RefNbr
     Inner Join ARTran t on r.CompanyID = t.CompanyID
 		and r.RefNbr = t.RefNbr
 		and r.DocType = t.TranType
-	Left Join (
-        select
-            cmr.CompanyID,
-            cmr.RefNbr,
-            cmr.UsrGUINbr,
-            cmt.ProjectID,
-            Sum(cmt.CuryTranAmt) as Amt
-        from
-            ARRegister cmr
-            inner join ARTran cmt on cmr.CompanyID = cmt.CompanyID
-            and cmr.RefNbr = cmt.RefNbr
-            and cmr.DocType = cmt.TranType
-        group by
-            cmr.CompanyID,
-            cmr.RefNbr,
-            cmr.UsrGUINbr,
-            cmt.ProjectID
-    ) as cmr on r.CompanyID = cmr.CompanyID
-    and r.RefNbr <> cmr.RefNbr
-    and t.ProjectID = cmr.ProjectID
-    and r.UsrGUINbr = cmr.UsrGUINbr
 	Where p.CompanyID = @CompanyID
 		and p.ProjectID = @ProjectID;
 		
 	IF @PM_Amount is null Set @PM_Amount = 0 ;
 	IF @AR_Amount is null Set @AR_Amount = 0 ;
-	IF @AR_CMAmount is null Set @AR_CMAmount = 0 ;
+	--IF @AR_CMAmount is null Set @AR_CMAmount = 0 ;
 
-	IF @PM_Amount > (@AR_Amount - @AR_CMAmount) Set @ReturnValue = @PM_Amount
-	ELSE SET @ReturnValue =(@AR_Amount - @AR_CMAmount);
+	IF @PM_Amount > @AR_Amount Set @ReturnValue = @PM_Amount
+	ELSE SET @ReturnValue = @AR_Amount;
 
     RETURN @ReturnValue;
 END;]]></CDATA>

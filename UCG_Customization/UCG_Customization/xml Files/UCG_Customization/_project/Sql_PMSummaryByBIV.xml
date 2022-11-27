@@ -7,7 +7,7 @@ select
     dbo.F_UsedExpense (c.CompanyID, c.ContractID,default,default,default) as UsedExpense,
     SUM(
         case
-            when b.Type = 'I' then b.CuryRevisedAmount
+            when b.Type = 'I' and ag.GroupCD <> 'A3PREPAY' then b.CuryRevisedAmount
             else 0
         end
     ) BudgetIncome,
@@ -21,6 +21,8 @@ from
     Contract c
     Left Join PMBudget b on c.CompanyID = b.CompanyID
     and c.ContractID = b.ProjectID
+	Left Join PMAccountGroup ag on b.CompanyID = ag.CompanyID
+	and b.AccountGroupID = ag.GroupID
 group by
     c.CompanyID,
     c.ContractID]]></CDATA>

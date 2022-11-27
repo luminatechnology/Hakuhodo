@@ -1,0 +1,4 @@
+﻿<Sql TableName="ALTER_RelationGroup_Description" SqlScriptPriority="2" CustomScript="#CDATA">
+    <CDATA name="CustomScript"><![CDATA[ALTER TABLE dbo.RelationGroup
+ALTER COLUMN Description nvarchar(255);]]></CDATA>
+</Sql>
