@@ -102,7 +102,7 @@ namespace eGUICustomizations.Graph
                             ourTaxNbr = gUITrans.OurTaxNbr;
 
                             // Reporting Code
-                            lines = gUITrans.GUIFormatcode;
+                            lines = gUITrans.GUIFormatCode;
                             // Tax Registration
                             lines += gUIPreferences.TaxRegistrationID;
                             // Sequence Number
@@ -122,7 +122,7 @@ namespace eGUICustomizations.Graph
                             // Tax Amount
                             lines += GetTaxAmt(gUITrans);
                             // Deduction Code
-                            lines += (gUITrans.DeductionCode != null || gUITrans.GUIFormatcode.StartsWith("2")) ? gUITrans.DeductionCode : new string(space, 1);
+                            lines += (gUITrans.DeductionCode != null || gUITrans.GUIFormatCode.StartsWith("2")) ? gUITrans.DeductionCode : new string(space, 1);
                             // Blank
                             lines += new string(space, 5);
                             // Special Tax Rate
@@ -229,16 +229,16 @@ namespace eGUICustomizations.Graph
             string sellerTaxID = GetSellerTaxID(gUITrans);
             string buyerTaxID  = GetBuyerTaxID(gUITrans);
 
-            if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATInCode22, TWGUIFormatCode.vATInCode27) ) { sellerFmtCode = true; }
+            if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATInCode22, TWGUIFormatCode.vATInCode27) ) { sellerFmtCode = true; }
 
-            if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode35) ) { buyerFmtCode = true; }
+            if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode35) ) { buyerFmtCode = true; }
 
             if (gUITrans.GUIStatus == TWNGUIStatus.Voided)
             {
                 combinStr = new string(zero, fixedLen);
             }
             else if (sellerFmtCode ||
-                     (gUITrans.GUIFormatcode.Equals(TWGUIFormatCode.vATInCode25) && sellerTaxID.Length != 8) ||
+                     (gUITrans.GUIFormatCode.Equals(TWGUIFormatCode.vATInCode25) && sellerTaxID.Length != 8) ||
                      (buyerFmtCode && (string.IsNullOrEmpty(buyerTaxID) || buyerTaxID == new string(space, 8)))
                     )
             {
@@ -254,7 +254,7 @@ namespace eGUICustomizations.Graph
 
         public virtual string GetGUINbr(TWNGUITrans gUITrans)
         {
-            if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATInCode28, TWGUIFormatCode.vATInCode29))
+            if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATInCode28, TWGUIFormatCode.vATInCode29))
             {
                 return gUITrans.GUINbr.Substring(4, gUITrans.GUINbr.Length - 4);
             }
@@ -270,11 +270,11 @@ namespace eGUICustomizations.Graph
 
         private string GetBuyerTaxID(TWNGUITrans gUITrans)
         {
-            if (gUITrans.GUIFormatcode.StartsWith("2"))
+            if (gUITrans.GUIFormatCode.StartsWith("2"))
             {
                 return gUITrans.OurTaxNbr;
             }
-            else if (gUITrans.GUIFormatcode.StartsWith("3") && gUITrans.GUIStatus != TWNGUIStatus.Voided)
+            else if (gUITrans.GUIFormatCode.StartsWith("3") && gUITrans.GUIStatus != TWNGUIStatus.Voided)
             {
                 return gUITrans.TaxNbr ?? new string(space, 8);
             }
@@ -284,13 +284,13 @@ namespace eGUICustomizations.Graph
 
         private string GetSellerTaxID(TWNGUITrans gUITrans)
         {
-            if (gUITrans.GUIFormatcode.StartsWith("2"))
+            if (gUITrans.GUIFormatCode.StartsWith("2"))
             {
-                if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATInCode28, TWGUIFormatCode.vATInCode29) )
+                if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATInCode28, TWGUIFormatCode.vATInCode29) )
                 {
                     return (new string(space, 4) + gUITrans.GUINbr.Substring(0, 4));
                 }
-                else if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATInCode26, TWGUIFormatCode.vATInCode27) )
+                else if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATInCode26, TWGUIFormatCode.vATInCode27) )
                 {
                     return gUITrans.TaxNbr + new string(space, (8 - gUITrans.TaxNbr.Length));
                 }
@@ -320,12 +320,12 @@ namespace eGUICustomizations.Graph
 
             string buyerTaxID = GetBuyerTaxID(gUITrans);
 
-            if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATInCode22, TWGUIFormatCode.vATInCode27) ) { fixedFmtCode = true; }
+            if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATInCode22, TWGUIFormatCode.vATInCode27) ) { fixedFmtCode = true; }
 
-            if (gUITrans.GUIFormatcode == TWGUIFormatCode.vATInCode25 && GetSellerTaxID(gUITrans).Length != 8)  { sellerFmtCode = true; }
+            if (gUITrans.GUIFormatCode == TWGUIFormatCode.vATInCode25 && GetSellerTaxID(gUITrans).Length != 8)  { sellerFmtCode = true; }
 
-            if ((gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode31 && (string.IsNullOrEmpty(buyerTaxID) || buyerTaxID == new string(space, 8)) ) ||
-                (gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode35 && (string.IsNullOrEmpty(buyerTaxID) || buyerTaxID == new string(space, 8)) )
+            if ((gUITrans.GUIFormatCode == TWGUIFormatCode.vATOutCode31 && (string.IsNullOrEmpty(buyerTaxID) || buyerTaxID == new string(space, 8)) ) ||
+                (gUITrans.GUIFormatCode == TWGUIFormatCode.vATOutCode35 && (string.IsNullOrEmpty(buyerTaxID) || buyerTaxID == new string(space, 8)) )
                ) { buyerFmtCode = true; }
 
             if (gUITrans.GUIStatus == TWNGUIStatus.Voided || fixedFmtCode || sellerFmtCode || buyerFmtCode)
@@ -342,8 +342,8 @@ namespace eGUICustomizations.Graph
 
         private string GetSummaryRemark(TWNGUITrans gUITrans)
         {
-            if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATInCode26, TWGUIFormatCode.vATInCode27) ||
-                gUITrans.GUIFormatcode == TWGUIFormatCode.vATInCode25 && GetSellerTaxID(gUITrans).Length != 8)
+            if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATInCode26, TWGUIFormatCode.vATInCode27) ||
+                gUITrans.GUIFormatCode == TWGUIFormatCode.vATInCode25 && GetSellerTaxID(gUITrans).Length != 8)
             {
                 return "A";
             }

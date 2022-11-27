@@ -45,7 +45,7 @@ namespace eGUICustomizations.Graph
                                     Where<TWNGUITrans.eGUIExcluded, Equal<False>,
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                              And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
+                                              And<TWNGUITrans.gUIFormatCode, Equal<VATOutCode35>,
                                                   And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
 
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
@@ -395,7 +395,7 @@ namespace eGUICustomizations.Graph
         {
             string billType = null;
 
-            switch (gUITran.GUIFormatcode)
+            switch (gUITran.GUIFormatCode)
             {
                 case TWGUIFormatCode.vATOutCode35:
                 case TWGUIFormatCode.vATOutCode31:

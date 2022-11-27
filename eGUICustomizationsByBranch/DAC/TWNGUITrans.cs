@@ -30,11 +30,11 @@ namespace eGUICustomizations.DAC
         public abstract class identityID : PX.Data.BQL.BqlInt.Field<identityID> { }
         #endregion
 
-        #region GUIFormatcode
+        #region GUIFormatCode
         [PXDBString(2, IsUnicode = true)]
-        [PXUIField(DisplayName = "GUI Format code")]
-        public virtual string GUIFormatcode { get; set; }
-        public abstract class gUIFormatcode : PX.Data.BQL.BqlString.Field<gUIFormatcode> { }
+        [PXUIField(DisplayName = "GUI Format Code")]
+        public virtual string GUIFormatCode { get; set; }
+        public abstract class gUIFormatCode : PX.Data.BQL.BqlString.Field<gUIFormatCode> { }
         #endregion
 
         #region GUINbr
@@ -43,7 +43,7 @@ namespace eGUICustomizations.DAC
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr, Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                                             And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>>>>),
                     typeof(TWNGUITrans.gUINbr),
-                    typeof(TWNGUITrans.gUIFormatcode),
+                    typeof(TWNGUITrans.gUIFormatCode),
                     typeof(TWNGUITrans.branchID),
                     typeof(TWNGUITrans.gUIDate),
                     ValidateValue = false)]
@@ -410,8 +410,8 @@ namespace eGUICustomizations.DAC
         #region NoteID
         [PXSearchable(SearchCategory.AP | SearchCategory.IN | SearchCategory.AR | SearchCategory.SO,
                       "GUI Number: {0}, {1}, {2}",
-                      new Type[] { typeof(TWNGUITrans.gUINbr), typeof(TWNGUITrans.gUIFormatcode), typeof(TWNGUITrans.gUIStatus)},
-                      new Type[] { typeof(TWNGUITrans.gUIFormatcode), typeof(TWNGUITrans.gUINbr), typeof(TWNGUITrans.orderNbr)},
+                      new Type[] { typeof(TWNGUITrans.gUINbr), typeof(TWNGUITrans.gUIFormatCode), typeof(TWNGUITrans.gUIStatus)},
+                      new Type[] { typeof(TWNGUITrans.gUIFormatCode), typeof(TWNGUITrans.gUINbr), typeof(TWNGUITrans.orderNbr)},
                       NumberFields = new Type[] { typeof(TWNGUITrans.gUINbr) },
                       Line1Format = "{0} {1} {2}",
                       Line1Fields = new Type[] { typeof(TWNGUITrans.gUIDirection), typeof(TWNGUITrans.netAmount), typeof(TWNGUITrans.taxAmount) },

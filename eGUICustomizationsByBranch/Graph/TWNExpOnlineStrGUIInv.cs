@@ -21,7 +21,7 @@ namespace eGUICustomizations.Graph
         public PXCancel<TWNGUITrans> Cancel;
         public PXProcessing<TWNGUITrans,
                             Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-                                  And<TWNGUITrans.gUIFormatcode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
+                                  And<TWNGUITrans.gUIFormatCode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
                                        And<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                  Or<TWNGUITrans.eGUIExported, IsNull>>>>>> GUITranProc;
         //public PXProcessing<TWNGUITrans,
@@ -63,7 +63,7 @@ namespace eGUICustomizations.Graph
 
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
-                    bool isCM = gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode33;
+                    bool isCM = gUITrans.GUIFormatCode == TWGUIFormatCode.vATOutCode33;
                     bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
                     ARRegister    register = ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
@@ -81,7 +81,7 @@ namespace eGUICustomizations.Graph
                     // 預計出貨日
                     lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd") + verticalBar;
                     // 稅率別 -> 1:應稅 2:零稅率 3:免稅 4:特殊稅率(需帶36 & 37欄位) 
-                    lines += (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATOutCode36, TWGUIFormatCode.vATOutCode37)) ? "4" : TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
+                    lines += (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATOutCode36, TWGUIFormatCode.vATOutCode37)) ? "4" : TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
                     // 訂單金額(未稅)
                     lines += gUITrans.NetAmount + verticalBar;
                     // 訂單稅額

@@ -20,8 +20,8 @@ namespace eGUICustomizations.Graph
                                           And<TWNGUITrans.gUIDecPeriod, LessEqual<Current<GUITransFilter.toDate>>,
                                               And<TWNGUITrans.vATType, Equal<TWNGUIVATType.zero>,
                                                   And<TWNGUITrans.gUIStatus, NotEqual<TWNGUIStatus.voided>,
-                                                      And<Where<TWNGUITrans.gUIFormatcode, NotEqual<ARRegisterExt.VATOut34Att>,
-                                                                Or<TWNGUITrans.gUIFormatcode, NotEqual<ARRegisterExt.VATOut33Att>>>>>>>>> GUITranProc;
+                                                      And<Where<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut34Att>,
+                                                                Or<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut33Att>>>>>>>>> GUITranProc;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 

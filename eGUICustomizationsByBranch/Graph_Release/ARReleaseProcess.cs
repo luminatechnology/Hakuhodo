@@ -157,6 +157,7 @@ namespace PX.Objects.AR
                                 CarrierID     = docExt.UsrB2CType == TWNStringList.TWNB2CType.MC ? tuple.Item2 : null,
                                 NPONbr        = docExt.UsrB2CType == TWNStringList.TWNB2CType.NPO ? tuple.Item3 : null,
                                 B2CPrinted    = docExt.UsrB2CType == TWNStringList.TWNB2CType.DEF && string.IsNullOrEmpty(docExt.UsrTaxNbr),
+                                TranDate      = doc.DocDate
                             });
 
                             #region Prepayment Adjust
@@ -197,14 +198,22 @@ namespace PX.Objects.AR
                             #endregion
 
                             #region InsertPrintedLine
-                            if (doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale))
+                            if (doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale, ARDocType.CreditMemo) && !string.IsNullOrEmpty(gUINbr))
                             {
                                 List<(string, int, string, decimal?, decimal?, decimal?, string)> list = new List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>>();
 
+                                string attrValue = CS.CSAnswers.PK.Find(Base, customer?.NoteID, doc.DocType == ARDocType.CreditMemo ? "ALLOWANCE" : "NORMALINV")?.Value;
+
                                 int lineNbr = 1;
-                                foreach (ARTran tran in Base.ARTran_TranType_RefNbr.Cache.Cached)
+                                if (string.IsNullOrEmpty(attrValue))
                                 {
-                                    list.Add(ValueTuple.Create(docExt.UsrGUINbr, lineNbr++, tran.TranDesc, tran.Qty, tran.CuryUnitPrice, tran.CuryTranAmt, string.Empty));
+                                    foreach (ARTran tran in Base.ARTran_TranType_RefNbr.Cache.Cached)
+                                    {
+                                        list.Add(ValueTuple.Create(docExt.UsrGUINbr, lineNbr++, tran.TranDesc, tran.Qty, tran.CuryUnitPrice, tran.CuryTranAmt, $"{docExt.UsrVATOutCode}-{doc.RefNbr}-{string.Empty}"));
+                                    }
+                                }
+                                {
+                                    list.Add(ValueTuple.Create(docExt.UsrGUINbr, lineNbr, attrValue, 1, (doc as ARInvoice).CuryLineTotal, (doc as ARInvoice).CuryLineTotal, $"{docExt.UsrVATOutCode}-{doc.RefNbr}-{string.Empty}"));
                                 }
 
                                 rp.GeneratePrintedLineDetails(list);

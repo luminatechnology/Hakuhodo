@@ -21,14 +21,14 @@ namespace eGUICustomizations.Graph
                                       //                         .And<ARInvoice.origRefNbr.IsNotNull>>
                                       .Where<TWNGUITrans.gUIStatus.IsEqual<TWNGUIStatus.used>
                                              .And<TWNGUITrans.gUIDirection.IsEqual<TWNGUIDirection.issue>
-                                                  .And<TWNGUITrans.gUIFormatcode.IsEqual<TWNExpGUIInv2BankPro.VATOutCode35>
+                                                  .And<TWNGUITrans.gUIFormatCode.IsEqual<TWNExpGUIInv2BankPro.VATOutCode35>
                                                        .And<Customer.bAccountID.IsEqual<TWNGUIInvCredit.customerID.FromCurrent>>>>>.View GUIInvoice;
         public SelectFrom<TWNGUITrans>.InnerJoin<Customer>.On<Customer.acctCD.IsEqual<TWNGUITrans.custVend>>
                                       //.InnerJoin<ARInvoice>.On<ARInvoice.refNbr.IsEqual<TWNGUITrans.orderNbr>
                                       //                         .And<ARInvoice.origRefNbr.IsNotNull>>
                                       .Where<TWNGUITrans.gUIStatus.IsEqual<TWNGUIStatus.used>
                                              .And<TWNGUITrans.gUIDirection.IsEqual<TWNGUIDirection.issue>
-                                                  .And<TWNGUITrans.gUIFormatcode.IsEqual<ARRegisterExt.VATOut33Att>
+                                                  .And<TWNGUITrans.gUIFormatCode.IsEqual<ARRegisterExt.VATOut33Att>
                                                        .And<Customer.bAccountID.IsEqual<TWNGUIInvCredit.customerID.FromCurrent>>>>>.View GUICreditNote;
         public SelectFrom<TWNInvTranHist>.View InvTranHist;
 
@@ -147,7 +147,7 @@ namespace eGUICustomizations.Graph
         protected void _(Events.RowSelected<TWNGUITrans> e)
         {
             PXUIFieldAttribute.SetEnabled<TWNGUITrans.gUINbr>       (e.Cache, e.Row, false);
-            PXUIFieldAttribute.SetEnabled<TWNGUITrans.gUIFormatcode>(e.Cache, e.Row, false);
+            PXUIFieldAttribute.SetEnabled<TWNGUITrans.gUIFormatCode>(e.Cache, e.Row, false);
             PXUIFieldAttribute.SetEnabled<TWNGUITrans.gUIDirection> (e.Cache, e.Row, false);
             PXUIFieldAttribute.SetEnabled<TWNGUITrans.gUIDate>      (e.Cache, e.Row, false);
             PXUIFieldAttribute.SetEnabled<TWNGUITrans.custVend>     (e.Cache, e.Row, false);
@@ -176,13 +176,13 @@ namespace eGUICustomizations.Graph
 
             lists.Sort((x, y) =>
             {
-                if (Convert.ToInt32(x.GUIFormatcode) < Convert.ToInt32(y.GUIFormatcode))
+                if (Convert.ToInt32(x.GUIFormatCode) < Convert.ToInt32(y.GUIFormatCode))
                 {
                     return 0;
                 }
                 else
                 {
-                    return ((IComparable)x.GUIFormatcode).CompareTo(y.GUIFormatcode);
+                    return ((IComparable)x.GUIFormatCode).CompareTo(y.GUIFormatCode);
                 }
             });
 
@@ -197,10 +197,10 @@ namespace eGUICustomizations.Graph
             {
                 TWNGUITrans row = lists[i];
 
-                if (row.GUIFormatcode == TWGUIFormatCode.vATOutCode35)
+                if (row.GUIFormatCode == TWGUIFormatCode.vATOutCode35)
                 {
                     invCredit.GUINbr     = row.GUINbr;
-                    invCredit.VATOutCode = row.GUIFormatcode;
+                    invCredit.VATOutCode = row.GUIFormatCode;
                     invCredit.GUINetAmt  = row.NetAmount;
                     invCredit.GUITaxAmt  = row.TaxAmount;
                     invCredit.CNNetAmt   = invCredit.CNTaxAmt = 0;
@@ -211,7 +211,7 @@ namespace eGUICustomizations.Graph
                 else
                 {
                     invCredit.CNGUINbr    += (row.GUINbr + ";");
-                    invCredit.CNVATOutCode = row.GUIFormatcode;
+                    invCredit.CNVATOutCode = row.GUIFormatCode;
                     invCredit.CNNetAmt    += row.NetAmount;
                     invCredit.CNTaxAmt    += row.TaxAmount;
                     invCredit.CalcNetAmt   = invCredit.GUINetAmt - invCredit.CNNetAmt;
@@ -272,7 +272,7 @@ namespace eGUICustomizations.Graph
                 string cNGUINbr = cNGUINbrs[i].TrimStart();
 
                 foreach (ARTran row in SelectFrom<ARTran>.InnerJoin<TWNGUITrans>.On<ARTran.refNbr.IsEqual<TWNGUITrans.orderNbr>>
-                                                         .Where<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>
+                                                         .Where<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>
                                                                 .And<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
                                                                      .And<TWNGUITrans.sequenceNo.IsEqual<@P.AsInt>>>>
                                                          .OrderBy<Asc<ARTran.inventoryID>>.View.Select(this, Document.Current.CNVATOutCode, cNGUINbr, i))
@@ -310,7 +310,7 @@ namespace eGUICustomizations.Graph
         public static PXResultset<ARTran> RetriveARTran(PXGraph graph, string formatCode, string gUINbr)
         {
             return SelectFrom<ARTran>.InnerJoin<TWNGUITrans>.On<ARTran.refNbr.IsEqual<TWNGUITrans.orderNbr>>
-                                     .Where<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>
+                                     .Where<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>
                                             .And<TWNGUITrans.gUINbr.IsEqual<@P.AsString>>>
                                      .OrderBy<Asc<ARTran.inventoryID>>.View.Select(graph, formatCode, gUINbr);
         }

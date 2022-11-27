@@ -5,6 +5,8 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
+using PX.Objects.CS;
+using PX.Objects.AR;
 
 namespace eGUICustomizations.Graph
 {
@@ -15,7 +17,9 @@ namespace eGUICustomizations.Graph
         public PXCancel<TWNPrintedLineFilter> Cancel;
         public PXFilter<TWNPrintedLineFilter> Filter;
         [PXImport(typeof(TWNGUIPrintedLineDet))]
-        public PXSelect<TWNGUIPrintedLineDet, Where<TWNGUIPrintedLineDet.gUINbr, Equal<Current<TWNPrintedLineFilter.gUINbr>>>> PrintedLineDet;
+        public PXSelect<TWNGUIPrintedLineDet, Where<TWNGUIPrintedLineDet.gUINbr, Equal<Current<TWNPrintedLineFilter.gUINbr>>,
+                                                    And<TWNGUIPrintedLineDet.gUIFormatcode, Equal<Current<TWNPrintedLineFilter.gUIFormatcode>>,
+                                                        And<TWNGUIPrintedLineDet.refNbr, Equal<Current<TWNPrintedLineFilter.refNbr>>>>>> PrintedLineDet;
         #endregion
 
         #region Delegate Data View
@@ -27,8 +31,7 @@ namespace eGUICustomizations.Graph
             {
                 filter.RevisedAmount = 0; //Reset total to zero 
 
-                int startRow  = 0;
-                int totalRows = 0;
+                int startRow = 0, totalRows = 0;
 
                 foreach (TWNGUIPrintedLineDet row in /*new PXView(this, false, cmd)*/PrintedLineDet.View.Select(new[] { filter }, //Pass filter context to the grid view delegate
                                                                                 null, null, null, null,
@@ -42,7 +45,10 @@ namespace eGUICustomizations.Graph
 
                 if (filter.OrigAmount == null && filter?.GUINbr != null)
                 {
-                    TWNGUITrans gUITran = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>>.View.SelectSingleBound(this, null, filter.GUINbr);
+                    TWNGUITrans gUITran = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
+                                                                        .And<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>
+                                                                             .And<TWNGUITrans.orderNbr.IsEqual<@P.AsString>>>>.View
+                                                                 .SelectSingleBound(this, null, filter.GUINbr, filter.GUIFormatcode, filter.RefNbr);
 
                     filter.OrigAmount = string.IsNullOrEmpty(gUITran.TaxNbr) ? gUITran.NetAmount + gUITran.TaxAmount : gUITran.NetAmount;
                 }
@@ -69,12 +75,37 @@ namespace eGUICustomizations.Graph
     [PXCacheName("TWN Printed Line Filter")]
     public class TWNPrintedLineFilter : IBqlTable
     {
+        #region GUIFormatcode
+        [PXDBString(2, IsFixed = true, IsUnicode = true)]
+        [PXUIField(DisplayName = "GUI Format code")]
+        [PXSelector(typeof(Search<CSAttributeDetail.valueID, Where<CSAttributeDetail.attributeID, Equal<ARRegisterExt.VATOUTFRMTNameAtt>,
+                                                                   Or<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.VATINFRMTNameAtt>>>>),
+                    typeof(CSAttributeDetail.valueID),
+                    typeof(CSAttributeDetail.description),
+                    DescriptionField = typeof(CSAttributeDetail.description))]
+        public virtual string GUIFormatcode { get; set; }
+        public abstract class gUIFormatcode : PX.Data.BQL.BqlString.Field<gUIFormatcode> { }
+        #endregion
+
+        #region RefNbr
+        [PXDBString(15, IsUnicode = true)]
+        [PXUIField(DisplayName = "Ref. Number")]
+        [PXSelector(typeof(SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIFormatCode.IsEqual<gUIFormatcode.AsOptional>
+                                                         .And<TWNGUITrans.gUIStatus.IsEqual<TWNStringList.TWNGUIStatus.used>>>.SearchFor<TWNGUITrans.orderNbr>),
+                    typeof(TWNGUITrans.orderNbr),
+                    typeof(TWNGUITrans.custVend),
+                    typeof(TWNGUITrans.custVendName),
+                    typeof(TWNGUITrans.transDate))]
+        public virtual string RefNbr { get; set; }
+        public abstract class refNbr : PX.Data.BQL.BqlString.Field<refNbr> { }
+        #endregion
+
         #region GUINbr
         [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaa")]
-        [PXUIField(DisplayName = "GUI Nbr.")]
-        [PXSelector(typeof(Search<TWNGUITrans.gUINbr, Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
-                                                            And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
-                                                                And<TWNGUITrans.eGUIExcluded, Equal<False>>>>>),
+        [PXUIField(DisplayName = "GUI Number")]
+        [PXSelector(typeof(SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIStatus.IsEqual<TWNStringList.TWNGUIStatus.used>
+                                                         .And<TWNGUITrans.eGUIExcluded.IsEqual<False>
+                                                             .And<TWNGUITrans.orderNbr.IsEqual<refNbr.AsOptional>>>>.SearchFor<TWNGUITrans.gUINbr>),
                     typeof(TWNGUITrans.gUINbr),
                     typeof(TWNGUITrans.gUIDate),
                     typeof(TWNGUITrans.custVend),

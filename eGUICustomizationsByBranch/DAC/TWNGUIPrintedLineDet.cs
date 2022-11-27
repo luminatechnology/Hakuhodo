@@ -1,6 +1,7 @@
 using System;
 using eGUICustomizations.Graph;
 using PX.Data;
+using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CM;
 using PX.Objects.IN;
@@ -26,7 +27,23 @@ namespace eGUICustomizations.DAC
         public virtual int? LineNbr { get; set; }
         public abstract class lineNbr : PX.Data.BQL.BqlInt.Field<lineNbr> { }
         #endregion
-    
+
+        #region GUIFormatcode
+        [PXDBString(2, IsKey = true, IsFixed = true, IsUnicode = true)]
+        [PXUIField(DisplayName = "GUI Format code", Visible = false)]
+        [PXDefault(typeof(TWNPrintedLineFilter.gUIFormatcode))]
+        public virtual string GUIFormatcode { get; set; }
+        public abstract class gUIFormatcode : PX.Data.BQL.BqlString.Field<gUIFormatcode> { }
+        #endregion
+
+        #region RefNbr
+        [PXDBString(15, IsKey = true, IsUnicode = true)]
+        [PXUIField(DisplayName = "Ref. Nbr.", Visible = false)]
+        [PXDefault(typeof(TWNPrintedLineFilter.refNbr))]
+        public virtual string RefNbr { get; set; }
+        public abstract class refNbr : PX.Data.BQL.BqlString.Field<refNbr> { }
+        #endregion
+
         #region Descr
         [PXDBString(255, IsUnicode = true)]
         [PXUIField(DisplayName = "Description")]

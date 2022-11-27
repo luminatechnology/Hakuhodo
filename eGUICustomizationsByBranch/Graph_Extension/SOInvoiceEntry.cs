@@ -1,16 +1,19 @@
 ﻿using System;
+using PX.Common;
 using PX.Data;
 using PX.Data.WorkflowAPI;
 using PX.Objects.AR;
 using System.Collections;
 using System.Collections.Generic;
 using eGUICustomizations.Descriptor;
+using eGUICustomizations.DAC;
 
 namespace PX.Objects.SO
 {
     public class SOInvoiceEntry_Extension : PXGraphExtension<SOInvoiceEntry_Workflow, SOInvoiceEntry>
     {
         public const string GUIReportID = "TW641000";
+        public const string GUICRMRptID = "TW642000";
 
         #region Override Methods
         public override void Configure(PXScreenConfiguration config)
@@ -26,6 +29,8 @@ namespace PX.Objects.SO
                 {
                     actions.Add<SOInvoiceEntry_Extension>(e => e.printGUIInvoice,
                                                           a => a.WithCategory((PredefinedCategory)FolderType.ReportsFolder).PlaceAfter(s => s.printInvoice));
+                    actions.Add<SOInvoiceEntry_Extension>(e => e.printGUICreditNote,
+                                                          a => a.WithCategory((PredefinedCategory)FolderType.ReportsFolder).PlaceAfter(s => s.printInvoice));
                 });
             });
         }
@@ -34,17 +39,33 @@ namespace PX.Objects.SO
         #region Actions
         public PXAction<ARInvoice> printGUIInvoice;
         [PXButton()]
-        [PXUIField(DisplayName = "GUI Invoice", MapEnableRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = "Print GUI Invoice", MapEnableRights = PXCacheRights.Select)]
         protected virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
         {
-            if (Base.Document.Current != null)
-            {
-                Dictionary<string, string> parameters = new Dictionary<string, string>
-                {
-                    [nameof(eGUICustomizations.DAC.TWNGUITrans.GUINbr)] = Base.Document.Current.GetExtension<ARRegisterExt>().UsrGUINbr
-                };
+            var current = Base.Document.Current;
 
-                throw new PXReportRequiredException(parameters, GUIReportID, GUIReportID);
+            if (current != null)
+            {
+                var curExt = current.GetExtension<ARRegisterExt>();
+
+                OpenGUIReport(false, curExt.UsrVATOutCode, current.RefNbr, curExt.UsrGUINbr);
+            }
+
+            return adapter.Get();
+        }
+
+        public PXAction<ARInvoice> printGUICreditNote;
+        [PXButton()]
+        [PXUIField(DisplayName = "Print GUI Credit Note", MapEnableRights = PXCacheRights.Select)]
+        protected virtual IEnumerable PrintGUICreditNote(PXAdapter adapter)
+        {
+            var current = Base.Document.Current;
+
+            if (current != null)
+            {
+                var curExt = current.GetExtension<ARRegisterExt>();
+
+                OpenGUIReport(true, curExt.UsrVATOutCode, current.RefNbr, curExt.UsrGUINbr);
             }
 
             return adapter.Get();
@@ -57,10 +78,13 @@ namespace PX.Objects.SO
             baseHandler?.Invoke(e.Cache, e.Args);
 
             bool activateGUI = TWNGUIValidation.ActivateTWGUI(e.Cache.Graph);
+            bool hasGUINbr = !string.IsNullOrEmpty(Base.Document.Current.GetExtension<ARRegisterExt>()?.UsrGUINbr);
 
             Base.report.SetVisible(nameof(PrintGUIInvoice), activateGUI);
+            Base.report.SetVisible(nameof(PrintGUICreditNote), activateGUI);
 
-            printGUIInvoice.SetEnabled(activateGUI && !string.IsNullOrEmpty(Base.Document.Current.GetExtension<ARRegisterExt>()?.UsrGUINbr));
+            printGUIInvoice.SetEnabled(activateGUI && hasGUINbr && e.Row.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale));
+            printGUICreditNote.SetEnabled(activateGUI && hasGUINbr && e.Row.DocType == ARDocType.CreditMemo);
         }
 
         protected void _(Events.FieldUpdated<ARInvoice.customerID> e, PXFieldUpdated baseHandler)
@@ -101,6 +125,21 @@ namespace PX.Objects.SO
                                                              $"{CS.Messages.Attribute}{SOrderUDF_Attr}") as PXFieldState;
 
             return order_State?.Value;
+        }
+
+        /// <summary>
+        /// parsm : P0 -> GUIFormatCode, P1 -> RefNbr, P2 -> GUINbr
+        /// </summary>
+        public virtual void OpenGUIReport(bool isCreditNote, params string[] param)
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>
+            {
+                [nameof(TWNGUITrans.GUIFormatCode)] = param[0],
+                [nameof(ARInvoice.RefNbr)]          = param[1],
+                [nameof(TWNGUITrans.GUINbr)]        = param[2]
+            };
+
+            throw new PXReportRequiredException(parameters, isCreditNote == false ? GUIReportID : GUICRMRptID, isCreditNote == false ? GUIReportID : GUICRMRptID);
         }
         #endregion
     }

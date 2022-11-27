@@ -9,9 +9,12 @@
                 <Value>@GUINbr</Value>
             </FilterExp>
             <FilterExp>
-                <Condition>Greater</Condition>
-                <DataField>TWNGUITrans.SequenceNo</DataField>
-                <Value>0</Value>
+                <DataField>TWNGUITrans.GUIFormatcode</DataField>
+                <Value>@GUIFormatCode</Value>
+            </FilterExp>
+            <FilterExp>
+                <DataField>TWNGUITrans.OrderNbr</DataField>
+                <Value>@RefNbr</Value>
             </FilterExp>
         </Filters>
         <PageSettings>
@@ -27,15 +30,14 @@
         </PageSettings>
         <Parameters>
             <ReportParameter>
-                <Name>GUINbr</Name>
-                <Prompt>GUI Nbr</Prompt>
-                <Required>True</Required>
-                <ViewName>=Report.GetFieldSchema('TWNGUITrans.GUINbr')</ViewName>
+                <Name>GUIFormatCode</Name>
             </ReportParameter>
             <ReportParameter>
-                <Name>DocDate</Name>
+                <Name>RefNbr</Name>
+            </ReportParameter>
+            <ReportParameter>
+                <Name>GUINbr</Name>
                 <Required>True</Required>
-                <Type>DateTime</Type>
             </ReportParameter>
             <ReportParameter>
                 <Name>CommentNbr</Name>
@@ -1388,6 +1390,12 @@
             </Detail>
             <ReportHeader Name="reportHeaderSection1">
                 <Height>3.6cm</Height>
+                <Variables>
+                    <ReportVariable>
+                        <Name>IsInvoice</Name>
+                        <ValueExpr>=IIF(CInt(Substring([@GUIFormatCode],0, 1)) = 3, True, False)</ValueExpr>
+                    </ReportVariable>
+                </Variables>
                 <Items>
                     <Panel Name="panel1">
                         <Location>0px, 0px</Location>
@@ -1493,7 +1501,7 @@
                                     <VerticalAlign>Middle</VerticalAlign>
                                 </Style>
                                 <StyleName>Normal</StyleName>
-                                <Value>=[TWNGUITrans.BranchID_Branch_acctName]</Value>
+                                <Value>=IIf($IsInvoice = True, [TWNGUITrans.BranchID_Branch_acctName], [TWNGUITrans.GUITitle])</Value>
                             </TextBox>
                             <TextBox Name="textBox7">
                                 <Location>152px, 24px</Location>
@@ -1509,7 +1517,7 @@
                                     <VerticalAlign>Middle</VerticalAlign>
                                 </Style>
                                 <StyleName>Normal</StyleName>
-                                <Value>=[TWNGUITrans.OurTaxNbr]</Value>
+                                <Value>=IIf($IsInvoice = True, [TWNGUITrans.OurTaxNbr], [TWNGUITrans.TaxNbr])</Value>
                             </TextBox>
                             <TextBox Name="textBox8">
                                 <Location>152px, 48px</Location>
@@ -1519,7 +1527,7 @@
                                     <VerticalAlign>Middle</VerticalAlign>
                                 </Style>
                                 <StyleName>Normal</StyleName>
-                                <Value>=[CompanyAddress.AddressLine1]</Value>
+                                <Value>=IIf($IsInvoice = True, [CompanyAddress.AddressLine1], [CRAddress.AddressLine1])</Value>
                             </TextBox>
                         </Items>
                     </Panel>
@@ -1531,7 +1539,7 @@
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=Concat('中華民國     ', Year([@DocDate]) - 1911, '  年  ', Month([@DocDate]), '  月  ', Day([@DocDate]), '  日')</Value>
+                        <Value>=Concat('中華民國     ', Year([TWNGUITrans.TransDate]) - 1911, '  年  ', Month([TWNGUITrans.TransDate]), '  月  ', Day([TWNGUITrans.TransDate]), '  日')</Value>
                     </TextBox>
                     <TextBox Name="textBox12">
                         <Location>0px, 80px</Location>
@@ -2721,6 +2729,7 @@
                         <Size>88px, 56px</Size>
                         <Source>Database</Source>
                         <Value>=[UploadFile.Name]</Value>
+                        <VisibleExpr>=$IsInvoice = False</VisibleExpr>
                     </PictureBox>
                     <TextBox Name="textBox115">
                         <Location>352px, 104px</Location>
@@ -2799,7 +2808,7 @@
                         <Location>400px, 32px</Location>
                         <Size>392px, 48px</Size>
                         <StyleName>Normal</StyleName>
-                        <Value>=[CRAddress.AddressLine1]</Value>
+                        <Value>=IIf($IsInvoice = True, [CRAddress.AddressLine1], [CompanyAddress.AddressLine1])</Value>
                     </TextBox>
                     <TextBox Name="textBox78">
                         <Location>352px, 32px</Location>
@@ -2880,13 +2889,13 @@
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUITrans.GUITitle]</Value>
+                        <Value>=IIf($IsInvoice = True, [TWNGUITrans.GUITitle], [TWNGUITrans.BranchID_Branch_acctName])</Value>
                     </TextBox>
                     <TextBox Name="textBox87">
                         <Location>104px, 96px</Location>
                         <Size>96px, 16px</Size>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUITrans.TaxNbr]</Value>
+                        <Value>=IIf($IsInvoice = True, [TWNGUITrans.TaxNbr], [TWNGUITrans.OurTaxNbr])</Value>
                     </TextBox>
                     <TextBox Name="textBox88">
                         <Format>N0</Format>

@@ -86,7 +86,7 @@ namespace eGUICustomizations.Descriptor
                     reverse = sender.GetValue<ARRegister.docType>(e.Row).Equals(ARDocType.CreditMemo);
                     break;
                 case nameof(TWNGUITrans):
-                    vATCode = (string)sender.GetValue<TWNGUITrans.gUIFormatcode>(e.Row);
+                    vATCode = (string)sender.GetValue<TWNGUITrans.gUIFormatCode>(e.Row);
                     break;
                 case nameof(TWNManualGUIAP):
                     vATCode = (string)sender.GetValue<TWNManualGUIAP.vATInCode>(e.Row);
@@ -134,7 +134,7 @@ namespace eGUICustomizations.Descriptor
         {
             if (e.NewValue != null)
             {
-                string vATInCode = (string)sender.GetValue(e.Row, nameof(TWNGUITrans.GUIFormatcode));
+                string vATInCode = (string)sender.GetValue(e.Row, nameof(TWNGUITrans.GUIFormatCode));
 
                 if (string.IsNullOrEmpty(vATInCode))
                 {

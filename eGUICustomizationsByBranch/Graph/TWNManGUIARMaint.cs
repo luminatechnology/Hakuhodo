@@ -211,7 +211,7 @@ namespace eGUICustomizations.Graph
 
                 List<(string, int, string, decimal?, decimal?, decimal?, string)> list = new List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>>();
 
-                list.Add(ValueTuple.Create(data.GUINbr, 1, CSAnswers.PK.Find(this, bAccount?.NoteID, "REMITDESC")?.Value, 1, amount, amount, data.Remark));
+                list.Add(ValueTuple.Create(data.GUINbr, 1, CSAnswers.PK.Find(this, bAccount?.NoteID, "REMITDESC")?.Value, 1, amount, amount, $"{data.VatOutCode}-{data.GUINbr}-{data.Remark}"));
 
                 rp.GeneratePrintedLineDetails(list);
             }

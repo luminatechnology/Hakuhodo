@@ -27,7 +27,7 @@ namespace eGUICustomizations.Graph_Release
         {
             TWNGUITrans row = ViewGUITrans.Cache.CreateInstance() as TWNGUITrans;
 
-            row.GUIFormatcode = sGUITran.VATCode;
+            row.GUIFormatCode = sGUITran.VATCode;
             row.GUINbr        = sGUITran.GUINbr;
             row.SequenceNo    = SequenceNo;
 
@@ -50,7 +50,7 @@ namespace eGUICustomizations.Graph_Release
             row.CustVend      = sGUITran.AcctCD;
             row.CustVendName  = sGUITran.AcctName;
             row.DeductionCode = sGUITran.DeductionCode;
-            row.TransDate     = base.Accessinfo.BusinessDate;
+            row.TransDate     = sGUITran.TranDate ?? base.Accessinfo.BusinessDate;
             row.EGUIExcluded  = sGUITran.eGUIExcluded;
             row.Remark        = sGUITran.Remark;
             row.BatchNbr      = sGUITran.BatchNbr;
@@ -140,7 +140,7 @@ namespace eGUICustomizations.Graph_Release
                 }
                 else
                 {
-                    rp.ViewGUITrans.Current = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>
+                    rp.ViewGUITrans.Current = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>
                                                                             .And<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
                                                                                  .And<TWNGUITrans.orderNbr.IsEqual<@P.AsString>>>>.View
                                                                             .SelectSingleBound(this, null, regisExt.UsrVATOutCode, regisExt.UsrGUINbr, register.RefNbr);
@@ -163,19 +163,21 @@ namespace eGUICustomizations.Graph_Release
         }
 
         /// <summary>
-        /// ValueTuple : P1 : GUINbr, P2 : LineNbr, P3 : Description, P4 : Qty, P5 : UnitPrice, P6 : Amount, P7 : Remark
+        /// ValueTuple : P1 : GUINbr, P2 : LineNbr, P3 : Description, P4 : Qty, P5 : UnitPrice, P6 : Amount, P7 : Remark + GUIFormatCode + RefNbr
         /// </summary>
         /// <param name="sourceList"></param>
         public virtual void GeneratePrintedLineDetails(List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>> sourceList)
         {
             for (int i = 0; i < sourceList.Count; i++)
             {
-                (string gUINbr, int lineNbr, string descr, decimal? qty, decimal? unitPrice, decimal? amount, string remark) = sourceList[i];
+                (string gUINbr, int lineNbr, string descr, decimal? qty, decimal? unitPrice, decimal? amount, string combineStr) = sourceList[i];
 
                 TWNGUIPrintedLineDet line = PrintedLineDet.Cache.CreateInstance() as TWNGUIPrintedLineDet;
 
-                line.GUINbr  = gUINbr;
-                line.LineNbr = lineNbr;
+                line.GUINbr        = gUINbr;
+                line.LineNbr       = lineNbr;
+                line.GUIFormatcode = combineStr.Split('-')[0];
+                line.RefNbr        = combineStr.Split('-')[1];
 
                 line = PrintedLineDet.Insert(line);
 
@@ -183,7 +185,7 @@ namespace eGUICustomizations.Graph_Release
                 line.Qty       = qty;
                 line.UnitPrice = unitPrice;
                 line.Amount    = amount;
-                line.Remark    = remark;
+                line.Remark    = combineStr.Split('-')[2];
 
                 PrintedLineDet.Update(line);
             }
@@ -194,7 +196,7 @@ namespace eGUICustomizations.Graph_Release
         public virtual TWNGUITrans InitAndCheckOnAP(string gUINbr, string vATInCode)
         {
             SequenceNo = (int)PXSelectGroupBy<TWNGUITrans, Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
-                                                                 And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
+                                                                 And<TWNGUITrans.gUIFormatCode, Equal<Required<TWNGUITrans.gUIFormatCode>>>>,
                                               Aggregate<Count>>.Select(this, gUINbr, vATInCode).RowCount;
 
             if (vATInCode.EndsWith("3") == true) { ++SequenceNo; }
@@ -209,7 +211,7 @@ namespace eGUICustomizations.Graph_Release
         public virtual TWNGUITrans InitAndCheckOnAR(string gUINbr, string vATOutCode)
         {
             SequenceNo = (int)PXSelectGroupBy<TWNGUITrans, Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
-                                                                 And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
+                                                                 And<TWNGUITrans.gUIFormatCode, Equal<Required<TWNGUITrans.gUIFormatCode>>>>,
                                               Aggregate<Count>>.Select(this, gUINbr, vATOutCode).RowCount;
             
             if (vATOutCode.EndsWith("3") == true) { ++SequenceNo; }
@@ -312,6 +314,7 @@ namespace eGUICustomizations.Graph_Release
 
         public DateTime? GUIDate;
         public DateTime? GUIDecPeriod;
+        public DateTime? TranDate;
 
         public decimal? NetAmount;
         public decimal? TaxAmount;

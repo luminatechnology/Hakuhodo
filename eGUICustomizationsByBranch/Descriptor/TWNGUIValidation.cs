@@ -64,7 +64,7 @@ namespace eGUICustomizations.Descriptor
         public virtual void CheckGUINbrExisted(PXGraph graph, string gUINbr, string gUIFmtCode, string refNbr = null)
         {
             var select = new SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                           .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>
+                                                           .And<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>
                                                                 /*.And<TWNGUITrans.gUIStatus.IsEqual<TWNStringList.TWNGUIStatus.used>>*/>.View.ReadOnly(graph);
 
             if (!string.IsNullOrEmpty(gUIFmtCode) && gUIFmtCode.EndsWith("3") == true)
@@ -90,30 +90,30 @@ namespace eGUICustomizations.Descriptor
             {
                 case TWGUIFormatCode.vATInCode23 :
                     tWNGUITrans = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                                .And<Where<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>
-                                                                          .Or<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>>>>
+                                                                .And<Where<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>
+                                                                          .Or<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>>>>
                                                          .View.ReadOnly.Select(graph, gUINbr, TWGUIFormatCode.vATInCode21, TWGUIFormatCode.vATInCode25);
                     isCreditNote = (tWNGUITrans == null);
                     break;
 
                 case TWGUIFormatCode.vATInCode24 :
                     tWNGUITrans = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                                .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>>
+                                                                .And<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>>
                                                          .View.ReadOnly.Select(graph, gUINbr, TWGUIFormatCode.vATInCode22);
                     isCreditNote = (tWNGUITrans == null);
                     break;
 
                 case TWGUIFormatCode.vATOutCode33:
                     tWNGUITrans = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                                .And<Where<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>
-                                                                          .Or<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>>>>
+                                                                .And<Where<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>
+                                                                          .Or<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>>>>
                                                          .View.ReadOnly.Select(graph, gUINbr, TWGUIFormatCode.vATOutCode31 ,TWGUIFormatCode.vATOutCode35);
                     isCreditNote = (tWNGUITrans == null);
                     break;
 
                 case TWGUIFormatCode.vATOutCode34:
                     tWNGUITrans = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                                .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>>
+                                                                .And<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>>
                                                          .View.ReadOnly.Select(graph, gUINbr, TWGUIFormatCode.vATOutCode32);
                     isCreditNote = (tWNGUITrans == null);
                     break;

@@ -8,13 +8,16 @@
 	</px:PXDataSource>
 </asp:Content>
 <asp:Content ID="cont2" ContentPlaceHolderID="phF" Runat="Server">
-	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="50px" AllowAutoHide="false">
+	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="70px" AllowAutoHide="false">
 		<Template>
 			<px:PXLayoutRule ID="PXLayoutRule1" runat="server" StartColumn="True"/>
-			<px:PXSelector ID="PXSelector1" runat="server" DataField="GUINbr" CommitChanges="true"></px:PXSelector>
+			<px:PXSelector ID="PXSelector2" runat="server" DataField="GUIFormatCode" CommitChanges="true" DisplayMode="Hint"></px:PXSelector>
+			<px:PXSelector ID="PXSelector3" runat="server" DataField="RefNbr" CommitChanges="true" AutoRefresh="true"></px:PXSelector>
 			<px:PXLayoutRule ID="PXLayoutRule2" runat="server" StartColumn="True"/>
-			<px:PXNumberEdit ID="PXNumberEdit1" runat="server" DataField="OrigAmount"></px:PXNumberEdit>
+			<px:PXLabel ID="CustPXLabel" runat="server" ></px:PXLabel>
+			<px:PXSelector ID="PXSelector1" runat="server" DataField="GUINbr" CommitChanges="true" AutoRefresh="true"></px:PXSelector>
 			<px:PXLayoutRule ID="PXLayoutRule3" runat="server" StartColumn="True"/>
+			<px:PXNumberEdit ID="PXNumberEdit1" runat="server" DataField="OrigAmount"></px:PXNumberEdit>
 			<px:PXNumberEdit ID="PXNumberEdit2" runat="server" DataField="RevisedAmount"></px:PXNumberEdit>
 		</Template>
 	</px:PXFormView>
@@ -27,6 +30,8 @@
 		<Levels>
 			<px:PXGridLevel DataMember="PrintedLineDet">
 			    <Columns>
+					<px:PXGridColumn DataField="GUIFormatCode" Width="60"></px:PXGridColumn>
+					<px:PXGridColumn DataField="RefNbr" Width="120"></px:PXGridColumn>
 			        <px:PXGridColumn DataField="GUINbr" Width="120"></px:PXGridColumn>
 					<px:PXGridColumn DataField="LineNbr" Width="80"></px:PXGridColumn>
 					<px:PXGridColumn DataField="Descr" Width="260"></px:PXGridColumn>

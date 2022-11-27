@@ -33,7 +33,7 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "GUI Nbr.")]
         [PXSelector(typeof(Search2<TWNGUITrans.gUINbr, InnerJoin<Customer, On<Customer.acctCD, Equal<TWNGUITrans.custVend>>>,
                                                        Where<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
-                                                             And<TWNGUITrans.gUIFormatcode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
+                                                             And<TWNGUITrans.gUIFormatCode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
                                                                  And<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                                                      And<Customer.bAccountID, Equal<Current<TWNGUIInvCredit.customerID>>>>>>>),
                     typeof(TWNGUITrans.gUIStatus),
