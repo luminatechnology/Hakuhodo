@@ -1,0 +1,469 @@
+﻿<Report Name="tw642000.rpx">
+    <Report version="20211215" Name="report1">
+        <CommonSettings>
+            <ViewPdf>True</ViewPdf>
+        </CommonSettings>
+        <Filters>
+            <FilterExp>
+                <DataField>TWNGUITrans.GUIFormatcode</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@GUIFormatCode</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@GUIFormatCode</DataField>
+            </FilterExp>
+            <FilterExp>
+                <DataField>TWNGUITrans.OrderNbr</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@RefNbr</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@RefNbr</DataField>
+            </FilterExp>
+            <FilterExp>
+                <DataField>TWNGUITrans.GUINbr</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@GUINbr</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@GUINbr</DataField>
+            </FilterExp>
+        </Filters>
+        <Parameters>
+            <ReportParameter>
+                <ColumnSpan>2</ColumnSpan>
+                <Name>GUIFormatCode</Name>
+                <Prompt>GUI Format Code</Prompt>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUIFormatcode')</ViewName>
+            </ReportParameter>
+            <ReportParameter>
+                <ColumnSpan>2</ColumnSpan>
+                <Name>RefNbr</Name>
+                <Prompt>Reference Nbr.</Prompt>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.RefNbr,GUIFormatCode')</ViewName>
+            </ReportParameter>
+            <ReportParameter>
+                <ColumnSpan>2</ColumnSpan>
+                <Name>GUINbr</Name>
+                <Prompt>GUI Nbr.</Prompt>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUINbr,RefNbr')</ViewName>
+            </ReportParameter>
+        </Parameters>
+        <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>
+        <Tables>
+            <ReportTable Name="TWNGUITrans">
+                <Fields>
+                    <ReportField Name="B2CPrinted">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="BatchNbr">
+                    </ReportField>
+                    <ReportField Name="BatchNbr_Batch_description">
+                    </ReportField>
+                    <ReportField Name="BatchNbr_description">
+                    </ReportField>
+                    <ReportField Name="BranchID">
+                    </ReportField>
+                    <ReportField Name="BranchID_Branch_acctName">
+                    </ReportField>
+                    <ReportField Name="BranchID_description">
+                    </ReportField>
+                    <ReportField Name="BranchID_Segment1">
+                    </ReportField>
+                    <ReportField Name="CarrierID">
+                    </ReportField>
+                    <ReportField Name="CarrierType">
+                    </ReportField>
+                    <ReportField Name="ChineseAmt">
+                    </ReportField>
+                    <ReportField Name="ClearingDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Day">
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Hour">
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Month">
+                    </ReportField>
+                    <ReportField Name="ClearingDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="CustomType">
+                    </ReportField>
+                    <ReportField Name="CustVend">
+                    </ReportField>
+                    <ReportField Name="CustVend_BAccount2_acctName">
+                    </ReportField>
+                    <ReportField Name="CustVend_description">
+                    </ReportField>
+                    <ReportField Name="CustVendName">
+                    </ReportField>
+                    <ReportField Name="DeductionCode">
+                    </ReportField>
+                    <ReportField Name="DeductionCode_CSAttributeDetail_description">
+                    </ReportField>
+                    <ReportField Name="DeductionCode_description">
+                    </ReportField>
+                    <ReportField Name="DocType">
+                    </ReportField>
+                    <ReportField Name="EGUIExcluded">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="EGUIExported">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="EGUIExportedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="ExportMethods">
+                    </ReportField>
+                    <ReportField Name="ExportMethods_description">
+                    </ReportField>
+                    <ReportField Name="ExportMethods_TWNExportMethods_description">
+                    </ReportField>
+                    <ReportField Name="ExportTicketNbr">
+                    </ReportField>
+                    <ReportField Name="ExportTicketType">
+                    </ReportField>
+                    <ReportField Name="ExportTicketType_description">
+                    </ReportField>
+                    <ReportField Name="ExportTicketType_TWNExportTicketTypes_description">
+                    </ReportField>
+                    <ReportField Name="GUIControlCode">
+                    </ReportField>
+                    <ReportField Name="GUIDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDate_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDate_Day">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Hour">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Month">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="GUIDate_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Date">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Day">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Hour">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Month">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Quarter">
+                    </ReportField>
+                    <ReportField Name="GUIDecPeriod_Time">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="GUIDirection">
+                    </ReportField>
+                    <ReportField Name="GUIFormatcode">
+                    </ReportField>
+                    <ReportField Name="GUINbr">
+                    </ReportField>
+                    <ReportField Name="GUIStatus">
+                    </ReportField>
+                    <ReportField Name="GUITitle">
+                    </ReportField>
+                    <ReportField Name="IdentityID">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="NetAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NetAmtRemain">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="NPONbr">
+                    </ReportField>
+                    <ReportField Name="NPONbr_description">
+                    </ReportField>
+                    <ReportField Name="NPONbr_TWNNPOTable_descr">
+                    </ReportField>
+                    <ReportField Name="OrderNbr">
+                    </ReportField>
+                    <ReportField Name="OurTaxNbr">
+                    </ReportField>
+                    <ReportField Name="PrintCount">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="PrintedDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Day">
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Hour">
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Month">
+                    </ReportField>
+                    <ReportField Name="PrintedDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="QREncrypter">
+                    </ReportField>
+                    <ReportField Name="Remark">
+                    </ReportField>
+                    <ReportField Name="Selected">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="SequenceNo">
+                        <DataType>Int32</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxAmtRemain">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID">
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID_description">
+                    </ReportField>
+                    <ReportField Name="TaxCategoryID_TaxCategory_descr">
+                    </ReportField>
+                    <ReportField Name="TaxID">
+                    </ReportField>
+                    <ReportField Name="TaxID_description">
+                    </ReportField>
+                    <ReportField Name="TaxID_Tax_descr">
+                    </ReportField>
+                    <ReportField Name="TaxNbr">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID_description">
+                    </ReportField>
+                    <ReportField Name="TaxZoneID_TaxZone_descr">
+                    </ReportField>
+                    <ReportField Name="TransDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="TransDate_Day">
+                    </ReportField>
+                    <ReportField Name="TransDate_Hour">
+                    </ReportField>
+                    <ReportField Name="TransDate_Month">
+                    </ReportField>
+                    <ReportField Name="TransDate_Quarter">
+                    </ReportField>
+                    <ReportField Name="tstamp">
+                    </ReportField>
+                    <ReportField Name="VATType">
+                    </ReportField>
+                </Fields>
+                <FullName>eGUICustomizations.DAC.TWNGUITrans</FullName>
+            </ReportTable>
+            <ReportTable Name="TWNPrintedLineFilter">
+                <Fields>
+                    <ReportField Name="GUIFormatcode">
+                    </ReportField>
+                    <ReportField Name="GUIFormatcode_CSAttributeDetail_description">
+                    </ReportField>
+                    <ReportField Name="GUIFormatcode_description">
+                    </ReportField>
+                    <ReportField Name="GUINbr">
+                    </ReportField>
+                    <ReportField Name="OrigAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RefNbr">
+                    </ReportField>
+                    <ReportField Name="RevisedAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                </Fields>
+                <FullName>eGUICustomizations.Graph.TWNPrintedLineFilter</FullName>
+            </ReportTable>
+        </Tables>
+        <Version>20211215</Version>
+        <Sections>
+            <Detail Name="detailSection1">
+                <Height>1.48148cm</Height>
+                <Items>
+                    <SubReport Name="subReport1">
+                        <Location>0px, 0px</Location>
+                        <Parameters>
+                            <ExternalParameter>
+                                <Name>GUIFormatCode</Name>
+                                <ValueExpr>=[TWNGUITrans.GUIFormatcode]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>RefNbr</Name>
+                                <ValueExpr>=[TWNGUITrans.OrderNbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>GUINbr</Name>
+                                <ValueExpr>=[TWNGUITrans.GUINbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>CommentNbr</Name>
+                                <Type>Integer</Type>
+                                <ValueExpr>1</ValueExpr>
+                            </ExternalParameter>
+                        </Parameters>
+                        <ReportName>TW642001.rpx</ReportName>
+                        <Size>696px, 24px</Size>
+                    </SubReport>
+                    <SubReport Name="subReport2">
+                        <Location>0px, 32px</Location>
+                        <Parameters>
+                            <ExternalParameter>
+                                <Name>GUIFormatCode</Name>
+                                <ValueExpr>=[TWNGUITrans.GUIFormatcode]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>RefNbr</Name>
+                                <ValueExpr>=[TWNGUITrans.OrderNbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>GUINbr</Name>
+                                <ValueExpr>=[TWNGUITrans.GUINbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>CommentNbr</Name>
+                                <Type>Integer</Type>
+                                <ValueExpr>2</ValueExpr>
+                            </ExternalParameter>
+                        </Parameters>
+                        <ReportName>TW642001.rpx</ReportName>
+                        <Size>696px, 24px</Size>
+                    </SubReport>
+                </Items>
+            </Detail>
+            <Detail Name="detailSection2">
+                <Height>1.48148cm</Height>
+                <Items>
+                    <SubReport Name="subReport3">
+                        <Location>0px, 0px</Location>
+                        <Parameters>
+                            <ExternalParameter>
+                                <Name>GUIFormatCode</Name>
+                                <ValueExpr>=[TWNGUITrans.GUIFormatcode]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>RefNbr</Name>
+                                <ValueExpr>=[TWNGUITrans.OrderNbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>GUINbr</Name>
+                                <ValueExpr>=[TWNGUITrans.GUINbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>CommentNbr</Name>
+                                <Type>Integer</Type>
+                                <ValueExpr>3</ValueExpr>
+                            </ExternalParameter>
+                        </Parameters>
+                        <ReportName>TW642001.rpx</ReportName>
+                        <Size>696px, 24px</Size>
+                    </SubReport>
+                    <SubReport Name="subReport4">
+                        <Location>0px, 32px</Location>
+                        <Parameters>
+                            <ExternalParameter>
+                                <Name>GUIFormatCode</Name>
+                                <ValueExpr>=[TWNGUITrans.GUIFormatcode]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>RefNbr</Name>
+                                <ValueExpr>=[TWNGUITrans.OrderNbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>GUINbr</Name>
+                                <ValueExpr>=[TWNGUITrans.GUINbr]</ValueExpr>
+                            </ExternalParameter>
+                            <ExternalParameter>
+                                <Name>CommentNbr</Name>
+                                <Type>Integer</Type>
+                                <ValueExpr>4</ValueExpr>
+                            </ExternalParameter>
+                        </Parameters>
+                        <ReportName>TW642001.rpx</ReportName>
+                        <Size>696px, 24px</Size>
+                    </SubReport>
+                </Items>
+            </Detail>
+        </Sections>
+    </Report>
+</Report>

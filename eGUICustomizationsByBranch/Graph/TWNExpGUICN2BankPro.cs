@@ -27,7 +27,7 @@ namespace eGUICustomizations.Graph
                                     Where<TWNGUITrans.eGUIExcluded, Equal<False>,
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                              And<TWNGUITrans.gUIFormatcode, In3<ARRegisterExt.VATOut33Att, VATOutCode34>,
+                                              And<TWNGUITrans.gUIFormatCode, In3<ARRegisterExt.VATOut33Att, VATOutCode34>,
                                                   And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
 
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;

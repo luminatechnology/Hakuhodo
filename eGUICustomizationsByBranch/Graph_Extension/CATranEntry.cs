@@ -33,9 +33,9 @@ namespace PX.Objects.CA
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            if (Base.CurrentDocument.Current == null || activateGUI.Equals(false)) { return; }
+            if (e.Row == null || activateGUI.Equals(false)) { return; }
 
-            decimal taxSum = 0;
+            decimal taxSum = 0m;
 
             foreach (TWNManualGUIBank row in ManGUIBank.Select())
             {
@@ -43,15 +43,15 @@ namespace PX.Objects.CA
 
                 if (tWNGUIValidation.errorOccurred.Equals(true))
                 {
-                    e.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(e.Row, row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
+                    ManGUIBank.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(row, row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
                 }
 
                 taxSum += row.TaxAmt.Value;
             }
 
-            if (taxSum != Base.CurrentDocument.Current.TaxTotal)
+            if (taxSum != 0m && taxSum != e.Row.TaxTotal)
             {
-                throw new PXException(TWMessages.ChkTotalGUIAmt);
+                ManGUIBank.Cache.RaiseExceptionHandling<TWNManualGUIBank.taxAmt>(ManGUIBank.Current, taxSum, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
             }
         }
 

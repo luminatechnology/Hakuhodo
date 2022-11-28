@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections;
-using System.Collections.Generic;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
@@ -12,6 +11,7 @@ using PX.Objects.CS;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using eGUICustomizations.Graph_Release;
+using eGUICustomizations.Graph;
 
 namespace PX.Objects.AR
 {
@@ -35,6 +35,11 @@ namespace PX.Objects.AR
                 {
                     actions.Add<ARInvoiceEntry_Extension>(e => e.printGUIInvoice,
                                                           a => a.WithCategory((PredefinedCategory)FolderType.ReportsFolder).PlaceAfter(s => s.printInvoice));
+                    actions.Add<ARInvoiceEntry_Extension>(e => e.printGUICreditNote,
+                                                          a => a.WithCategory((PredefinedCategory)FolderType.ReportsFolder).PlaceAfter(s => s.printInvoice));
+                    actions.Add<ARInvoiceEntry_Extension>(e => e.openGUIPrintedLineForm,
+                                                          a => a.WithCategory((PredefinedCategory)FolderType.InquiriesFolder).PlaceAfter(s => s.viewPayment));
+
                 });
             });
         }
@@ -77,20 +82,61 @@ namespace PX.Objects.AR
 
         public PXAction<ARInvoice> printGUIInvoice;
         [PXButton()]
-        [PXUIField(DisplayName = "GUI Invoice", MapEnableRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = "Print GUI Invoice", MapEnableRights = PXCacheRights.Select)]
         protected virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
         {
-            if (Base.Document.Current != null)
-            {
-                Dictionary<string, string> parameters = new Dictionary<string, string>
-                {
-                    [nameof(TWNGUITrans.GUINbr)] = Base.Document.Current.GetExtension<ARRegisterExt>().UsrGUINbr
-                };
+            var current = Base.Document.Current;
 
-                throw new PXReportRequiredException(parameters, SO.SOInvoiceEntry_Extension.GUIReportID, SO.SOInvoiceEntry_Extension.GUIReportID);
+            if (current != null)
+            {
+                var curExt = current.GetExtension<ARRegisterExt>();
+
+                new SO.SOInvoiceEntry_Extension().OpenGUIReport(false, curExt.UsrVATOutCode, current.RefNbr, curExt.UsrGUINbr);
             }
 
             return adapter.Get();
+        }
+
+        public PXAction<ARInvoice> printGUICreditNote;
+        [PXButton()]
+        [PXUIField(DisplayName = "Print GUI Credit Note", MapEnableRights = PXCacheRights.Select)]
+        protected virtual IEnumerable PrintGUICreditNote(PXAdapter adapter)
+        {
+            var current = Base.Document.Current;
+
+            if (current != null)
+            {
+                var curExt = current.GetExtension<ARRegisterExt>();
+
+                new SO.SOInvoiceEntry_Extension().OpenGUIReport(true, curExt.UsrVATOutCode, current.RefNbr, curExt.UsrGUINbr);
+            }
+
+            return adapter.Get();
+        }
+
+        public PXAction<ARInvoice> openGUIPrintedLineForm;
+        [PXButton()]
+        [PXUIField(DisplayName = "GUI Printed Line Details")]
+        protected virtual IEnumerable OpenGUIPrintedLineForm(PXAdapter adapter)
+        {
+            var current = Base.Document.Current;
+            var curExt = current.GetExtension<ARRegisterExt>();
+
+            if (string.IsNullOrEmpty(curExt.UsrGUINbr))
+            {
+                return adapter.Get();
+            }
+
+            var graph = PXGraph.CreateInstance<TWNPrintedLineDetMaint>();
+
+            graph.Filter.Insert(new TWNPrintedLineFilter()
+            {
+                GUIFormatcode = curExt.UsrVATOutCode,
+                RefNbr = current.RefNbr,
+                GUINbr = curExt.UsrGUINbr
+            });
+
+            throw new PXRedirectRequiredException(graph, "Navigation") { Mode = PXBaseRedirectException.WindowMode.NewWindow };
         }
         #endregion
 
@@ -115,6 +161,9 @@ namespace PX.Objects.AR
                                                                                         !string.IsNullOrEmpty(registerExt.UsrVATOutCode) &&
                                                                                         registerExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34));
 
+            Base.report.SetVisible(nameof(PrintGUIInvoice), activateGUI);
+            Base.report.SetVisible(nameof(PrintGUICreditNote), activateGUI);
+
             bool taxNbrBlank  = string.IsNullOrEmpty(registerExt.UsrTaxNbr);
             bool statusClosed = e.Row.Status.IsIn(ARDocStatus.Open, ARDocStatus.Closed);
 
@@ -122,9 +171,12 @@ namespace PX.Objects.AR
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, !statusClosed && string.IsNullOrEmpty(registerExt.UsrGUINbr));
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled && registerExt.UsrCreditAction != TWNStringList.TWNCreditAction.NO);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled);
 
-            printGUIInvoice.SetEnabled(!string.IsNullOrEmpty(registerExt.UsrGUINbr));   
+            bool hasGUINbr = !string.IsNullOrEmpty(registerExt.UsrGUINbr);
+
+            printGUIInvoice.SetEnabled(activateGUI && hasGUINbr && e.Row.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale));
+            printGUICreditNote.SetEnabled(activateGUI && hasGUINbr && e.Row.DocType == ARDocType.CreditMemo);
         }
 
         protected void _(Events.RowPersisting<ARInvoice> e, PXRowPersisting baseHandler)
@@ -141,11 +193,17 @@ namespace PX.Objects.AR
 
                     regisExt.UsrGUINbr = ARGUINbrAutoNumAttribute.GetNextNumber(e.Cache, 
                                                                                 e.Row, 
-                                                                                regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering : pref.GUI3CopiesNumbering, 
+                                                                                regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering :
+                                                                                                                                         regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode31 ? pref.GUI3CopiesManNumbering :
+                                                                                                                                                                                                  pref.GUI3CopiesNumbering, 
                                                                                 regisExt.UsrGUIDate);
 
                     new TWNGUIValidation().CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
                 }
+
+                object taxNbr = regisExt.UsrTaxNbr;
+                // Added a validation on save, not only fields with default value.
+                e.Cache.RaiseFieldVerifying<ARRegisterExt.usrTaxNbr>(e.Row, ref taxNbr);
             }
         }
 
@@ -178,7 +236,8 @@ namespace PX.Objects.AR
                         break;
                 }
 
-                registerExt.UsrCreditAction = TWNStringList.TWNCreditAction.CN;
+                registerExt.UsrCreditAction = TWNStringList.TWNCreditAction.VG;
+                registerExt.UsrB2CType      = TWNStringList.TWNB2CType.DEF;
                 registerExt.UsrCarrierID    = registerExt.UsrNPONbr = null;
             }
         }
@@ -194,6 +253,8 @@ namespace PX.Objects.AR
                 if (row.DocType == ARDocType.CreditMemo)
                 {
                     vATInCode = TWGUIFormatCode.vATOutCode33;
+
+                    e.Cache.SetValue<ARRegisterExt.usrCreditAction>(row, TWNStringList.TWNCreditAction.VG);
                 }
                 else if (row.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale))
                 {
@@ -228,7 +289,7 @@ namespace PX.Objects.AR
             {
                 bool prepayGUI = SelectFrom<ARRegister>.InnerJoin<TWNGUITrans>.On<TWNGUITrans.orderNbr.IsEqual<ARRegister.refNbr>>
                                                        .Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                              .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>>.View
+                                                              .And<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>>.View
                                                        .Select(rp, gUINbr, TWGUIFormatCode.vATOutCode35).TopFirst?.DocType == ARDocType.Prepayment;
 
                 if (prepayGUI == true && (string)e.NewValue == TWNStringList.TWNCreditAction.VG)

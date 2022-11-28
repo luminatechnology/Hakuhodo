@@ -21,7 +21,7 @@ namespace eGUICustomizations.Graph
         public PXCancel<TWNGUITrans> Cancel;
         public PXProcessing<TWNGUITrans,
                             Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-                                  And<TWNGUITrans.gUIFormatcode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
+                                  And<TWNGUITrans.gUIFormatCode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
                                        And<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                  Or<TWNGUITrans.eGUIExported, IsNull>>>>>> GUITranProc;
         //public PXProcessing<TWNGUITrans,
@@ -63,7 +63,8 @@ namespace eGUICustomizations.Graph
 
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
-                    bool isCM = gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode33;
+                    bool isCM = gUITrans.GUIFormatCode == TWGUIFormatCode.vATOutCode33;
+                    bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
                     ARRegister    register = ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
                     ARRegisterExt regisExt = register.GetExtension<ARRegisterExt>();
@@ -80,7 +81,7 @@ namespace eGUICustomizations.Graph
                     // 預計出貨日
                     lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd") + verticalBar;
                     // 稅率別 -> 1:應稅 2:零稅率 3:免稅 4:特殊稅率(需帶36 & 37欄位) 
-                    lines += (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATOutCode36, TWGUIFormatCode.vATOutCode37)) ? "4" : TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
+                    lines += (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATOutCode36, TWGUIFormatCode.vATOutCode37)) ? "4" : TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
                     // 訂單金額(未稅)
                     lines += gUITrans.NetAmount + verticalBar;
                     // 訂單稅額
@@ -142,15 +143,14 @@ namespace eGUICustomizations.Graph
                     lines += 0 + verticalBar + "\r\n";
                     #endregion
 
+                    bool isInclusive = invGraph.AmountInclusiveTax(register.TaxCalcMode, gUITrans.TaxID);
                     int num = 1;
                     string refNbr = string.Empty;
                     decimal? totalUP = 0m, totalEP = 0m, totalTA = 0m;
                     foreach (ARTran tran in invGraph.RetrieveARTran(gUITrans.OrderNbr))
                     {
-                        ARInvoice invoice = ARInvoice.PK.Find(graph, tran.TranType, tran.RefNbr);
-
-                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross,
-                                                                                 !string.IsNullOrEmpty(gUITrans.TaxNbr),
+                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(isInclusive == true,//invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross,
+                                                                                 !isB2C,
                                                                                  tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
                                                                                  tran.CuryTranAmt.Value/*tran.CuryExtPrice.Value*/);
 
@@ -182,7 +182,7 @@ namespace eGUICustomizations.Graph
                             // 未稅金額
                             lines += ExtPrice + verticalBar;
                             // 含稅金額
-                            lines += (invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt) + verticalBar;
+                            lines += (/*invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross*/ isInclusive == false ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt) + verticalBar;
                             // 健康捐
                             lines += 0 + verticalBar;
                             // 稅率別
@@ -196,7 +196,7 @@ namespace eGUICustomizations.Graph
                             refNbr   = isCM == false ? tran.RefNbr : tran.OrigInvoiceNbr;
                             totalUP += UnitPrice;
                             totalEP += ExtPrice;
-                            totalTA += invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt;
+                            totalTA += /*invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross*/ isInclusive == false ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt;
                         }
                     }
 
@@ -252,8 +252,6 @@ namespace eGUICustomizations.Graph
                         TWNGUIPrepayAdjust prepayAdj = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>.And<TWNGUIPrepayAdjust.sequenceNo.IsEqual<@P.AsInt>>>
                                                                                      .AggregateTo<Sum<TWNGUIPrepayAdjust.netAmt,
                                                                                                       Sum<TWNGUIPrepayAdjust.taxAmt>>>.View.ReadOnly.Select(graph, gUITrans.GUINbr, gUITrans.SequenceNo);
-
-                        bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
                         decimal? netAmt   = hasAdjust == false ? gUITrans.NetAmount + gUITrans.TaxAmount : prepayAdj.NetAmt + prepayAdj.TaxAmt;
                         decimal? grossAmt = hasAdjust == false ? gUITrans.NetAmount : prepayAdj.NetAmt;

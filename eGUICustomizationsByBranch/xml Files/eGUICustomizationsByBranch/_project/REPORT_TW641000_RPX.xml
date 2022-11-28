@@ -63,13 +63,42 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
         <ExportFileName>=Format('GUI Invoice {0} {1}', IsNull([TWNGUITrans.GUIFormatcode],''),IsNull([TWNGUITrans.GUINbr],''))</ExportFileName>
         <Filters>
             <FilterExp>
-                <DataField>TWNGUITrans.GUINbr</DataField>
-                <Value>@GUINbr</Value>
-            </FilterExp>
-            <FilterExp>
                 <Condition>NotEqual</Condition>
                 <DataField>TWNGUITrans.GUIStatus</DataField>
                 <Value>Voided</Value>
+            </FilterExp>
+            <FilterExp>
+                <DataField>TWNGUITrans.GUINbr</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@GUINbr</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@GUINbr</DataField>
+            </FilterExp>
+            <FilterExp>
+                <DataField>TWNGUITrans.GUIFormatcode</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@FormatCode</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@FormatCode</DataField>
+            </FilterExp>
+            <FilterExp>
+                <DataField>TWNGUITrans.OrderNbr</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@RefNBr</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@RefNbr</DataField>
             </FilterExp>
         </Filters>
         <PageSettings>
@@ -82,52 +111,25 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
         </PageSettings>
         <Parameters>
             <ReportParameter>
-                <DefaultValue>INV</DefaultValue>
-                <Name>DocType</Name>
-                <Prompt>Document Type</Prompt>
-                <ValidValues>
-                    <ParameterValue>
-                        <Label>Invoice</Label>
-                        <Value>INV</Value>
-                    </ParameterValue>
-                    <ParameterValue>
-                        <Label>DebitMemo</Label>
-                        <Value>DRM</Value>
-                    </ParameterValue>
-                    <ParameterValue>
-                        <Label>Credit Memo</Label>
-                        <Value>CRM</Value>
-                    </ParameterValue>
-                    <ParameterValue>
-                        <Label>Fin. Charge</Label>
-                        <Value>FCH</Value>
-                    </ParameterValue>
-                    <ParameterValue>
-                        <Label>Cash Sale</Label>
-                        <Value>CSL</Value>
-                    </ParameterValue>
-                    <ParameterValue>
-                        <Label>Void Cash Sale</Label>
-                        <Value>RCS</Value>
-                    </ParameterValue>
-                    <ParameterValue>
-                        <Label>Prepayment</Label>
-                        <Value>PPM</Value>
-                    </ParameterValue>
-                </ValidValues>
-                <Visible>False</Visible>
+                <ColumnSpan>2</ColumnSpan>
+                <Name>GUIFormatCode</Name>
+                <Prompt>GUI Format Code</Prompt>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUIFormatcode')</ViewName>
             </ReportParameter>
             <ReportParameter>
+                <ColumnSpan>2</ColumnSpan>
                 <Name>RefNbr</Name>
                 <Prompt>Reference Nbr.</Prompt>
-                <ViewName>=Report.GetFieldSchema('ARRegister.RefNbr,DocType')</ViewName>
-                <Visible>False</Visible>
+                <Required>True</Required>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.RefNbr,GUIFormatCode')</ViewName>
             </ReportParameter>
             <ReportParameter>
+                <ColumnSpan>2</ColumnSpan>
                 <Name>GUINbr</Name>
                 <Prompt>GUI Nbr.</Prompt>
                 <Required>True</Required>
-                <ViewName>=Report.GetFieldSchema('TWNGUITrans.GUINbr')</ViewName>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUINbr,RefNbr')</ViewName>
             </ReportParameter>
         </Parameters>
         <Relations>
@@ -166,18 +168,18 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <ParentName>TWNGUITrans</ParentName>
             </ReportRelation>
             <ReportRelation>
-                <ChildName>Customer</ChildName>
+                <ChildAlias>CustVend</ChildAlias>
+                <ChildName>BAccount2</ChildName>
                 <Links>
                     <RelationRow>
                         <ChildField>AcctCD</ChildField>
-                        <ParentField>=Trim(CustVend)</ParentField>
+                        <ParentField>=Trim([TWNGUITrans.CustVend])</ParentField>
                     </RelationRow>
                 </Links>
                 <ParentName>TWNGUITrans</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Contact</ChildName>
-                <JoinType>Inner</JoinType>
                 <Links>
                     <RelationRow>
                         <ChildField>BAccountID</ChildField>
@@ -185,20 +187,26 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </RelationRow>
                     <RelationRow>
                         <ChildField>ContactID</ChildField>
-                        <ParentField>DefBillContactID</ParentField>
+                        <ParentField>DefContactID</ParentField>
                     </RelationRow>
                 </Links>
-                <ParentName>Customer</ParentName>
+                <ParentAlias>CustVend</ParentAlias>
+                <ParentName>BAccount2</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Address</ChildName>
                 <Links>
                     <RelationRow>
+                        <ChildField>BAccountID</ChildField>
+                        <ParentField>BAccountID</ParentField>
+                    </RelationRow>
+                    <RelationRow>
                         <ChildField>AddressID</ChildField>
-                        <ParentField>DefBillAddressID</ParentField>
+                        <ParentField>DefAddressID</ParentField>
                     </RelationRow>
                 </Links>
-                <ParentName>Customer</ParentName>
+                <ParentAlias>CustVend</ParentAlias>
+                <ParentName>BAccount2</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Branch</ChildName>
@@ -1602,6 +1610,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="AcctReferenceNbr">
                     </ReportField>
+                    <ReportField Name="ALLOWANCE_Attributes">
+                    </ReportField>
                     <ReportField Name="AllowOverrideCury">
                         <DataType>Boolean</DataType>
                     </ReportField>
@@ -1824,6 +1834,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="MailInvoices">
                         <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="NORMALINV_Attributes">
                     </ReportField>
                     <ReportField Name="NoteActivity">
                     </ReportField>
@@ -2193,6 +2205,10 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="CustomType">
                     </ReportField>
                     <ReportField Name="CustVend">
+                    </ReportField>
+                    <ReportField Name="CustVend_BAccount2_acctName">
+                    </ReportField>
+                    <ReportField Name="CustVend_description">
                     </ReportField>
                     <ReportField Name="CustVendName">
                     </ReportField>
@@ -3082,6 +3098,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="Descr">
                     </ReportField>
+                    <ReportField Name="GUIFormatcode">
+                    </ReportField>
                     <ReportField Name="GUINbr">
                     </ReportField>
                     <ReportField Name="LastModifiedByID">
@@ -3122,6 +3140,8 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     <ReportField Name="Qty">
                         <DataType>Decimal</DataType>
                     </ReportField>
+                    <ReportField Name="RefNbr">
+                    </ReportField>
                     <ReportField Name="Remark">
                     </ReportField>
                     <ReportField Name="Tstamp">
@@ -3131,6 +3151,27 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                 </Fields>
                 <FullName>eGUICustomizations.DAC.TWNGUIPrintedLineDet</FullName>
+            </ReportTable>
+            <ReportTable Name="TWNPrintedLineFilter">
+                <Fields>
+                    <ReportField Name="GUIFormatcode">
+                    </ReportField>
+                    <ReportField Name="GUIFormatcode_CSAttributeDetail_description">
+                    </ReportField>
+                    <ReportField Name="GUIFormatcode_description">
+                    </ReportField>
+                    <ReportField Name="GUINbr">
+                    </ReportField>
+                    <ReportField Name="OrigAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RefNbr">
+                    </ReportField>
+                    <ReportField Name="RevisedAmount">
+                        <DataType>Decimal</DataType>
+                    </ReportField>
+                </Fields>
+                <FullName>eGUICustomizations.Graph.TWNPrintedLineFilter</FullName>
             </ReportTable>
         </Tables>
         <Version>20221017</Version>

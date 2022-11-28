@@ -10,7 +10,7 @@ namespace eGUICustomizations.Graph
         public PXCancel<TWNGUITrans> Cancel;
         public PXProcessing<TWNGUITrans,
                             Where<TWNGUITrans.eGUIExcluded.IsNotEqual<True>
-                                  .And<TWNGUITrans.gUIFormatcode.IsEqual<PX.Objects.AR.ARRegisterExt.VATOut33Att>
+                                  .And<TWNGUITrans.gUIFormatCode.IsEqual<PX.Objects.AR.ARRegisterExt.VATOut33Att>
                                        .And<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                  Or<TWNGUITrans.eGUIExported, IsNull>>>>>> GUITranProc;
         //public PXProcessing<TWNGUITrans,

@@ -71,7 +71,8 @@ namespace PX.Objects.AP
                             Remark        = row.Remark,
                             BatchNbr      = doc.BatchNbr,
                             DocType       = doc.DocType,
-                            OrderNbr      = doc.RefNbr
+                            OrderNbr      = doc.RefNbr,
+                            TranDate      = doc.DocDate
                         });
 
                         ///<remarks>This is only for Cottingham's request.</remarks>
@@ -171,7 +172,7 @@ namespace PX.Objects.AP
         public static int CountExistedRec(PXGraph graph, string gUINbr, string gUIFmtCode, string refNbr)
         {
             return SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                                 .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>
+                                                 .And<TWNGUITrans.gUIFormatCode.IsEqual<@P.AsString>>
                                                       .And<TWNGUITrans.orderNbr.IsEqual<@P.AsString>>>
                                           .View.ReadOnly.Select(graph, gUINbr, gUIFmtCode, refNbr).Count;
         }

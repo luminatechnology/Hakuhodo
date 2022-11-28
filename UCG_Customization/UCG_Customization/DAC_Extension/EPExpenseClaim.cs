@@ -16,6 +16,8 @@ using PX.SM;
 using PX.TM;
 using System.Collections.Generic;
 using System;
+using PX.Objects.CT;
+using PX.Objects.PM;
 
 namespace PX.Objects.EP
 {
@@ -89,6 +91,50 @@ namespace PX.Objects.EP
         [PXUIField(DisplayName = "ApproveWG10")]
         public virtual string UsrApproveWG10 { get; set; }
         public abstract class usrApproveWG10 : PX.Data.BQL.BqlString.Field<usrApproveWG10> { }
+        #endregion
+
+        #region UsrProjectID 
+        [PXDBInt]
+        [PXUIField(DisplayName = "Project ID",Required = true)]
+        [PXDefault(PersistingCheck = PXPersistingCheck.NullOrBlank)]
+        [PXDimensionSelector(ContractAttribute.DimensionName,
+                            typeof(Search2<Contract.contractID,
+                                           LeftJoin<EPEmployeeContract,
+                                                    On<EPEmployeeContract.contractID, Equal<Contract.contractID>,
+                                                    And<EPEmployeeContract.employeeID, Equal<Current2<EPExpenseClaim.employeeID>>>>>,
+                                           Where<Contract.isActive, Equal<True>,
+                                                 And<Contract.isCompleted, Equal<False>,
+                                                 And<Where<Contract.nonProject, Equal<True>,
+                                                           Or2<Where<Contract.baseType, Equal<CTPRType.contract>,
+                                                           And<FeatureInstalled<FeaturesSet.contractManagement>>>,
+                                                           Or<Contract.baseType, Equal<CTPRType.project>,
+                                                           And2<Where<Contract.visibleInEA, Equal<True>>,
+                                                           And2<FeatureInstalled<FeaturesSet.projectModule>,
+                                                           And2<Match<Current<AccessInfo.userName>>,
+                                                           And<Where<Contract.restrictToEmployeeList, Equal<False>,
+                                                           Or<EPEmployeeContract.employeeID, IsNotNull>>>>>>>>>>>>,
+                                           OrderBy<Desc<Contract.contractCD>>>),
+                             typeof(Contract.contractCD),
+                             typeof(Contract.contractCD),
+                             typeof(Contract.description),
+                             typeof(Contract.customerID),
+                             typeof(Contract.status),
+                             Filterable = true,
+                             ValidComboRequired = true,
+                             CacheGlobal = true,
+                             DescriptionField = typeof(Contract.description))]
+        [PXRestrictor(typeof(Where<Contract.defaultBranchID, Equal<Current<EPExpenseClaim.branchID>>, Or<Contract.defaultBranchID, IsNull>>), "專案所屬分公司與分公司不相符")]
+        public virtual int? UsrProjectID { get; set; }
+        public abstract class usrProjectID : PX.Data.BQL.BqlInt.Field<usrProjectID> { }
+        #endregion
+
+        #region unbound
+        #region IsApproving 
+        [PXBool]
+        [PXUIField(DisplayName = "IsApproving")]
+        public virtual bool? IsApproving { get; set; }
+        public abstract class isApproving : PX.Data.BQL.BqlBool.Field<isApproving> { }
+        #endregion
         #endregion
 
     }

@@ -10,6 +10,7 @@ using PX.Objects.CR;
 using PX.Objects.SO;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
+using PX.Objects.TX;
 
 namespace eGUICustomizations.Graph
 {
@@ -44,7 +45,7 @@ namespace eGUICustomizations.Graph
                                     Where<TWNGUITrans.eGUIExcluded, Equal<False>,
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                              And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
+                                              And<TWNGUITrans.gUIFormatCode, Equal<VATOutCode35>,
                                                   And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
 
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
@@ -105,6 +106,28 @@ namespace eGUICustomizations.Graph
 
                 //throw new PXOperationCompletedException(message);
             }
+        }
+
+        public bool AmountInclusiveTax(string taxCalcMode, string taxID)
+        {
+            bool value;
+            switch (taxCalcMode)
+            {
+                case TaxCalculationMode.Gross:
+                    value = false;
+                    break;
+                case TaxCalculationMode.Net:
+                    value = true;
+                    break;
+                case TaxCalculationMode.TaxSetting:
+                    value = Tax.PK.Find(this, taxID).TaxCalcLevel == CSTaxCalcLevel.Inclusive;
+                    break;
+                default:
+                    value = false;
+                    break;
+            }
+
+            return value;
         }
         #endregion
 
@@ -274,12 +297,14 @@ namespace eGUICustomizations.Graph
                             decimal? unitPrice = (aRTran.CuryDiscAmt == 0m) ? aRTran.UnitPrice : (aRTran.TranAmt / aRTran.Qty);
                             decimal? tranAmt = aRTran.TranAmt;
 
-                            if (string.IsNullOrEmpty(gUITrans.TaxNbr) && taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
+                            bool isInclusive = graph.AmountInclusiveTax(taxCalcMode, gUITrans.TaxID);
+
+                            if (string.IsNullOrEmpty(gUITrans.TaxNbr) && isInclusive == false)//taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
                             {
                                 unitPrice *= fixedRate;
                                 tranAmt *= fixedRate;
                             }
-                            else if (!string.IsNullOrEmpty(gUITrans.TaxNbr) && taxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross)
+                            else if (!string.IsNullOrEmpty(gUITrans.TaxNbr) && isInclusive == true)//taxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross)
                             {
                                 unitPrice /= fixedRate;
                                 tranAmt /= fixedRate;
@@ -370,7 +395,7 @@ namespace eGUICustomizations.Graph
         {
             string billType = null;
 
-            switch (gUITran.GUIFormatcode)
+            switch (gUITran.GUIFormatCode)
             {
                 case TWGUIFormatCode.vATOutCode35:
                 case TWGUIFormatCode.vATOutCode31:

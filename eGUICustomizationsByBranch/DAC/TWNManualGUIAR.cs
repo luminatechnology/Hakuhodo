@@ -27,9 +27,12 @@ namespace eGUICustomizations.DAC
         public virtual string Status { get; set; }
         public abstract class status : PX.Data.BQL.BqlString.Field<status> { }
         #endregion
-    
+
         #region CustomerID
-        [CustomerActive()]
+        //[CustomerActive()]
+        [PXDBInt()]
+        [PXUIField(DisplayName = "Customer/Vendor")]
+        [MultiBAccountSelector]
         public virtual int? CustomerID { get; set; }
         public abstract class customerID : PX.Data.BQL.BqlInt.Field<customerID> { }
         #endregion
@@ -53,9 +56,9 @@ namespace eGUICustomizations.DAC
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr,
                                   Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                         And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
-                                            And<TWNGUITrans.gUIFormatcode, NotEqual<ARRegisterExt.VATOut33Att>,
+                                            And<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut33Att>,
                                                 And<TWNGUITrans.taxNbr, Equal<Current<taxNbr>>>>>>>),
-                    typeof(TWNGUITrans.gUIFormatcode),
+                    typeof(TWNGUITrans.gUIFormatCode),
                     typeof(TWNGUITrans.netAmtRemain),
                     typeof(TWNGUITrans.taxAmtRemain),
                     Filterable = true,

@@ -5,6 +5,7 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CS;
+using PX.Objects.CR;
 using PX.Objects.TX;
 using eGUICustomizations.DAC;
 
@@ -85,7 +86,7 @@ namespace eGUICustomizations.Descriptor
                     reverse = sender.GetValue<ARRegister.docType>(e.Row).Equals(ARDocType.CreditMemo);
                     break;
                 case nameof(TWNGUITrans):
-                    vATCode = (string)sender.GetValue<TWNGUITrans.gUIFormatcode>(e.Row);
+                    vATCode = (string)sender.GetValue<TWNGUITrans.gUIFormatCode>(e.Row);
                     break;
                 case nameof(TWNManualGUIAP):
                     vATCode = (string)sender.GetValue<TWNManualGUIAP.vATInCode>(e.Row);
@@ -133,7 +134,7 @@ namespace eGUICustomizations.Descriptor
         {
             if (e.NewValue != null)
             {
-                string vATInCode = (string)sender.GetValue(e.Row, nameof(TWNGUITrans.GUIFormatcode));
+                string vATInCode = (string)sender.GetValue(e.Row, nameof(TWNGUITrans.GUIFormatCode));
 
                 if (string.IsNullOrEmpty(vATInCode))
                 {
@@ -149,7 +150,9 @@ namespace eGUICustomizations.Descriptor
 
                     if (validation.errorOccurred == true)
                     {
-                        throw new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel);
+                        //throw new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel);
+                        sender.RaiseExceptionHandling(this.FieldName, e.Row, e.NewValue,
+                                                      new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel));
                     }
                 }
             }
@@ -283,6 +286,37 @@ namespace eGUICustomizations.Descriptor
             Filterable = true;
             DirtyRead = true;
             DescriptionField = typeof(CSAttributeDetail.description);
+        }
+    }
+    #endregion
+
+    #region MultiBAccountSelctorAttribute
+    public class MultiBAccountSelectorAttribute : PXSelectorAttribute
+    {
+        public MultiBAccountSelectorAttribute() : base(typeof(Search<BAccount.bAccountID, Where<BAccount.type.IsIn<BAccountType.customerType,
+                                                                                                                   BAccountType.vendorType>>>),
+                                                       typeof(BAccount.acctCD))
+        {
+            SubstituteKey = typeof(BAccount.acctCD);
+            Filterable = true;
+            DirtyRead = true;
+            DescriptionField = typeof(BAccount.acctName);
+        }
+    }
+    #endregion
+
+    #region MultiBAccountSelctorRawAttribute
+    public class MultiBAccountSelctorRawAttribute : PXSelectorAttribute
+    {
+        public MultiBAccountSelctorRawAttribute() : base(typeof(Search<BAccount2.acctCD, Where<BAccount2.type.IsIn<BAccountType.customerType,
+                                                                                                                   BAccountType.vendorType,
+                                                                                                                   BAccountType.employeeType,
+                                                                                                                   BAccountType.combinedType>>>),
+                                                         typeof(BAccount2.acctName))
+        {
+            Filterable = true;
+            DirtyRead = true;
+            DescriptionField = typeof(BAccount2.acctName);
         }
     }
     #endregion

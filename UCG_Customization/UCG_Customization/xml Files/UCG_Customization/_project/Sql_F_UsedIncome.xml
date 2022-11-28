@@ -1,0 +1,41 @@
+﻿<Sql TableName="F_UsedIncome" SqlScriptPriority="2" CustomScript="#CDATA">
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER FUNCTION dbo.F_UsedIncome(@CompanyID int,@ProjectID int)
+RETURNS decimal(18,3)
+AS
+BEGIN
+	DECLARE @PM_Amount decimal(18,3);-- PM在途&實際收入
+	DECLARE @AR_Amount decimal(18,3);-- AR在途&實際收入
+	--DECLARE @AR_CMAmount decimal(18,3);-- AR在途&實際 折讓
+	DECLARE @ReturnValue decimal(18,3);
+
+	--=== PM在途&實際收入 ===
+	SELECT
+		@PM_Amount = SUM(CuryProgressiveTotal + CuryTransactionalTotal)
+	FROM PMProforma 
+	WHERE CompanyID = @CompanyID
+	And ProjectID = @ProjectID
+	And status <> 'C'
+	
+
+	--=== AR在途&實際收入 & 折讓===
+    SELECT 
+		@AR_Amount =SUM(t.CuryTranAmt * (case when r.DocType = 'CRM' then -1 else 1 end)) 
+	FROM PMProforma p
+	Inner Join ARRegister r on p.CompanyID = r.CompanyID
+		and p.ARInvoiceRefNbr = r.RefNbr
+    Inner Join ARTran t on r.CompanyID = t.CompanyID
+		and r.RefNbr = t.RefNbr
+		and r.DocType = t.TranType
+	Where p.CompanyID = @CompanyID
+		and p.ProjectID = @ProjectID;
+		
+	IF @PM_Amount is null Set @PM_Amount = 0 ;
+	IF @AR_Amount is null Set @AR_Amount = 0 ;
+	--IF @AR_CMAmount is null Set @AR_CMAmount = 0 ;
+
+	IF @PM_Amount > @AR_Amount Set @ReturnValue = @PM_Amount
+	ELSE SET @ReturnValue = @AR_Amount;
+
+    RETURN @ReturnValue;
+END;]]></CDATA>
+</Sql>

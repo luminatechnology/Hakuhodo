@@ -305,7 +305,7 @@ namespace eGUICustomizations.Graph
             {
                 message = string.Format(TWMessages.StatusNotUsed, gUITrans.GUINbr);
             }
-            else if (gUITrans.GUIFormatcode != TWGUIFormatCode.vATOutCode31 && gUITrans.GUIFormatcode != TWGUIFormatCode.vATOutCode35)
+            else if (gUITrans.GUIFormatCode != TWGUIFormatCode.vATOutCode31 && gUITrans.GUIFormatCode != TWGUIFormatCode.vATOutCode35)
             {
                 message = string.Format(TWMessages.FmtCodeIncort, gUITrans.GUINbr);
             }

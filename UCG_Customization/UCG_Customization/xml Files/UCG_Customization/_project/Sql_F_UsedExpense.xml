@@ -1,0 +1,113 @@
+﻿<Sql TableName="F_UsedExpense" SqlScriptPriority="2" CustomScript="#CDATA">
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER FUNCTION dbo.F_UsedExpense(
+	@CompanyID int,
+	@ProjectID int,
+	@TaskID int = null,
+	@InventoryID int = null, 
+	@AccountGroupID int= null)
+RETURNS decimal(18,3)
+AS
+BEGIN
+	--DECLARE @PO_Amount decimal(18,3);-- 在途PO
+	--DECLARE @AP_Amount decimal(18,3);-- 在途AP & 實際AP (AP明細對應專案 + 專案任務 的金額)
+	DECLARE @POAP_Amount decimal(18,3);--在途PO 在途AP & 實際AP
+	DECLARE @AP_SelfAmount decimal(18,3);-- 自建AP (AP明細對應專案 + 專案任務 的 金額)
+	DECLARE @EP_Amount decimal(18,3);-- EP在途 費用申請EP301000 status not in (H,C,R) 明細對應專案 + 專案任務 的 收據總額-稅額)
+
+	DECLARE @ReturnValue decimal(18,3);
+
+	--=== EP在途 ===
+	-- [未來CR]
+	-- SELECT 
+	-- 	@EP_Amount = SUM(e.CuryExtCost - e.CuryTaxTotal)
+	-- FROM PMTask t
+	-- Inner Join EPExpenseClaimDetails e on t.CompanyID =e.companyID
+	-- 	and t.TaskID = e.TaskID
+	-- 	and t.ProjectID = e.ContractID
+	-- Inner Join EPExpenseClaim ec on e.CompanyID =ec.companyID
+	-- 	and e.RefNbr = ec.RefNbr
+	-- Inner Join Account a on e.CompanyID = a.CompanyID
+	-- 	and e.ExpenseAccountID = a.AccountID
+	-- Where t.CompanyID = @CompanyID
+	-- And t.ProjectID = @ProjectID
+	-- And ec.Status not In('H','C','R')
+	-- --單筆處理
+	-- And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
+	-- And(@InventoryID is Null Or e.InventoryID = @InventoryID)--InventoryID
+	-- And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
+	-- ;
+	
+
+	--=== PO在途 & AP實際 & AP在途 ===
+	select
+		@POAP_Amount = SUM(
+			case
+				when POAmount > APAmount then POAmount
+				else APAmount
+			end
+		)
+	from
+		(
+			SELECT
+				l.OrderNbr,
+				(case when o.Status not in ('H', 'V', 'L', 'C') then l.CuryExtCost else 0 end) as POAmount,
+				SUM(IsNull(apt.CuryTranAmt,0) * (case when apt.TranType <> 'ADR' then 1 else -1 end)) as APAmount
+			FROM
+				PMTask t
+				Inner Join POLine l on t.CompanyID = l.CompanyID
+					and t.TaskID = l.TaskID
+					and t.ProjectID = l.ProjectID
+				Inner Join POOrder o on l.CompanyID = o.CompanyID
+					and l.OrderNbr = o.OrderNbr
+				Inner Join Account a on l.CompanyID = a.CompanyID
+					and l.ExpenseAcctID = a.AccountID
+				LEFT Join APTran apt on t.CompanyID = apt.CompanyID
+					and t.ProjectID = apt.ProjectID
+					and t.TaskID = apt.TaskID
+					and l.InventoryID = apt.InventoryID
+					and l.OrderNbr = apt.PONbr
+					and l.LineNbr = apt.POLineNbr
+					and l.ExpenseAcctID = apt.AccountID
+					and apt.TranType <>  'PPM'
+			Where t.CompanyID = @CompanyID
+				and t.ProjectID = @ProjectID
+				--單筆處理
+				And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
+				And(@InventoryID is Null Or l.InventoryID = @InventoryID)--InventoryID
+				And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
+			Group by l.OrderNbr, o.Status,l.CuryExtCost
+		) as PO_APSum;
+	--GroupBy 會造成總Summary分離
+	--Group by ProjectID,TaskID,InventoryID,AccountGroupID
+	
+	--== 自建AP==
+	SELECT 
+		@AP_SelfAmount = SUM(apt.CuryTranAmt * (case when apt.TranType <> 'ADR' then 1 else -1 end))
+		--(DocType:INV、PPM、ACR用加的) 、 (DocType:ADR 用扣的)
+	FROM PMTask t 
+	Inner Join APTran apt on t.CompanyID = apt.CompanyID
+		and t.ProjectID = apt.ProjectID
+		and t.TaskID = apt.TaskID
+		and apt.PONbr is null -- 自建不會有PONbr
+	Inner Join Account a on apt.CompanyID = a.CompanyID
+		and apt.AccountID = a.AccountID
+	Where t.CompanyID = @CompanyID
+		and t.ProjectID = @ProjectID
+		--單筆處理
+		And(@TaskID is null Or t.TaskID = @TaskID) -- taskID
+		And(@InventoryID is Null Or apt.InventoryID = @InventoryID)--InventoryID
+		And(@AccountGroupID is Null Or a.AccountGroupID = @AccountGroupID)--AccountGroup
+		;
+		
+
+	IF @POAP_Amount is null Set @POAP_Amount = 0 ;
+	IF @AP_SelfAmount is null Set @AP_SelfAmount = 0 ;
+	IF @EP_Amount is null Set @EP_Amount = 0 ;
+
+	--Max(在途PO - (在途AP + 實際AP),0) +  (在途AP + 實際AP)  + (在途EP + 自建AP)
+
+	Set @ReturnValue = @POAP_Amount + (@EP_Amount + @AP_SelfAmount);
+
+    RETURN @ReturnValue;
+END;]]></CDATA>
+</Sql>

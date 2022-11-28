@@ -3,6 +3,8 @@
   <col name="CompanyID" type="Int" default="Zero" />
   <col name="GUINbr" type="NVarChar(15)" />
   <col name="LineNbr" type="Int" />
+  <col name="GUIFormatCode" type="Char(2)" />
+  <col name="RefNbr" type="NVarChar(15)" />
   <col name="Descr" type="NVarChar(255)" nullable="true" />
   <col name="Qty" type="Decimal(25,6)" nullable="true" />
   <col name="UnitPrice" type="Decimal(19,6)" nullable="true" default="Zero" />
@@ -20,6 +22,8 @@
     <col name="CompanyID" />
     <col name="GUINbr" />
     <col name="LineNbr" />
+    <col name="GUIFormatCode" />
+    <col name="RefNbr" />
   </index>
   <index name="TWNGUIPrintedLineDet_NoteID" unique="true">
     <col name="NoteID" />

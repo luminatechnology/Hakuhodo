@@ -44,7 +44,7 @@ namespace eGUICustomizations.Graph
                 {
                     if (tWNGUIValidation.isCreditNote == false && !string.IsNullOrEmpty(row.GUINbr))
                     {
-                        InsertGUITran(row, Customer.PK.Find(this, row.CustomerID), true);
+                        InsertGUITran(row, BAccount.PK.Find(this, row.CustomerID), true);
                     }
                 }
 
@@ -74,7 +74,7 @@ namespace eGUICustomizations.Graph
                     {
                         TWNGUITrans tWNGUITrans = rp.InitAndCheckOnAR(manualGUIAR.GUINbr, manualGUIAR.VatOutCode);
 
-                        InsertGUITran(manualGUIAR, Customer.PK.Find(this, manualGUIAR.CustomerID), false);
+                        InsertGUITran(manualGUIAR, BAccount.PK.Find(this, manualGUIAR.CustomerID), false);
 
                         manualGUIAR.Status = TWNStringList.TWNGUIManualStatus.Released;
                         ManualGUIAR.Cache.MarkUpdated(manualGUIAR);
@@ -179,7 +179,7 @@ namespace eGUICustomizations.Graph
         #endregion
 
         #region Methods
-        private void InsertGUITran(TWNManualGUIAR data, Customer customer, bool isDeleted)
+        private void InsertGUITran(TWNManualGUIAR data, BAccount bAccount, bool isDeleted)
         {
             rp.CreateGUITrans(new STWNGUITran()
             {
@@ -189,7 +189,7 @@ namespace eGUICustomizations.Graph
                 BranchID      = data.BranchID,
                 GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
                 GUIDate       = data.GUIDate,
-                GUITitle      = customer?.AcctName,
+                GUITitle      = bAccount?.AcctName,
                 TaxZoneID     = data.TaxZoneID,
                 TaxCategoryID = data.TaxCategoryID,
                 TaxID         = data.TaxID,
@@ -197,8 +197,8 @@ namespace eGUICustomizations.Graph
                 OurTaxNbr     = data.OurTaxNbr,
                 NetAmount     = isDeleted == false ? data.NetAmt : 0m,
                 TaxAmount     = isDeleted == false ? data.TaxAmt : 0m,
-                AcctCD        = customer?.AcctCD,
-                AcctName      = customer?.AcctName,
+                AcctCD        = bAccount?.AcctCD,
+                AcctName      = bAccount?.AcctName,
                 eGUIExcluded  = data.VatOutCode == TWGUIFormatCode.vATOutCode32,
                 Remark        = isDeleted == false ? data.Remark : string.Format(TWMessages.DeleteInfo, this.Accessinfo.UserName),
                 OrderNbr      = data.GUINbr
@@ -211,7 +211,7 @@ namespace eGUICustomizations.Graph
 
                 List<(string, int, string, decimal?, decimal?, decimal?, string)> list = new List<ValueTuple<string, int, string, decimal?, decimal?, decimal?, string>>();
 
-                list.Add(ValueTuple.Create(data.GUINbr, 1, CSAnswers.PK.Find(this, customer?.NoteID, "REMITDESC")?.Value, 1, amount, amount, data.Remark));
+                list.Add(ValueTuple.Create(data.GUINbr, 1, CSAnswers.PK.Find(this, bAccount?.NoteID, "REMITDESC")?.Value, 1, amount, amount, $"{data.VatOutCode}-{data.GUINbr}-{data.Remark}"));
 
                 rp.GeneratePrintedLineDetails(list);
             }
