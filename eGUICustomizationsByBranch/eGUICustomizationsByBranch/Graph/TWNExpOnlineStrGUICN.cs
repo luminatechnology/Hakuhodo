@@ -7,12 +7,15 @@ namespace eGUICustomizations.Graph
     public class TWNExpOnlineStrGUICN : PXGraph<TWNExpOnlineStrGUICN>
     {
         #region Features
-        public PXCancel<TWNGUITrans> Cancel;
-        public PXProcessing<TWNGUITrans,
-                            Where<TWNGUITrans.eGUIExcluded.IsNotEqual<True>
-                                  .And<TWNGUITrans.gUIFormatCode.IsEqual<PX.Objects.AR.ARRegisterExt.VATOut33Att>
-                                       .And<Where<TWNGUITrans.eGUIExported, Equal<False>,
-                                                 Or<TWNGUITrans.eGUIExported, IsNull>>>>>> GUITranProc;
+        public PXCancel<WHTTranFilter> Cancel;
+        public PXFilter<WHTTranFilter> Filter;
+        public PXFilteredProcessing<TWNGUITrans,
+                                    WHTTranFilter,
+                                    Where<TWNGUITrans.eGUIExcluded, NotEqual<True>,
+                                          And<TWNGUITrans.gUIFormatCode, Equal<PX.Objects.AR.ARRegisterExt.VATOut33Att>,
+                                               And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
+                                                          Or<TWNGUITrans.eGUIExported, IsNull>>,
+                                                    And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
         //public PXProcessing<TWNGUITrans,
         //                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
         //                          And<TWNGUITrans.gUIFormatcode, Equal<PX.Objects.AR.ARRegisterExt.VATOut33Att>,
