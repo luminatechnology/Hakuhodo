@@ -7,13 +7,26 @@ using PX.Data.Update;
 using PX.Objects.PM;
 using PMX = PX.Objects.PM;
 using PX.Objects.CT;
+using PX.Objects.EP;
 
 namespace PX.Objects.CN.Subcontracts.SC.Graphs
-{ 
-    public class SubcontractEntryUCGExt:PXGraphExtension<SubcontractEntry>
+{
+    public class SubcontractEntryUCGExt : PXGraphExtension<SubcontractEntry>
     {
+
         #region Event
         #region POOrder
+        protected virtual void _(Events.RowSelected<POOrder> e)
+        {
+            if (e.Row == null) return;
+            if (e.Cache.GetStatus(e.Row) != PXEntryStatus.Updated && e.Row.GetExtension<POOrderUCGExt>()?.IsApproving == true && Base.Accessinfo.ScreenID == "SC.30.10.00")
+            {
+                // Acuminator disable once PX1073 ExceptionsInRowPersisted [Justification]
+                // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
+                throw new PXRedirectRequiredException(PXGraph.CreateInstance<EPApprovalProcess>(), "EPApprovalProcess");
+            }
+        }
+
         protected virtual void _(Events.FieldUpdated<POOrder, POOrder.branchID> e)
         {
             if (e.Row == null) return;
@@ -75,7 +88,7 @@ namespace PX.Objects.CN.Subcontracts.SC.Graphs
 
         #region CacheAttached
         [PXMergeAttributes(Method = MergeMethod.Append)]
-        [PXRestrictor(typeof(Where<PMProject.defaultBranchID,Equal<Current<POOrder.branchID>>,Or<PMProject.defaultBranchID,IsNull>>), "專案所屬分公司與分公司不相符")]
+        [PXRestrictor(typeof(Where<PMProject.defaultBranchID, Equal<Current<POOrder.branchID>>, Or<PMProject.defaultBranchID, IsNull>>), "專案所屬分公司與分公司不相符")]
         protected virtual void _(Events.CacheAttached<POOrder.projectID> e) { }
         #endregion
 

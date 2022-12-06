@@ -21,21 +21,31 @@ namespace UCG_Customization.Utils
         const string UD_APPROVE4 = "AttributeAPPROVER4";
         /**User Defined */
         const string UD_APPROVE5 = "AttributeAPPROVER5";
+
+        /// <summary> 無簽核層級Project:INT001 </summary>
+        const string NO_APPROVE_PROJECT_INT001 = "INT001";
+        /// <summary> 無簽核層級Project:INT002 </summary>
+        const string NO_APPROVE_PROJECT_INT002 = "INT002";
         #endregion
 
-       
-        public static void SetUsrApproveWG(PXCache cache, object row, string deptID,string empAcctCD, int? projectID = null)
+
+        public static void SetUsrApproveWG(PXCache cache, object row, string deptID, string empAcctCD, int? projectID = null)
         {
             PXGraph graph = new PXGraph();
-
             #region 取得層級資料
             string[] saveAcctCDs = new string[TREE_SIZE];
-            if (projectID == null || projectID == ProjectDefaultAttribute.NonProject())
+            PMProject project = PMProject.PK.Find(cache.Graph, projectID);
+            string projectCD = project?.ContractCD.Trim();
+            if (projectID == null 
+                || projectID == ProjectDefaultAttribute.NonProject() 
+                || projectCD == NO_APPROVE_PROJECT_INT001 
+                || projectCD == NO_APPROVE_PROJECT_INT002)
             {
                 #region 一般情境
                 //取得當前階層
                 EPCompanyTree thisTree = GetCompanyTreeByDeptID(graph, deptID);
-                if (thisTree != null) {
+                if (thisTree != null)
+                {
                     saveAcctCDs = GetUsrApproveWG(graph, thisTree);
                 }
                 #endregion
@@ -59,7 +69,8 @@ namespace UCG_Customization.Utils
                 if (thisAcctCD == empAcctCD) isSelf = true;
                 //當曾經為自己時，當前的acctCD 要拿上一層的
                 //如果當前的acctCD為空，也是拿上一層(94要填滿
-                if (isSelf || thisAcctCD == null) {
+                if (isSelf || thisAcctCD == null)
+                {
                     thisAcctCD = preAcctCD ?? thisAcctCD;//如果為最上層人員....preAcctCD會為null，那就先帶自己[----這段之後可能會改----]
                 }
                 cache.SetValueExt(row, string.Format(USR_APPROVE_WG, i), thisAcctCD);
@@ -67,7 +78,7 @@ namespace UCG_Customization.Utils
             }
         }
 
-        private static string[] GetUsrApproveWGByNonProject(PXGraph graph,int? projectID)
+        private static string[] GetUsrApproveWGByNonProject(PXGraph graph, int? projectID)
         {
             //建立虛構空間
             string[] saveAcctCDs = new string[TREE_SIZE];

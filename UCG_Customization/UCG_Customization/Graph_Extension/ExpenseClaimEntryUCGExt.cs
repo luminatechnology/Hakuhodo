@@ -1,7 +1,10 @@
 ﻿using PX.Data;
 using PX.Data.Update;
+using PX.Objects.AR;
+using PX.Objects.CT;
 using PX.Objects.GL;
 using PX.Objects.IN;
+using PX.Objects.PM;
 using System;
 using UCG_Customization.Descriptor;
 using UCG_Customization.Utils;
@@ -18,12 +21,11 @@ namespace PX.Objects.EP
             var now = Base.ExpenseClaim.Current;
             baseMethod();
             if (now == null) return;
-            //當Approved || Rejected 時，回到EP503010
+            //當Approved 時，回到EP503010
             if (now.GetExtension<EPExpenseClaimWorkGroupExt>()?.IsApproving == true && Base.Accessinfo.ScreenID == "EP.30.10.00")
             {
                 throw new PXRedirectRequiredException(PXGraph.CreateInstance<EPApprovalProcess>(), "EPApprovalProcess");
             }
-
         }
         #endregion
 
@@ -55,7 +57,8 @@ namespace PX.Objects.EP
             {
                 Base.ExpenseClaimDetails.Cache.SetDefaultExt<EPExpenseClaimDetails.contractID>(item);
                 Base.ExpenseClaimDetails.Cache.SetDefaultExt<EPExpenseClaimDetails.taskID>(item);
-                Base.ExpenseClaimDetails.Cache.SetStatus(item, PXEntryStatus.Updated);
+                if (Base.ExpenseClaimDetails.Cache.GetStatus(item) == PXEntryStatus.Notchanged)
+                    Base.ExpenseClaimDetails.Cache.SetStatus(item, PXEntryStatus.Updated);
             }
         }
         #endregion
@@ -68,12 +71,24 @@ namespace PX.Objects.EP
             e.Cache.SetDefaultExt<EPExpenseClaimDetailsUCGExt.budgetAmt>(e.Row);
         }
 
+        protected virtual void _(Events.RowInserting<EPExpenseClaimDetails> e, PXRowInserting baseHandler)
+        {
+            if (e.Row == null) return;
+            baseHandler?.Invoke(e.Cache, e.Args);
+            e.Cache.SetDefaultExt<EPExpenseClaimDetails.contractID>(e.Row);
+            e.Cache.SetDefaultExt<EPExpenseClaimDetails.taskID>(e.Row);
+            e.Cache.SetDefaultExt<EPExpenseClaimDetails.customerID>(e.Row);
+            e.Cache.SetDefaultExt<EPExpenseClaimDetails.customerLocationID>(e.Row);
+            e.Cache.SetDefaultExt<EPExpenseClaimDetails.billable>(e.Row);
+        }
+
         protected virtual void _(Events.RowSelected<EPExpenseClaimDetails> e)
         {
             if (e.Row == null) return;
             ValidateUsedExpense(e.Row);
         }
 
+        #region 2022-11-17 Alton mark:[未來CR]
         protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetails.inventoryID> e, PXFieldUpdated baseMethod)
         {
             baseMethod?.Invoke(e.Cache, e.Args);
@@ -101,12 +116,38 @@ namespace PX.Objects.EP
         //        e.Cache.SetValueExt<EPExpenseClaimDetails.taxCategoryID>(e.Row, item.TaxCategoryID);
         //    }
         //}
+        #endregion
 
         protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetails.contractID> e, PXFieldDefaulting baseHandler)
         {
             baseHandler?.Invoke(e.Cache, e.Args);
             if (e.Row == null) return;
             e.NewValue = Base.ExpenseClaim.Current.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID;
+        }
+
+        protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetails.customerLocationID> e, PXFieldDefaulting baseHandler)
+        {
+            if (e.Row == null) return;
+            if (!ProjectDefaultAttribute.IsNonProject(e.Row.ContractID))
+            {
+                Contract projectCust = PXSelectorAttribute.Select<EPExpenseClaimDetails.contractID>(e.Cache, e.Row) as Contract;
+                var custoemr = Customer.PK.Find(Base, projectCust?.CustomerID);
+                e.NewValue = custoemr?.DefLocationID;
+            }
+            else
+            {
+                baseHandler?.Invoke(e.Cache, e.Args);
+            }
+        }
+
+        protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetails.billable> e, PXFieldDefaulting baseHandler)
+        {
+            if (e.Row == null) return;
+            baseHandler?.Invoke(e.Cache, e.Args);
+            if (e.Row.CustomerLocationID != null)
+            {
+                e.NewValue = true;
+            }
         }
 
         protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.usedExpense> e)
@@ -121,6 +162,7 @@ namespace PX.Objects.EP
                    e.Row.InventoryID,
                    account?.AccountGroupID);
         }
+
         protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetailsUCGExt.budgetAmt> e)
         {
             if (e.Row == null) return;

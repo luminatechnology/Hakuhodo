@@ -3,17 +3,37 @@ using PX.Data.Update;
 using PX.Objects.GL;
 using UCG_Customization.Utils;
 using UCG_Customization.Descriptor;
+using PX.Objects.EP;
+using PX.Objects.PM;
 
 namespace PX.Objects.AP
 {
     public class APInvoiceEntryUCGExt : PXGraphExtension<PX.Objects.AP.APInvoiceEntry>
     {
+        #region Override
+        public delegate void PersistDelegate();
+        [PXOverride]
+        public virtual void Persist(PersistDelegate baseMethod)
+        {
+            var now = Base.Document.Current;
+            baseMethod();
+            if (now == null) return;
+            //當Approved 時，回到EP503010
+            if (now.GetExtension<APRegisterUCGExt>()?.IsApproving == true && Base.Accessinfo.ScreenID == "AP.30.10.00")
+            {
+                throw new PXRedirectRequiredException(PXGraph.CreateInstance<EPApprovalProcess>(), "EPApprovalProcess");
+            }
+        }
+        #endregion
+
         #region Event
         #region APInvoice
         protected virtual void _(Events.FieldUpdated<APInvoice,APInvoice.branchID> e)
         {
             if (e.Row == null) return;
-            e.Cache.SetValueExt<APInvoice.projectID>(e.Row,null);
+            
+            if(e.Row.ProjectID != ProjectDefaultAttribute.NonProject()) 
+                e.Cache.SetValueExt<APInvoice.projectID>(e.Row,null);
         }
         #endregion
 
