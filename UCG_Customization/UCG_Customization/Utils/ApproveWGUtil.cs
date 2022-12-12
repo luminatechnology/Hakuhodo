@@ -3,6 +3,7 @@ using PX.Objects.EP;
 using PX.Objects.PM;
 using PX.TM;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace UCG_Customization.Utils
 {
@@ -36,10 +37,9 @@ namespace UCG_Customization.Utils
             string[] saveAcctCDs = new string[TREE_SIZE];
             PMProject project = PMProject.PK.Find(cache.Graph, projectID);
             string projectCD = project?.ContractCD.Trim();
-            if (projectID == null 
-                || projectID == ProjectDefaultAttribute.NonProject() 
-                || projectCD == NO_APPROVE_PROJECT_INT001 
-                || projectCD == NO_APPROVE_PROJECT_INT002)
+            if (projectID == null
+                || projectID == ProjectDefaultAttribute.NonProject()
+                || IsNoApproveProject(projectCD))
             {
                 #region 一般情境
                 //取得當前階層
@@ -129,6 +129,21 @@ namespace UCG_Customization.Utils
             tempIDs.Add(parentTree.WorkGroupID);
 
             LoopGetCompanyTreeByParentID(graph, tempIDs, parentTree.ParentWGID);
+        }
+
+        /// <summary>
+        /// 判斷是否是要忽略的Project
+        /// </summary>
+        private static bool IsNoApproveProject(string projectCD)
+        {
+            string[] noApproveProject = { NO_APPROVE_PROJECT_INT001, NO_APPROVE_PROJECT_INT002 };
+            foreach (var cd in noApproveProject)
+            {
+                //start with NoApproveProject
+                string pattern = $"^({cd})[A-Za-z0-9]*$";
+                if (Regex.IsMatch(projectCD, pattern)) return true;
+            }
+            return false;
         }
 
         #region BQL

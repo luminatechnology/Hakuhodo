@@ -88,6 +88,19 @@ namespace PX.Objects.EP
             ValidateUsedExpense(e.Row);
         }
 
+        protected virtual void _(Events.FieldDefaulting<EPExpenseClaimDetails, EPExpenseClaimDetails.taskID> e ,PXFieldDefaulting baseMethod)
+        {
+            if (e.Row == null) return;
+            //UAT & PRD nonProject 莫名有對應的 Default TaskID，因此nonProject直接預設清空
+            if (e.Row.ContractID != null && ProjectDefaultAttribute.IsNonProject(e.Row.ContractID))
+            {
+                e.NewValue = null;
+            }
+            else {
+                baseMethod?.Invoke(e.Cache,e.Args);
+            }
+        }
+
         #region 2022-11-17 Alton mark:[未來CR]
         protected virtual void _(Events.FieldUpdated<EPExpenseClaimDetails, EPExpenseClaimDetails.inventoryID> e, PXFieldUpdated baseMethod)
         {
