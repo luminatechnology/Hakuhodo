@@ -17,6 +17,7 @@
   <col name="TaxAmt" type="Decimal(10,0)" nullable="true" />
   <col name="Remark" type="NVarChar(20)" nullable="true" />
   <col name="BranchID" type="Int" nullable="true" />
+  <col name="SortOrder" type="Int" nullable="true" />
   <col name="CreatedByID" type="UniqueIdentifier" />
   <col name="CreatedByScreenID" type="Char(8)" />
   <col name="CreatedDateTime" type="DateTime" />

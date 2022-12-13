@@ -1,3 +1,4 @@
+using System.Linq;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
@@ -18,7 +19,8 @@ namespace PX.Objects.AP
                                  typeof(TWNManualGUIAPBill.refNbr),
                                  typeof(TWNManualGUIAPBill.gUINbr))]
         public SelectFrom<TWNManualGUIAPBill>.Where<TWNManualGUIAPBill.docType.IsEqual<APInvoice.docType.FromCurrent>
-                                                    .And<TWNManualGUIAPBill.refNbr.IsEqual<APInvoice.refNbr.FromCurrent>>>.View ManualAPBill;
+                                                    .And<TWNManualGUIAPBill.refNbr.IsEqual<APInvoice.refNbr.FromCurrent>>>
+                                             .OrderBy<TWNManualGUIAPBill.sortOrder.Asc>.View ManualAPBill;
 
         [PXCopyPasteHiddenFields(typeof(TWNWHT.docType), typeof(TWNWHT.refNbr))]
         public SelectFrom<TWNWHT>.Where<TWNWHT.docType.IsEqual<APInvoice.docType.FromCurrent>
@@ -73,15 +75,19 @@ namespace PX.Objects.AP
 
                         if (tWNGUIValidation.errorOccurred == true)
                         {
-                            e.Cache.RaiseExceptionHandling<TWNManualGUIAPBill.gUINbr>(e.Row, line.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
+                            ManualAPBill.Cache.RaiseExceptionHandling<TWNManualGUIAPBill.gUINbr>(line, line.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
                         }
 
                         taxSum += line.TaxAmt.Value;
                     }
 
-                    if (taxSum != row.TaxTotal && e.Operation != PXDBOperation.Delete)
+                    if (taxSum != row.TaxTotal && e.Operation != PXDBOperation.Delete && e.Row.Hold == false)
                     {
-                        throw new PXException(TWMessages.ChkTotalGUIAmt);
+                        var current = ManualAPBill.Current ?? ManualAPBill.Cache.Cached.RowCast<TWNManualGUIAPBill>().FirstOrDefault();
+
+                        ManualAPBill.Cache.RaiseExceptionHandling<TWNManualGUIAPBill.taxAmt>(current, current?.TaxAmt, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
+
+                        throw new PXException(PX.Objects.Common.Messages.RecordCanNotBeSaved);
                     }
                 }
             }
@@ -112,6 +118,11 @@ namespace PX.Objects.AP
 
         #region TWNManualGUIAPBill
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
+
+        protected virtual void _(Events.RowInserting<TWNManualGUIAPBill> e)
+        {
+            e.Row.SortOrder = e.Cache.Cached.RowCast<TWNManualGUIAPBill>().Count() + 1;
+        }
 
         protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.deduction> e)
         {

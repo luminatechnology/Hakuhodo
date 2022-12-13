@@ -210,6 +210,13 @@ namespace eGUICustomizations.DAC
         public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
 
+        #region SortOrder
+        [PXDBInt()]
+        [PXUIField(DisplayName = "Sort Order", Visible = false, Enabled = false)]
+        public virtual int? SortOrder { get; set; }
+        public abstract class sortOrder : PX.Data.BQL.BqlInt.Field<sortOrder> { }
+        #endregion
+
         #region CreatedByID
         [PXDBCreatedByID()]
         public virtual Guid? CreatedByID { get; set; }

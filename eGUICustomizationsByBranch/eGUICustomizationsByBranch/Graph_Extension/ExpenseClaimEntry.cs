@@ -1,3 +1,4 @@
+using System.Linq;
 using PX.Data;
 using PX.Data.BQL.Fluent;
 using PX.Objects.CR;
@@ -11,7 +12,8 @@ namespace PX.Objects.EP
         #region Selects
         [PXCopyPasteHiddenFields(typeof(TWNManualGUIExpense.gUINbr), typeof(TWNManualGUIExpense.refNbr))]
         public SelectFrom<TWNManualGUIExpense>
-                         .Where<TWNManualGUIExpense.refNbr.IsEqual<EPExpenseClaim.refNbr.FromCurrent>>.View manGUIExpense;
+                         .Where<TWNManualGUIExpense.refNbr.IsEqual<EPExpenseClaim.refNbr.FromCurrent>>
+                         .OrderBy<TWNManualGUIExpense.sortOrder.Asc>.View manGUIExpense;
         #endregion
 
         #region Static Methods
@@ -55,11 +57,20 @@ namespace PX.Objects.EP
                     taxSum += row.TaxAmt.Value;
                 }
 
-                if (taxSum != 0m && !taxSum.Equals(e.Row.TaxTotal))
+                if (taxSum != 0m && taxSum != e.Row.TaxTotal && e.Row.Hold == false)
                 {
-                    manGUIExpense.Cache.RaiseExceptionHandling<TWNManualGUIExpense.taxAmt>(manGUIExpense.Current, taxSum, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
+                    var current = manGUIExpense.Current ?? manGUIExpense.Cache.Cached.RowCast<TWNManualGUIExpense>().FirstOrDefault();
+
+                    manGUIExpense.Cache.RaiseExceptionHandling<TWNManualGUIExpense.taxAmt>(current, current?.TaxAmt, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
+                    
+                    throw new PXException(Common.Messages.RecordCanNotBeSaved);
                 }
             }
+        }
+
+        protected virtual void _(Events.RowInserting<TWNManualGUIExpense> e)
+        {
+            e.Row.SortOrder = e.Cache.Cached.RowCast<TWNManualGUIExpense>().Count() + 1;
         }
 
         protected virtual void _(Events.FieldDefaulting<TWNManualGUIExpense.deduction> e)
