@@ -1,7 +1,5 @@
 using PX.Common;
 using PX.Data;
-using PX.Data.BQL;
-using PX.Data.BQL.Fluent;
 using System;
 using System.IO;
 using System.Text;
@@ -29,26 +27,16 @@ namespace eGUICustomizations.Graph
         public PXFilteredProcessing<TWNGUITrans, 
                                     GUITransFilter,
                                     Where<TWNGUITrans.gUIDecPeriod, Between<Current<GUITransFilter.fromDate>, Current<GUITransFilter.toDate>>,
-                                          And<TWNGUITrans.branchID, Equal<Current<GUITransFilter.branchID>>>>> GUITransList;
+                                          And<TWNGUITrans.branchID, Equal<Current<GUITransFilter.branchID>>,
+                                              And2<Where2<Where<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.receipt>>,
+                                                                And<TWNGUITrans.taxAmount, Greater<decimal0>>>,
+                                                   Or<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>>>>>> GUITransList;
         //public PXFilteredProcessing<TWNGUITrans, GUITransFilter,
         //                            Where<TWNGUITrans.gUIDecPeriod, LessEqual<Current<GUITransFilter.toDate>>,
         //                                  And<TWNGUITrans.gUIDecPeriod, GreaterEqual<Current<GUITransFilter.fromDate>>,
         //                                      And<TWNWHTTran.branchID, Equal<Current<GUITransFilter.branchID>>>>>> GUITransList;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
-
-        //#region Delegate Data View
-        //public IEnumerable gUITransList()
-        //{
-        //    GUITransFilter filter = Filter.Current;
-
-        //    foreach (TWNGUITrans row in SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIDecPeriod.IsLessEqual<@P.AsDateTime>
-        //                                                              .And<TWNGUITrans.gUIDecPeriod.IsGreaterEqual<@P.AsDateTime>>>.View.Select(this, filter.ToDate.Value.AddDays(1).Date.AddSeconds(-1), filter.FromDate))
-        //    {
-        //        yield return row;
-        //    }
-        //}
-        //#endregion
 
         #region Ctor
         public TWNGenGUIMediaFile()
