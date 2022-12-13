@@ -79,6 +79,7 @@
     <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntry_ReleaseExt.cs" />
+    <Compile Include="Graph_Extension\EPApprovalProcessUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
     <Compile Include="DAC_Extension\APRegisterWorkGroupExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry.cs" />
@@ -86,7 +87,6 @@
     <Compile Include="Graph_Extension\ExpenseClaimEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ProjectEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\RegisterEntry_UCGExt.cs" />
-    <Compile Include="Graph_Extension\RelationGroupUCGExt.cs" />
     <Compile Include="Graph_Extension\SubcontractEntry.cs" />
     <Compile Include="DAC\PMSummaryByBIV.cs" />
     <Compile Include="Graph_Extension\SubcontractEntryUCGExt.cs" />

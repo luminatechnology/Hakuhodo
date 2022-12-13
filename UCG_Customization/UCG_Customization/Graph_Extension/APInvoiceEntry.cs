@@ -71,6 +71,7 @@ namespace PX.Objects.AP
             if (row.DocType == APDocType.Prepayment) { 
                 var projectCD = (PXStringState)cache.GetValueExt(row, UD_PROJECT);
                 var pmProject = GetProjectByCD(projectCD);
+                if (pmProject == null) throw new PXException($"找不到對應專案:{projectCD}");
                 projectID = pmProject.ContractID;
             }
             var emp = GetEmployee(row.EmployeeID);

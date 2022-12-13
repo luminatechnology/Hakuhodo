@@ -22,6 +22,13 @@ namespace PX.Objects.AP
         public virtual decimal? ReturnAmount { get; set; }
         public abstract class returnAmount : PX.Data.BQL.BqlDecimal.Field<returnAmount> { }
         #endregion
+
+        #region IsApproving 
+        [PXBool]
+        [PXUIField(DisplayName = "IsApproving")]
+        public virtual bool? IsApproving { get; set; }
+        public abstract class isApproving : PX.Data.BQL.BqlBool.Field<isApproving> { }
+        #endregion
         #endregion
 
     }

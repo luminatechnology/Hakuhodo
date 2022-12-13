@@ -146,17 +146,18 @@ namespace PX.Objects.AP
                         BAccount baccount = GetBaccountByDefContact(Base, invoice.EmployeeID);
                         vendorID = baccount.BAccountID;
                     }
-                    else {
+                    else
+                    {
                         //代墊廠商
                         string vendor = (PXStringState)cache.GetValueExt(invoice, VENDOR);
                         BAccount baccount = GetBaccountByCD(Base, vendor);
                         vendorID = baccount.BAccountID;
                     }
 
-                    string epLentAP = CreateAPInvoice4Adv(invoice, epPayAmt, vendorID);
+                    string epLentAP = CreateAPInvoice4Adv(invoice, epPayAmt, vendorID, epPayType);
                     cache.SetValueExt<APRegisterUCGExt.usrEPLentAP>(invoice, epLentAP);
                     baseMethod(adapter);
-                    CreateAPPayment4Adv(invoice, epPayAmt);
+                    CreateAPPayment4Adv(invoice, epPayAmt, epPayType);
                 }
 
                 ts.Complete(Base);
@@ -303,7 +304,7 @@ namespace PX.Objects.AP
 
         }
 
-        private string CreateAPInvoice4Adv(APInvoice inv, decimal epPayAmt,int? vendorID)
+        private string CreateAPInvoice4Adv(APInvoice inv, decimal epPayAmt, int? vendorID, string epPayType)
         {
             APInvoiceEntry graph = PXGraph.CreateInstance<APInvoiceEntry>();
             //建立 一張新的AP單
@@ -319,7 +320,8 @@ namespace PX.Objects.AP
             //供應商參考 = 原單RefNbr
             cache.SetValueExt<APInvoice.invoiceNbr>(invoice, inv.RefNbr);
             //Doc Desc = ‘員工代墊 -’ +原單DocDesc
-            cache.SetValueExt<APInvoice.docDesc>(invoice, "員工代墊 - " + inv.DocDesc);
+            string desc = epPayType == EMP_ADV_CODE ? "員工代墊" : "廠商代墊";
+            cache.SetValueExt<APInvoice.docDesc>(invoice, desc + " - " + inv.DocDesc);
             //折讓退傭單號 = ‘NA’
             cache.SetValueExt(invoice, DJNBR, "NA");
             //財務Branch = 原單Branch
@@ -333,7 +335,8 @@ namespace PX.Objects.AP
 
             //Item
             #region --Transactions
-            APTran tran = new APTran() {
+            APTran tran = new APTran()
+            {
                 RefNbr = invoice.RefNbr,
                 TranType = invoice.DocType
             };
@@ -342,7 +345,7 @@ namespace PX.Objects.AP
             //Branch = 原單Branch
             tCache.SetValueExt<APTran.branchID>(tran, inv.BranchID);
             //TranDesc = ‘員工代墊 -’ +原單DocDesc
-            tCache.SetValueExt<APTran.tranDesc>(tran, "員工代墊 - " + inv.DocDesc);
+            tCache.SetValueExt<APTran.tranDesc>(tran, desc + " - " + inv.DocDesc);
             //成本小計 = 代墊金額
             tCache.SetValueExt<APTran.qty>(tran, 1m);
             tCache.SetValueExt<APTran.curyUnitCost>(tran, epPayAmt);
@@ -394,7 +397,7 @@ namespace PX.Objects.AP
             return graph.Document.Current.RefNbr;
         }
 
-        private void CreateAPPayment4Adv(APInvoice inv, decimal epPayAmt)
+        private void CreateAPPayment4Adv(APInvoice inv, decimal epPayAmt, string epPayType)
         {
             APPaymentEntry graph = PXGraph.CreateInstance<APPaymentEntry>();
             //建立一張 APPayment(CHK)
@@ -417,7 +420,8 @@ namespace PX.Objects.AP
             cache.SetValueExt<APPayment.cashAccountID>(payment, cashAccount.CashAccountID);
             //上方付款金額 = 代墊金額
             cache.SetValueExt<APPayment.curyOrigDocAmt>(payment, epPayAmt);
-            cache.SetValueExt<APPayment.docDesc>(payment, "員工代墊 - " + inv.DocDesc);
+            string desc = epPayType == EMP_ADV_CODE ? "員工代墊" : "廠商代墊";
+            cache.SetValueExt<APPayment.docDesc>(payment, desc + " - " + inv.DocDesc);
             payment = graph.Document.Update(payment);
 
             #region Adjustments

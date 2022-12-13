@@ -73,5 +73,14 @@ namespace PX.Objects.PO
         public virtual string UsrApproveWG10 { get; set; }
         public abstract class usrApproveWG10 : PX.Data.BQL.BqlString.Field<usrApproveWG10> { }
         #endregion
+
+        #region Unbound
+        #region IsApproving 
+        [PXBool]
+        [PXUIField(DisplayName = "IsApproving")]
+        public virtual bool? IsApproving { get; set; }
+        public abstract class isApproving : PX.Data.BQL.BqlBool.Field<isApproving> { }
+        #endregion
+        #endregion
     }
 }
