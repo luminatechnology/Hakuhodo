@@ -92,7 +92,7 @@ namespace PX.Objects.AR
         #region UsrGUIDate
         [PXDBDate]
         [PXUIField(DisplayName = "GUI Date")]
-        [PXDefault(typeof(AccessInfo.businessDate),  PersistingCheck = PXPersistingCheck.Nothing)]        
+        //[PXDefault(typeof(AccessInfo.businessDate),  PersistingCheck = PXPersistingCheck.Nothing)]        
         public virtual DateTime? UsrGUIDate { get; set; }
         public abstract class usrGUIDate : IBqlField { }
         #endregion
