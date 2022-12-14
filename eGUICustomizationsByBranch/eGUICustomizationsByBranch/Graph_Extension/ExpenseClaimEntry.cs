@@ -27,6 +27,8 @@ namespace PX.Objects.EP
         #endregion
 
         #region Event Handlers
+
+        #region EPExpenseClaim 
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
 
         protected void _(Events.RowSelected<EPExpenseClaim> e, PXRowSelected InvokeBaseHandler)
@@ -67,7 +69,9 @@ namespace PX.Objects.EP
                 }
             }
         }
+        #endregion
 
+        #region TWNManualGUIExpense
         protected virtual void _(Events.RowInserting<TWNManualGUIExpense> e)
         {
             e.Row.SortOrder = e.Cache.Cached.RowCast<TWNManualGUIExpense>().Count() + 1;
@@ -88,6 +92,8 @@ namespace PX.Objects.EP
             // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
             manGUIExpense.Cache.SetValueExt<TWNManualGUIExpense.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
         }
+        #endregion
+
         #endregion
     }
 }

@@ -67,27 +67,16 @@ namespace PX.Objects.AP
                 }
                 else
                 {
-                    decimal? taxSum = 0;
-
-                    foreach (TWNManualGUIAPBill line in ManualAPBill.Select())
+                    if (e.Operation != PXDBOperation.Delete && e.Row.Hold == false)
                     {
-                        tWNGUIValidation.CheckCorrespondingInv(Base, line.GUINbr, line.VATInCode);
-
-                        if (tWNGUIValidation.errorOccurred == true)
+                        if (row.TaxTotal != ManualAPBill.Select().RowCast<TWNManualGUIAPBill>().ToList().Sum(s => s.TaxAmt).Value)
                         {
-                            ManualAPBill.Cache.RaiseExceptionHandling<TWNManualGUIAPBill.gUINbr>(line, line.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
+                            var current = ManualAPBill.Current ?? ManualAPBill.Cache.Cached.RowCast<TWNManualGUIAPBill>().FirstOrDefault();
+
+                            ManualAPBill.Cache.RaiseExceptionHandling<TWNManualGUIAPBill.taxAmt>(current, current?.TaxAmt, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
+
+                            throw new PXException(PX.Objects.Common.Messages.RecordCanNotBeSaved);
                         }
-
-                        taxSum += line.TaxAmt.Value;
-                    }
-
-                    if (taxSum != row.TaxTotal && e.Operation != PXDBOperation.Delete && e.Row.Hold == false)
-                    {
-                        var current = ManualAPBill.Current ?? ManualAPBill.Cache.Cached.RowCast<TWNManualGUIAPBill>().FirstOrDefault();
-
-                        ManualAPBill.Cache.RaiseExceptionHandling<TWNManualGUIAPBill.taxAmt>(current, current?.TaxAmt, new PXSetPropertyException(TWMessages.ChkTotalGUIAmt));
-
-                        throw new PXException(PX.Objects.Common.Messages.RecordCanNotBeSaved);
                     }
                 }
             }

@@ -119,7 +119,7 @@ namespace eGUICustomizations.Descriptor
                     break;
             }
 
-            if (isCreditNote.Equals(true))
+            if (isCreditNote == true)
             {
                 errorOccurred = true;
                 errorMessage  = TWMessages.CNIsNotFound;
@@ -206,21 +206,6 @@ namespace eGUICustomizations.Descriptor
                 }
             }
         }
-
-        //public virtual bool ConfirmDeletion(PXView view, string gUIFmtCode)
-        //{
-        //    isCreditNote = true;
-
-        //    if (gUIFmtCode != TWGUIFormatCode.vATOutCode33 && gUIFmtCode != TWGUIFormatCode.vATOutCode34 && gUIFmtCode != null)
-        //    {
-        //        WebDialogResult result = view.Ask(TWMessages.CfmMegOnDelete, MessageButtons.YesNo);
-
-        //        isCreditNote = false;
-        //        notBeDeleted = (result == WebDialogResult.No);
-        //    }
-
-        //    return notBeDeleted;
-        //}
         #endregion
     }
 }
