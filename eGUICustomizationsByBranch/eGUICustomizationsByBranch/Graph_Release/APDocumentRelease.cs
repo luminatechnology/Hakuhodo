@@ -35,9 +35,18 @@ namespace PX.Objects.AP
             {
                 TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
 
+                TWNGUIValidation gUIValidate = new TWNGUIValidation();
+
                 foreach (TWNManualGUIAPBill row in SelectFrom<TWNManualGUIAPBill>.Where<TWNManualGUIAPBill.docType.IsEqual<@P.AsString>
                                                                                         .And<TWNManualGUIAPBill.refNbr.IsEqual<@P.AsString>>>.View.Select(Base, doc.DocType, doc.RefNbr))
                 {
+                    gUIValidate.CheckCorrespondingInv(Base, row.GUINbr, row.VATInCode);
+
+                    if (gUIValidate.errorOccurred == true)
+                    {
+                        throw new PXException(gUIValidate.errorMessage);
+                    }
+
                     // Avoid standard logic calling this method twice and inserting duplicate records into TWNGUITrans.
                     if (CountExistedRec(Base, row.GUINbr, row.VATInCode, doc.RefNbr) >= 1) { return; }
 
@@ -74,10 +83,6 @@ namespace PX.Objects.AP
                             OrderNbr      = doc.RefNbr,
                             TranDate      = doc.DocDate
                         });
-
-                        ///<remarks>This is only for Cottingham's request.</remarks>
-                        rp.ViewGUITrans.Current.GUIDecPeriod = doc.DocDate;
-                        rp.ViewGUITrans.UpdateCurrent();
 
                         if (tWNGUITrans != null)
                         {
