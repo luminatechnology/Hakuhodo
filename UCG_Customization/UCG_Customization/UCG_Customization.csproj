@@ -79,6 +79,7 @@
     <Compile Include="Descriptor\UserDefinedFieldAttribute.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
+    <Compile Include="Graph_Extension\ARInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\EPApprovalProcessUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />

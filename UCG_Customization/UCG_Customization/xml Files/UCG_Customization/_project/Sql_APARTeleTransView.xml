@@ -1,5 +1,5 @@
 ﻿<Sql TableName="APARTeleTransView" SqlScriptPriority="2" CustomScript="#CDATA">
-    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER VIEW APARTeleTransView AS
+    <CDATA name="CustomScript"><![CDATA[CREATE OR ALTER VIEW dbo.APARTeleTransView AS
 SELECT
     p.CompanyID,
     'AP' AS DataType,
@@ -52,7 +52,7 @@ SELECT
                     r.CompanyID = vpm.CompanyID
                     AND acct.BAccountID = vpm.BAccountID
                     AND acct.DefLocationID = vpm.LocationID
-                    AND l.VPaymentMethodID = vpm.PaymentMethodID
+                    AND el.VPaymentMethodID = vpm.PaymentMethodID
                     AND vpm.DetailID = 'BKACCTNAME'
             )
             ELSE (
@@ -78,7 +78,7 @@ SELECT
                     r.CompanyID = vpm.CompanyID
                     AND acct.BAccountID = vpm.BAccountID
                     AND acct.DefLocationID = vpm.LocationID
-                    AND l.VPaymentMethodID = vpm.PaymentMethodID
+                    AND el.VPaymentMethodID = vpm.PaymentMethodID
                     AND vpm.DetailID = 'BKACCT'
             )
             ELSE (
@@ -104,7 +104,7 @@ SELECT
                     r.CompanyID = vpm.CompanyID
                     AND acct.BAccountID = vpm.BAccountID
                     AND acct.DefLocationID = vpm.LocationID
-                    AND l.VPaymentMethodID = vpm.PaymentMethodID
+                    AND el.VPaymentMethodID = vpm.PaymentMethodID
                     AND vpm.DetailID = 'BKBRCODE'
             )
             ELSE (

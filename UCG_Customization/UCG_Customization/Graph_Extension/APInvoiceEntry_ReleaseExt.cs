@@ -329,6 +329,7 @@ namespace PX.Objects.AP
 
             //專案 = X
             cache.SetValueExt<APInvoice.projectID>(invoice, ProjectDefaultAttribute.NonProject());
+            cache.SetValueExt<APInvoice.dueDate>(invoice, inv.DueDate);
             //經辦人 = ADMIN(emp = 24)
             cache.SetValueExt<APInvoice.employeeID>(invoice, 24);
             invoice = graph.Document.Update(invoice);
