@@ -36,14 +36,14 @@ namespace UCG_Customization.Utils
             #region 取得層級資料
             string[] saveAcctCDs = new string[TREE_SIZE];
             PMProject project = PMProject.PK.Find(cache.Graph, projectID);
+            //取得當前階層
+            EPCompanyTree thisTree = GetCompanyTreeByDeptID(graph, deptID);
             string projectCD = project?.ContractCD.Trim();
             if (projectID == null
                 || projectID == ProjectDefaultAttribute.NonProject()
                 || IsNoApproveProject(projectCD))
             {
                 #region 一般情境
-                //取得當前階層
-                EPCompanyTree thisTree = GetCompanyTreeByDeptID(graph, deptID);
                 if (thisTree != null)
                 {
                     saveAcctCDs = GetUsrApproveWG(graph, thisTree);
@@ -53,7 +53,19 @@ namespace UCG_Customization.Utils
             else
             {
                 #region 需判斷Project 且不為NonProject時
-                saveAcctCDs = GetUsrApproveWGByNonProject(graph, projectID);
+                var tempAcctCDs = GetUsrApproveWGByNonProject(graph, projectID);
+                //如果最高層 則走 nonProject邏輯
+                if (empAcctCD == tempAcctCDs[4])
+                {
+                    if (thisTree != null)
+                    {
+                        saveAcctCDs = GetUsrApproveWG(graph, thisTree);
+                    }
+                }
+                else
+                {
+                    saveAcctCDs = tempAcctCDs;
+                }
                 #endregion
             }
             #endregion

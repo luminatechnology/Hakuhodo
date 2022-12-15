@@ -13,7 +13,6 @@ namespace PX.Objects.AP
         public abstract class usrEPLentAP : PX.Data.BQL.BqlString.Field<usrEPLentAP> { }
         #endregion
 
-
         #region Unbound
         #region Return Amount
         [PXDecimal(0)]
