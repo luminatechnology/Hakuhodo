@@ -1,4 +1,5 @@
 ﻿using PX.Data;
+using System.Collections.Generic;
 using UCG_Customization.Descriptor;
 
 namespace PX.Objects.AP
@@ -30,5 +31,46 @@ namespace PX.Objects.AP
         #endregion
         #endregion
 
+        [PXOverride]
+        [PXDBString(1, IsFixed = true)]
+        [PXDefault(APDocStatus.Hold)]
+        [PXUIField(DisplayName = "Status", Visibility = PXUIVisibility.SelectorVisible, Enabled = false)]
+        [PXDependsOnFields(
+            typeof(APRegister.voided),
+            typeof(APRegister.hold),
+            typeof(APRegister.scheduled),
+            typeof(APRegister.released),
+            typeof(APRegister.printed),
+            typeof(APRegister.prebooked),
+            typeof(APRegister.openDoc),
+            typeof(APRegister.approved),
+            typeof(APRegister.dontApprove),
+            typeof(APRegister.rejected),
+            typeof(APRegister.docType))]
+        [APDocStatusExt.List]
+        public virtual string Status { get; set; }
+
+        #region APDocStatusExt
+        public class APDocStatusExt {
+
+            public static string[] Values = AppendArr(APDocStatus.Values, "A");
+            public static string[] Labels = AppendArr(APDocStatus.Labels, "科目確認");
+
+            public class ListAttribute : PXStringListAttribute {
+                public ListAttribute():base(
+                    Values,
+                    Labels
+                    ) { }
+            }
+
+            public static string[] AppendArr(string[] arr, params string[] strs)
+            {
+                List<string> values = new List<string>();
+                foreach (var s in arr) values.Add(s);
+                foreach (var s in strs) values.Add(s);
+                return values.ToArray();
+            }
+        }
+        #endregion
     }
 }
