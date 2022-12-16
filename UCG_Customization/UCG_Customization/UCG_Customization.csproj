@@ -72,7 +72,6 @@
     <Compile Include="DAC_Extension\PMProjectUCGExt.cs" />
     <Compile Include="DAC_Extension\POLineUCGExt.cs" />
     <Compile Include="DAC_Extension\POOrderUCGExt.cs" />
-    <Compile Include="DAC_Extension\RelationGroupUCGExt.cs" />
     <Compile Include="Descriptor\APReturnAmountAttribute.cs" />
     <Compile Include="Descriptor\Type.cs" />
     <Compile Include="Descriptor\ProcedureAttribute.cs" />
