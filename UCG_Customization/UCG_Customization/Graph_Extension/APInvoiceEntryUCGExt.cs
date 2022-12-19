@@ -5,6 +5,7 @@ using UCG_Customization.Utils;
 using UCG_Customization.Descriptor;
 using PX.Objects.EP;
 using PX.Objects.PM;
+using static PX.Objects.AP.APRegisterUCGExt;
 
 namespace PX.Objects.AP
 {
@@ -28,12 +29,12 @@ namespace PX.Objects.AP
 
         #region Event
         #region APInvoice
-        protected virtual void _(Events.FieldUpdated<APInvoice,APInvoice.branchID> e)
+        protected virtual void _(Events.FieldUpdated<APInvoice, APInvoice.branchID> e)
         {
             if (e.Row == null) return;
-            
-            if(e.Row.ProjectID != ProjectDefaultAttribute.NonProject()) 
-                e.Cache.SetValueExt<APInvoice.projectID>(e.Row,null);
+
+            if (e.Row.ProjectID != ProjectDefaultAttribute.NonProject())
+                e.Cache.SetValueExt<APInvoice.projectID>(e.Row, null);
         }
         #endregion
 
@@ -79,8 +80,17 @@ namespace PX.Objects.AP
         #endregion
         #endregion
 
+        #region CacheAttached
+
+        [PXMergeAttributes(Method = MergeMethod.Append)]
+        [PXRemoveBaseAttribute(typeof(APDocStatus.ListAttribute))]
+        [APDocStatusExt.List]
+        protected virtual void _(Events.CacheAttached<APInvoice.status> e) { }
+        #endregion
+
         #region Method
-        protected virtual void ValidateUsedExpense(APTran tran) {
+        protected virtual void ValidateUsedExpense(APTran tran)
+        {
             if (tran == null) return;
             var rowExt = tran.GetExtension<APTranUCGExt>();
             if (rowExt.UsedExpense > rowExt.BudgetAmt)
