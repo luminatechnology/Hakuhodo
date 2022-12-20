@@ -135,7 +135,8 @@ namespace eGUICustomizations.Graph_Release
                         AcctCD        = customer.AcctCD,
                         AcctName      = customer.AcctName,
                         Remark        = register.DocDesc,
-                        OrderNbr      = register.RefNbr
+                        OrderNbr      = register.RefNbr,
+                        DocType       = register.DocType
                     });
                 }
                 else
