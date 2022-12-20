@@ -70,7 +70,7 @@ namespace eGUICustomizations.Graph
                     bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
                     ARRegister    register = ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
-                    ARRegisterExt regisExt = register.GetExtension<ARRegisterExt>();
+                    ARRegisterExt regisExt = register?.GetExtension<ARRegisterExt>();
 
                     #region Header
                     // 主檔代號
@@ -146,7 +146,7 @@ namespace eGUICustomizations.Graph
                     lines += 0 + verticalBar + "\r\n";
                     #endregion
 
-                    bool isInclusive = invGraph.AmountInclusiveTax(register.TaxCalcMode, gUITrans.TaxID);
+                    bool isInclusive = invGraph.AmountInclusiveTax(register?.TaxCalcMode, gUITrans.TaxID);
                     int num = 1;
                     string refNbr = string.Empty;
                     decimal? totalUP = 0m, totalEP = 0m, totalTA = 0m;
@@ -157,7 +157,7 @@ namespace eGUICustomizations.Graph
                                                                                  tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
                                                                                  tran.CuryTranAmt.Value/*tran.CuryExtPrice.Value*/);
 
-                        if (regisExt.UsrSummaryPrint == false)
+                        if (regisExt?.UsrSummaryPrint == false)
                         {
                             if (isCM == true && lines.Contains(FixedMsg) == true && !string.IsNullOrEmpty(tran.OrigInvoiceNbr))
                             {
@@ -204,7 +204,7 @@ namespace eGUICustomizations.Graph
                     }
 
                     #region GUI Summary 
-                    if (regisExt.UsrSummaryPrint == true)
+                    if (regisExt?.UsrSummaryPrint == true)
                     {
                         // 明細代號
                         lines += "D" + verticalBar;
@@ -216,7 +216,7 @@ namespace eGUICustomizations.Graph
                         // 商品條碼
                         lines += new string(char.Parse(verticalBar), 2);
                         // 商品名稱
-                        lines += (CSAttributeDetail.PK.Find(graph, ARRegisterExt.GUISummary, regisExt.UsrGUISummary ?? string.Empty)?.Description ?? string.Empty) + verticalBar;
+                        lines += (CSAttributeDetail.PK.Find(graph, ARRegisterExt.GUISummary, regisExt?.UsrGUISummary ?? string.Empty)?.Description ?? string.Empty) + verticalBar;
                         // 商品規格
                         // 單位
                         lines += new string(char.Parse(verticalBar), 2);
@@ -308,6 +308,8 @@ namespace eGUICustomizations.Graph
         #region Methods
         private (string addressLine, string postalCode) GetBillingAddress(PXGraph graph, string docType, string refNbr, string customer)
         {
+            if (string.IsNullOrEmpty(customer)) { return (null, null); }
+
             IAddressBase address = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
                                                         .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst;
 
@@ -333,16 +335,18 @@ namespace eGUICustomizations.Graph
 
             if (address == null)
             {
-                address = SelectFrom<Address>.InnerJoin<Customer>.On<Customer.defBillAddressID.IsEqual<Address.addressID>>
-                                                 .Where<Customer.acctCD.IsEqual<@P.AsString>>.View
+                address = SelectFrom<Address>.InnerJoin<BAccount>.On<BAccount.defAddressID.IsEqual<Address.addressID>>
+                                                 .Where<BAccount.acctCD.IsEqual<@P.AsString>>.View
                                                  .SelectSingleBound(graph, null, customer).TopFirst;
             }
 
-            return (address.AddressLine1, address.PostalCode);
+            return (address?.AddressLine1, address.PostalCode);
         }
 
         private (string phone, string email, string attention) GetBillingInfo(PXGraph graph, string docType, string refNbr, string customer)
         {
+            if (string.IsNullOrEmpty(customer)) { return(null, null, null); }
+
             IContact contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>
                                                     .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst;
 
@@ -368,8 +372,9 @@ namespace eGUICustomizations.Graph
 
             if (contact == null)
             {
-                contact = SelectFrom<Contact>.InnerJoin<Customer>.On<Customer.defBillContactID.IsEqual<Contact.contactID>>
-                                             .Where<Customer.acctCD.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, customer).TopFirst;
+                contact = SelectFrom<Contact>.InnerJoin<BAccount2>.On<BAccount2.defContactID.IsEqual<Contact.contactID>>
+                                             .Where<BAccount2.acctCD.IsEqual<@P.AsString>>
+                                             .View.SelectSingleBound(graph, null, customer).TopFirst;
             }
 
             return (contact.Phone1, contact.Email, contact.Attention);
