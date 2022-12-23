@@ -115,31 +115,16 @@
                 <ParentName>UploadFile</ParentName>
             </ReportRelation>
             <ReportRelation>
-                <ChildAlias>Customer</ChildAlias>
-                <ChildName>BAccount</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>AcctCD</ChildField>
-                        <ParentField>=Trim([TWNGUITrans.CustVend])</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentName>TWNGUITrans</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildAlias>CRAddress</ChildAlias>
-                <ChildName>Address</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>AddressID</ChildField>
-                        <ParentField>DefAddressID</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentAlias>Customer</ParentAlias>
-                <ParentName>BAccount</ParentName>
-            </ReportRelation>
-            <ReportRelation>
                 <ChildName>TWNGUIPrintedLineDet</ChildName>
                 <Links>
+                    <RelationRow>
+                        <ChildField>GUIFormatcode</ChildField>
+                        <ParentField>GUIFormatCode</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>RefNbr</ChildField>
+                        <ParentField>OrderNbr</ParentField>
+                    </RelationRow>
                     <RelationRow>
                         <ChildField>GUINbr</ChildField>
                         <ParentField>GUINbr</ParentField>
@@ -161,6 +146,11 @@
         <Tables>
             <ReportTable Name="TWNGUITrans">
                 <Fields>
+                    <ReportField Name="AddressLine">
+                    </ReportField>
+                    <ReportField Name="AllowUpload">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
                     <ReportField Name="B2CPrinted">
                         <DataType>Boolean</DataType>
                     </ReportField>
@@ -220,7 +210,7 @@
                     </ReportField>
                     <ReportField Name="CustVend">
                     </ReportField>
-                    <ReportField Name="CustVend_BAccount_acctName">
+                    <ReportField Name="CustVend_BAccount2_acctName">
                     </ReportField>
                     <ReportField Name="CustVend_description">
                     </ReportField>
@@ -303,7 +293,7 @@
                     </ReportField>
                     <ReportField Name="GUIDirection">
                     </ReportField>
-                    <ReportField Name="GUIFormatcode">
+                    <ReportField Name="GUIFormatCode">
                     </ReportField>
                     <ReportField Name="GUINbr">
                     </ReportField>
@@ -458,6 +448,8 @@
                     </ReportField>
                     <ReportField Name="Descr">
                     </ReportField>
+                    <ReportField Name="GUIFormatcode">
+                    </ReportField>
                     <ReportField Name="GUINbr">
                     </ReportField>
                     <ReportField Name="LastModifiedByID">
@@ -497,6 +489,8 @@
                     </ReportField>
                     <ReportField Name="Qty">
                         <DataType>Decimal</DataType>
+                    </ReportField>
+                    <ReportField Name="RefNbr">
                     </ReportField>
                     <ReportField Name="Remark">
                     </ReportField>
@@ -1527,7 +1521,7 @@
                                     <VerticalAlign>Middle</VerticalAlign>
                                 </Style>
                                 <StyleName>Normal</StyleName>
-                                <Value>=IIf($IsInvoice = True, [CompanyAddress.AddressLine1], [CRAddress.AddressLine1])</Value>
+                                <Value>=IIf($IsInvoice = True, [CompanyAddress.AddressLine1], [TWNGUITrans.AddressLine])</Value>
                             </TextBox>
                         </Items>
                     </Panel>
@@ -2808,7 +2802,7 @@
                         <Location>400px, 32px</Location>
                         <Size>392px, 48px</Size>
                         <StyleName>Normal</StyleName>
-                        <Value>=IIf($IsInvoice = True, [CRAddress.AddressLine1], [CompanyAddress.AddressLine1])</Value>
+                        <Value>=IIf($IsInvoice = True, [TWNGUITrans.AddressLine], [CompanyAddress.AddressLine1])</Value>
                     </TextBox>
                     <TextBox Name="textBox78">
                         <Location>352px, 32px</Location>

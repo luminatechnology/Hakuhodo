@@ -129,7 +129,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <Name>GUINbr</Name>
                 <Prompt>GUI Nbr.</Prompt>
                 <Required>True</Required>
-                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUINbr,RefNbr')</ViewName>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUINbr,RefNbr,GUIFormatCode')</ViewName>
             </ReportParameter>
         </Parameters>
         <Relations>
@@ -161,52 +161,19 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <ChildName>TWNGUIPrintedLineDet</ChildName>
                 <Links>
                     <RelationRow>
+                        <ChildField>GUIFormatcode</ChildField>
+                        <ParentField>GUIFormatCode</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>RefNbr</ChildField>
+                        <ParentField>OrderNbr</ParentField>
+                    </RelationRow>
+                    <RelationRow>
                         <ChildField>GUINbr</ChildField>
                         <ParentField>GUINbr</ParentField>
                     </RelationRow>
                 </Links>
                 <ParentName>TWNGUITrans</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildAlias>CustVend</ChildAlias>
-                <ChildName>BAccount2</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>AcctCD</ChildField>
-                        <ParentField>=Trim([TWNGUITrans.CustVend])</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentName>TWNGUITrans</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildName>Contact</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>BAccountID</ChildField>
-                        <ParentField>BAccountID</ParentField>
-                    </RelationRow>
-                    <RelationRow>
-                        <ChildField>ContactID</ChildField>
-                        <ParentField>DefContactID</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentAlias>CustVend</ParentAlias>
-                <ParentName>BAccount2</ParentName>
-            </ReportRelation>
-            <ReportRelation>
-                <ChildName>Address</ChildName>
-                <Links>
-                    <RelationRow>
-                        <ChildField>BAccountID</ChildField>
-                        <ParentField>BAccountID</ParentField>
-                    </RelationRow>
-                    <RelationRow>
-                        <ChildField>AddressID</ChildField>
-                        <ParentField>DefAddressID</ParentField>
-                    </RelationRow>
-                </Links>
-                <ParentAlias>CustVend</ParentAlias>
-                <ParentName>BAccount2</ParentName>
             </ReportRelation>
             <ReportRelation>
                 <ChildName>Branch</ChildName>
@@ -2147,6 +2114,11 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
             </ReportTable>
             <ReportTable Name="TWNGUITrans">
                 <Fields>
+                    <ReportField Name="AddressLine">
+                    </ReportField>
+                    <ReportField Name="AllowUpload">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
                     <ReportField Name="B2CPrinted">
                         <DataType>Boolean</DataType>
                     </ReportField>
@@ -2289,7 +2261,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="GUIDirection">
                     </ReportField>
-                    <ReportField Name="GUIFormatcode">
+                    <ReportField Name="GUIFormatCode">
                     </ReportField>
                     <ReportField Name="GUINbr">
                     </ReportField>
@@ -3347,7 +3319,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <TextAlign>Left</TextAlign>
                         </Style>
-                        <Value>=[Contact.FullName]</Value>
+                        <Value>=[TWNGUITrans.GUITitle]</Value>
                     </TextBox>
                     <TextBox Name="textBox12">
                         <Location>2.1164cm, 2.53968cm</Location>
@@ -3371,7 +3343,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <TextAlign>Left</TextAlign>
                         </Style>
-                        <Value>=IsNull([ARAddress.AddressLine1], [Address.AddressLine1])</Value>
+                        <Value>=[TWNGUITrans.AddressLine]</Value>
                     </TextBox>
                     <TextBox Name="textBox2">
                         <Format>yyyy-MM-dd</Format>
@@ -3516,6 +3488,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </TextBox>
                     <TextBox Name="textBox36">
                         <CanGrow>True</CanGrow>
+                        <CanSplit>True</CanSplit>
                         <Location>5.55in, 0cm</Location>
                         <Size>1.85in, 1.25cm</Size>
                         <Style>
