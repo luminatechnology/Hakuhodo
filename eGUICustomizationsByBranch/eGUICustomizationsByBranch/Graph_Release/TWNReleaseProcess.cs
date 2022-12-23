@@ -60,6 +60,7 @@ namespace eGUICustomizations.Graph_Release
             row.CarrierID     = sGUITran.CarrierID;
             row.NPONbr        = sGUITran.NPONbr;
             row.B2CPrinted    = sGUITran.B2CPrinted;
+            row.AddressLine   = sGUITran.AddressLine;
             //row.QREncrypter   = sGUITran.GUIDirection.Equals(TWNGUIDirection.Issue) && sGUITran.NetAmount > 0 && sGUITran.eGUIExcluded.Equals(false) ? GetQREncrypter(sGUITran) : null;
 
             ViewGUITrans.Update(row);
@@ -307,6 +308,7 @@ namespace eGUICustomizations.Graph_Release
         public string CarrierID;
         public string NPONbr;
         public string QREncrypter;
+        public string AddressLine;
         
         public int? BranchID;
 
