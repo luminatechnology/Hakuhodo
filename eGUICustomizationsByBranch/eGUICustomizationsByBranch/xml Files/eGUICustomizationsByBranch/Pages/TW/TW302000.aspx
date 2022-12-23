@@ -4,7 +4,8 @@
 <asp:Content ID="cont1" ContentPlaceHolderID="phDS" Runat="Server">
   <px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="eGUICustomizations.Graph.TWNManGUIAREntry" PrimaryView="Filter">
     <CallbackCommands>
-	<px:PXDSCallbackCommand Text="GUI Invoice" Name="PrintGUIInvoice" Visible="False" DependOnGrid="CstPXGrid2" CommitChanges="true" HideText="False" ></px:PXDSCallbackCommand></CallbackCommands>
+	<%--<px:PXDSCallbackCommand Text="GUI Invoice" Name="PrintGUIInvoice" Visible="False" DependOnGrid="CstPXGrid2" CommitChanges="true" HideText="False" ></px:PXDSCallbackCommand>--%>
+    </CallbackCommands>
   </px:PXDataSource>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="phF" Runat="Server">
@@ -16,7 +17,7 @@
 	</px:PXFormView>
 </asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">
-	<px:PXGrid ID="grid" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Details" AllowAutoHide="false">
+	<px:PXGrid ID="grid" runat="server" DataSourceID="ds" Width="100%" Height="150px" SkinID="Details" AllowAutoHide="false" SyncPosition="true">
 		<Levels>
 			<px:PXGridLevel DataMember="ManualGUIAR">
 			    <Columns>
@@ -33,6 +34,8 @@
                   <px:PXGridColumn CommitChanges="True" DataField="OurTaxNbr" Width="96" ></px:PXGridColumn>
                   <px:PXGridColumn CommitChanges="True" DataField="NetAmt" Width="100" ></px:PXGridColumn>
                   <px:PXGridColumn CommitChanges="True" DataField="TaxAmt" Width="100" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUITitle" Width="140" ></px:PXGridColumn>
+				  <px:PXGridColumn DataField="AddressLine" Width="180" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="CustomType" Width="140" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="ExportMethod" Width="70" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="ExportTicketType" Width="70" ></px:PXGridColumn>
