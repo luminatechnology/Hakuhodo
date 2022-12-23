@@ -14,7 +14,7 @@ namespace eGUICustomizations.DAC
     public class TWNManualGUIExpense : PX.Data.IBqlTable
     {
         #region RefNbr
-        [PXDBString(15, IsUnicode = true)]
+        [PXDBString(15, IsKey = true, IsUnicode = true)]
         [PXDBDefault(typeof(EPExpenseClaim.refNbr),
                      PersistingCheck = PXPersistingCheck.Nothing)]
         [PXParent(typeof(Select<EPExpenseClaim,
@@ -22,6 +22,14 @@ namespace eGUICustomizations.DAC
         [PXUIField(Visible = false)]
         public virtual string RefNbr { get; set; }
         public abstract class refNbr : PX.Data.BQL.BqlString.Field<refNbr> { }
+        #endregion
+
+        #region GUINbr
+        [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
+        [PXUIField(DisplayName = "GUI Nbr.")]
+        [PXDefault()]
+        public virtual string GUINbr { get; set; }
+        public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }
         #endregion
 
         #region Status
@@ -41,24 +49,14 @@ namespace eGUICustomizations.DAC
 
         #region VATInCode
         [PXDBString(2, IsUnicode = true)]
-        [PXUIField(DisplayName = "VAT In Code")]
+        [PXUIField(DisplayName = "VAT In Code", Required = true)]
         [PXSelector(typeof(Search<CSAttributeDetail.valueID,
                                   Where<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.VATINFRMTNameAtt>>>),
                     typeof(CSAttributeDetail.description))]
-        [PXDefault(typeof(Search2<CSAnswers.value, InnerJoin<Vendor, On<Vendor.noteID, Equal<CSAnswers.refNoteID>,
-                                                                        And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.VATINFRMTNameAtt>>>>,
-                                 Where<Vendor.bAccountID, Equal<Current<vendorID>>>>))]
+        [PXDefault(TWGUIFormatCode.vATInCode25)]
         [PXFormula(typeof(Default<vendorID>))]
         public virtual string VATInCode { get; set; }
         public abstract class vATInCode : PX.Data.BQL.BqlString.Field<vATInCode> { }
-        #endregion
-
-        #region GUINbr
-        [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
-        [PXUIField(DisplayName = "GUI Nbr.")]
-        [PXDefault()]
-        public virtual string GUINbr { get; set; }
-        public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }
         #endregion
 
         #region GUIDate
