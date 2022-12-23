@@ -1,5 +1,6 @@
 using System;
 using PX.Data;
+using PX.Objects.CR.MassProcess;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.TX;
@@ -248,7 +249,7 @@ namespace eGUICustomizations.DAC
 
         #region PrintedDate
         [PXDBDate()]
-        [PXUIField(DisplayName = "Printed Date")]
+        [PXUIField(DisplayName = "Printed Date", Visible = false)]
         public virtual DateTime? PrintedDate { get; set; }
         public abstract class printedDate : PX.Data.BQL.BqlDateTime.Field<printedDate> { }
         #endregion
@@ -365,6 +366,23 @@ namespace eGUICustomizations.DAC
         public abstract class qREncrypter : PX.Data.BQL.BqlString.Field<qREncrypter> { }
         #endregion
 
+        #region AddressLine       
+        [PXDBString(50, IsUnicode = true)]
+        [PXUIField(DisplayName = "GUI Address")]
+        [PXMassMergableField]
+        [PXPersonalDataField]
+        public virtual string AddressLine { get; set; }
+        public abstract class addressLine : PX.Data.BQL.BqlString.Field<addressLine> { }
+        #endregion
+
+        #region AllowUpload
+        [PXDBBool()]
+        [PXUIField(DisplayName = "Allow Upload BankPro", Enabled = false)]
+        [PXDefault(true, PersistingCheck = PXPersistingCheck.Nothing)]
+        public virtual bool? AllowUpload { get; set; }
+        public abstract class allowUpload : PX.Data.BQL.BqlBool.Field<allowUpload> { }
+        #endregion
+
         #region CreatedByID
         [PXDBCreatedByID]
         public virtual Guid? CreatedByID { get; set; }
@@ -431,7 +449,7 @@ namespace eGUICustomizations.DAC
 
         #region ChineseAmt
         [PXString(IsUnicode = true)]
-        [PXUIField(DisplayName = "Chinese Amount")]
+        [PXUIField(DisplayName = "Chinese Amount", Visible = false)]
         public virtual string ChineseAmt
         {
             [PXDependsOnFields(typeof(netAmount), typeof(taxAmount))]
