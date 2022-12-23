@@ -16,6 +16,21 @@ namespace PX.Objects.EP
                          .OrderBy<TWNManualGUIExpense.createdDateTime.Asc>.View manGUIExpense;
         #endregion
 
+        #region Override Method
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            PXCache<AP.Vendor> vendor = new PXCache<AP.Vendor>(Base);
+
+            Base.Caches[typeof(AP.Vendor)] = vendor;
+
+            PXCache<EPEmployee> employee = new PXCache<EPEmployee>(Base);
+
+            Base.Caches[typeof(EPEmployee)] = employee;
+        }
+        #endregion
+
         #region Static Methods
         public static bool IsActive() => TWNGUIValidation.ActivateTWGUI(new PXGraph());
         #endregion
