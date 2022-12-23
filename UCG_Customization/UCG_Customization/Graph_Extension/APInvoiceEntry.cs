@@ -22,10 +22,10 @@ namespace PX.Objects.AP
         {
             var row = e.Row;
             if (row == null) return;
-
             string docType = row.DocType;
             bool isShowReturnAmt = docType == APDocType.Invoice;
-            PXUIFieldAttribute.SetVisible<APRegisterUCGExt.returnAmount>(e.Cache,row,isShowReturnAmt);
+            PXUIFieldAttribute.SetVisible<APRegisterUCGExt.returnAmount>(e.Cache, row, isShowReturnAmt);
+            PXUIFieldAttribute.SetVisible<APRegisterUCGExt.usrOpportunityID>(e.Cache, row, ProjectDefaultAttribute.IsNonProject(row.ProjectID));
             PXUIFieldAttribute.SetVisible<APTranUCGExt.returnAmt>(Base.Transactions.Cache, null, isShowReturnAmt);
         }
 
@@ -54,6 +54,17 @@ namespace PX.Objects.AP
             var rowExt = e.Cache.GetExtension<APRegisterWorkGroupExt>(row);
             rowExt.UsrDepartmentID = newValue;
         }
+
+        protected void _(Events.FieldUpdated<APRegister, APRegister.projectID> e, PXFieldUpdated baseMethod)
+        {
+            var row = e.Row;
+            if (row == null) return;
+            bool isNonProject = ProjectDefaultAttribute.IsNonProject(row.ProjectID);
+            if (!isNonProject)
+            {
+                e.Cache.SetValueExt<APRegisterUCGExt.usrOpportunityID>(row, null);
+            }
+        }
         #endregion
         #endregion
 
@@ -67,15 +78,17 @@ namespace PX.Objects.AP
         private void SetUsrApproveWG(PXCache cache, APRegister row)
         {
             int? projectID = row.ProjectID;
+            string oppID = row.GetExtension<APRegisterUCGExt>().UsrOpportunityID;
             if (row.Hold == true && cache.GetStatus(row) == PXEntryStatus.Deleted) return;
-            if (row.DocType == APDocType.Prepayment) { 
+            if (row.DocType == APDocType.Prepayment)
+            {
                 var projectCD = (PXStringState)cache.GetValueExt(row, UD_PROJECT);
                 var pmProject = GetProjectByCD(projectCD);
                 if (pmProject == null) throw new PXException($"找不到對應專案:{projectCD}");
                 projectID = pmProject.ContractID;
             }
             var emp = GetEmployee(row.EmployeeID);
-            ApproveWGUtil.SetUsrApproveWG(cache,row, row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID, emp.AcctCD?.Trim(), projectID);
+            ApproveWGUtil.SetUsrApproveWG(cache, row, row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID, emp?.AcctCD?.Trim(), projectID, oppID);
         }
 
         #endregion
