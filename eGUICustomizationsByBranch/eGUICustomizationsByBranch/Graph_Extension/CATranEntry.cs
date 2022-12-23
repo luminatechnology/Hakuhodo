@@ -16,6 +16,21 @@ namespace PX.Objects.CA
         public PXSetup<TWNGUIPreferences> GUIPreferences;
         #endregion
 
+        #region Override Method
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            PXCache<AP.Vendor> vendor = new PXCache<AP.Vendor>(Base);
+
+            Base.Caches[typeof(AP.Vendor)] = vendor;
+
+            PXCache<EP.EPEmployee> employee = new PXCache<EP.EPEmployee>(Base);
+
+            Base.Caches[typeof(EP.EPEmployee)] = employee;
+        }
+        #endregion
+
         #region Event Handlers
         public bool activateGUI = TWNGUIValidation.ActivateTWGUI(new PXGraph());
 

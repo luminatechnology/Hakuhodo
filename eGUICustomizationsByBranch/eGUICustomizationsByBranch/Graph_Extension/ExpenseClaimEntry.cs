@@ -13,7 +13,22 @@ namespace PX.Objects.EP
         [PXCopyPasteHiddenFields(typeof(TWNManualGUIExpense.gUINbr), typeof(TWNManualGUIExpense.refNbr))]
         public SelectFrom<TWNManualGUIExpense>
                          .Where<TWNManualGUIExpense.refNbr.IsEqual<EPExpenseClaim.refNbr.FromCurrent>>
-                         .OrderBy<TWNManualGUIExpense.sortOrder.Asc>.View manGUIExpense;
+                         .OrderBy<TWNManualGUIExpense.createdDateTime.Asc>.View manGUIExpense;
+        #endregion
+
+        #region Override Method
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            PXCache<AP.Vendor> vendor = new PXCache<AP.Vendor>(Base);
+
+            Base.Caches[typeof(AP.Vendor)] = vendor;
+
+            PXCache<EPEmployee> employee = new PXCache<EPEmployee>(Base);
+
+            Base.Caches[typeof(EPEmployee)] = employee;
+        }
         #endregion
 
         #region Static Methods
@@ -91,6 +106,11 @@ namespace PX.Objects.EP
 
             // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
             manGUIExpense.Cache.SetValueExt<TWNManualGUIExpense.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
+        }
+
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIExpense.createdDateTime> e)
+        {
+            e.NewValue = System.DateTime.UtcNow;
         }
         #endregion
 

@@ -20,7 +20,7 @@ namespace PX.Objects.AP
                                  typeof(TWNManualGUIAPBill.gUINbr))]
         public SelectFrom<TWNManualGUIAPBill>.Where<TWNManualGUIAPBill.docType.IsEqual<APInvoice.docType.FromCurrent>
                                                     .And<TWNManualGUIAPBill.refNbr.IsEqual<APInvoice.refNbr.FromCurrent>>>
-                                             .OrderBy<TWNManualGUIAPBill.sortOrder.Asc>.View ManualAPBill;
+                                             .OrderBy<TWNManualGUIAPBill.createdDateTime.Asc>.View ManualAPBill;
 
         [PXCopyPasteHiddenFields(typeof(TWNWHT.docType), typeof(TWNWHT.refNbr))]
         public SelectFrom<TWNWHT>.Where<TWNWHT.docType.IsEqual<APInvoice.docType.FromCurrent>
@@ -106,8 +106,6 @@ namespace PX.Objects.AP
         }
 
         #region TWNManualGUIAPBill
-        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
-
         protected virtual void _(Events.RowInserting<TWNManualGUIAPBill> e)
         {
             e.Row.SortOrder = e.Cache.Cached.RowCast<TWNManualGUIAPBill>().Count() + 1;
@@ -130,6 +128,11 @@ namespace PX.Objects.AP
         protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.vATInCode> e)
         {
             e.NewValue = Base.Document.Current?.DocType == APDocType.DebitAdj ? TWGUIFormatCode.vATInCode23 : e.NewValue;
+        }
+
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.createdDateTime> e)
+        {
+            e.NewValue = System.DateTime.UtcNow;
         }
         #endregion
 

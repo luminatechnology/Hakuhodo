@@ -9,7 +9,7 @@
 </asp:Content>
 <asp:Content ID="cont2" ContentPlaceHolderID="phF" Runat="Server"></asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">
-	<px:PXGrid PreservePageIndex="true" KeepPosition="True" FastFilterFields="GUINbr,OrderNbr,CustVend" AdjustPageSize="Auto" AllowPaging="True" AllowSearch="True" Width="100%" SyncPosition="True" ID="grid" runat="server" DataSourceID="ds" SkinID="Primary" AllowAutoHide="false">
+	<px:PXGrid PreservePageIndex="true" KeepPosition="True" FastFilterFields="GUINbr,OrderNbr,CustVend" AdjustPageSize="Auto" AllowPaging="True" AllowSearch="True" Width="100%" SyncPosition="True" ID="grid" runat="server" DataSourceID="ds" SkinID="Primary" AllowAutoHide="false" NoteIndicator ="false" FilesIndicator="false">
 		<Levels>
 			<px:PXGridLevel DataMember="ViewGUITrans">
 			    <Columns>
@@ -34,26 +34,28 @@
 				<px:PXGridColumn DataField="SequenceNo" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="CustVend" Width="120" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="CustVendName" Width="280" ></px:PXGridColumn>
-				<px:PXGridColumn DisplayMode="Hint" DataField="DeductionCode" Width="100" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="DeductionCode" Width="100" DisplayMode="Hint" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="BatchNbr" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="DocType" Width="50"></px:PXGridColumn>
 				<px:PXGridColumn DataField="OrderNbr" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="TransDate" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PrintedDate" Width="90" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="GUITitle" Width="140" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="AddressLine" Width="180" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="AllowUpload" Width="90" Type="CheckBox" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="EGUIExported" Width="90" Type="CheckBox" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="EGUIExportedDateTime" Width="90" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="Remark" Width="180" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="CarrierType" Width="70" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="CarrierID" Width="120" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="NPONbr" Width="120" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="ExportMethods" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="ExportTicketType" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="ExportTicketNbr" Width="140" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="CustomType" Width="140" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="ClearingDate" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="Remark" Width="180" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="GUITitle" Width="200" ></px:PXGridColumn>
-				<px:PXGridColumn Type="CheckBox" DataField="EGUIExcluded" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn Type="CheckBox" DataField="EGUIExported" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="EGUIExportedDateTime" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="CarrierType" Width="70" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="CarrierID" Width="120" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="NPONbr" Width="120" ></px:PXGridColumn>
-				<px:PXGridColumn Type="CheckBox" DataField="B2CPrinted" Width="60" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="EGUIExcluded" Width="90" Type="CheckBox" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="B2CPrinted" Width="60" Type="CheckBox" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="PrintedDate" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PrintCount" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="QREncrypter" Width="140" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="CreatedDateTime" Width="90" ></px:PXGridColumn></Columns>

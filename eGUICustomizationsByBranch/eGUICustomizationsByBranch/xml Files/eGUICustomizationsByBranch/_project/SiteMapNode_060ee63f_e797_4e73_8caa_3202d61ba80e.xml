@@ -26,15 +26,12 @@
         <data>
             <SiteMap>
                 <row Position="7861" Title="Create New GUI" Url="~/Pages/TW/TW204000.aspx" ScreenID="TW204000" NodeID="060ee63f-e797-4e73-8caa-3202d61ba80e" ParentID="00000000-0000-0000-0000-000000000000">
-                    <MUIScreen IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="60" SubcategoryID="38d13a6e-3076-42fb-9fce-62fa33897da6" />
+                    <MUIScreen IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="60" SubcategoryID="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" />
                 </row>
             </SiteMap>
             <MUIWorkspace>
                 <row IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="145.25" Title="Taxes" Icon="taxes" AreaID="338edf81-5456-4735-8601-b213458e93fe" ScreenID="WSTX0000" IsSystem="0" />
             </MUIWorkspace>
-            <MUISubcategory>
-                <row IsPortal="0" SubcategoryID="38d13a6e-3076-42fb-9fce-62fa33897da6" Order="64" Name="Transactions" Icon="" IsSystem="0" />
-            </MUISubcategory>
             <MUIArea>
                 <row IsPortal="0" AreaID="338edf81-5456-4735-8601-b213458e93fe" Order="10" Name="Financials" />
             </MUIArea>

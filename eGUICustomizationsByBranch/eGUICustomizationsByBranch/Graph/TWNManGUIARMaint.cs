@@ -30,7 +30,7 @@ namespace eGUICustomizations.Graph
         [PXFilterable()]
         public SelectFrom<TWNManualGUIAR>.Where<TWNManualGUIAR.status.IsEqual<TWNGUIManualFilter.status.FromCurrent>>.View ManualGUIAR;
 
-        public SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAR.gUINbr.FromCurrent>>.View ViewGUITrans;
+        //public SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAR.gUINbr.FromCurrent>>.View ViewGUITrans;
 
         public PXSetup<TWNGUIPreferences> GUIPreferences;
         #endregion
@@ -83,9 +83,12 @@ namespace eGUICustomizations.Graph
 
                         if (tWNGUITrans != null)
                         {
-                            ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= manualGUIAR.NetAmt));
-                            ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= manualGUIAR.TaxAmt));
-                            ViewGUITrans.Update(tWNGUITrans);
+                            rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= manualGUIAR.NetAmt));
+                            rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= manualGUIAR.TaxAmt));
+                            rp.ViewGUITrans.Update(tWNGUITrans);
+
+                            rp.ViewGUITrans.Cache.Persist(PXDBOperation.Update);
+                            rp.ViewGUITrans.Cache.Persisted(false);
                         }
 
                         ts.Complete();
@@ -100,11 +103,15 @@ namespace eGUICustomizations.Graph
         [PXButton(ImageSet = "main", ImageKey = PX.Web.UI.Sprite.Main.ReportF), PXUIField(DisplayName = "Print GUI Invoice")]
         public virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
         {
-            if (ManualGUIAR.Current != null)
+            var current = ManualGUIAR.Current;
+
+            if (current != null)
             {
                 Dictionary<string, string> parameters = new Dictionary<string, string>
                 {
-                    [nameof(TWNGUITrans.GUINbr)] = ManualGUIAR.Current.GUINbr
+                    [nameof(TWNGUITrans.GUIFormatCode)] = current.VatOutCode,
+                    [nameof(ARInvoice.RefNbr)]          = current.GUINbr,
+                    [nameof(TWNGUITrans.GUINbr)]        = current.GUINbr
                 };
 
                 throw new PXReportRequiredException(parameters, SOInvoiceEntry_Extension.GUIReportID, SOInvoiceEntry_Extension.GUIReportID);
@@ -189,7 +196,7 @@ namespace eGUICustomizations.Graph
                 BranchID      = data.BranchID,
                 GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
                 GUIDate       = data.GUIDate,
-                GUITitle      = bAccount?.AcctName,
+                GUITitle      = data.GUITitle,//bAccount?.AcctName,
                 TaxZoneID     = data.TaxZoneID,
                 TaxCategoryID = data.TaxCategoryID,
                 TaxID         = data.TaxID,
@@ -201,7 +208,8 @@ namespace eGUICustomizations.Graph
                 AcctName      = bAccount?.AcctName,
                 eGUIExcluded  = data.VatOutCode == TWGUIFormatCode.vATOutCode32,
                 Remark        = isDeleted == false ? data.Remark : string.Format(TWMessages.DeleteInfo, this.Accessinfo.UserName),
-                OrderNbr      = data.GUINbr
+                OrderNbr      = data.GUINbr,
+                AddressLine   = data.AddressLine
             });
 
             #region InsertPrintedLine

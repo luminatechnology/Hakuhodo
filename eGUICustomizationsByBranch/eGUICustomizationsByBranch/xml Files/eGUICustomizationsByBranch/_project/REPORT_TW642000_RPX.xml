@@ -58,7 +58,7 @@
                 <Name>GUINbr</Name>
                 <Prompt>GUI Nbr.</Prompt>
                 <Required>True</Required>
-                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUINbr,RefNbr')</ViewName>
+                <ViewName>=Report.GetFieldSchema('TWNPrintedLineFilter.GUINbr,RefNbr,GUIFormatCode')</ViewName>
             </ReportParameter>
         </Parameters>
         <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>

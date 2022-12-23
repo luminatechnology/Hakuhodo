@@ -1,6 +1,7 @@
 using System;
 using PX.Data;
 using PX.Objects.AR;
+using PX.Objects.CR.MassProcess;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.TX;
@@ -182,6 +183,22 @@ namespace eGUICustomizations.DAC
         [Branch(useDefaulting: false)]
         public virtual int? BranchID { get; set; }
         public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
+        #endregion
+
+        #region GUITitle
+        [PXDBString(80, IsUnicode = true)]
+        [PXUIField(DisplayName = "GUI Title")]
+        public virtual string GUITitle { get; set; }
+        public abstract class gUITitle : PX.Data.BQL.BqlString.Field<gUITitle> { }
+        #endregion
+
+        #region AddressLine       
+        [PXDBString(50, IsUnicode = true)]
+        [PXUIField(DisplayName = "GUI Address")]
+        [PXMassMergableField]
+        [PXPersonalDataField]
+        public virtual string AddressLine { get; set; }
+        public abstract class addressLine : PX.Data.BQL.BqlString.Field<addressLine> { }
         #endregion
 
         #region CreatedByID

@@ -16,13 +16,6 @@ namespace eGUICustomizations.Graph
                                                And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                           Or<TWNGUITrans.eGUIExported, IsNull>>,
                                                     And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
-        //public PXProcessing<TWNGUITrans,
-        //                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-        //                          And<TWNGUITrans.gUIFormatcode, Equal<PX.Objects.AR.ARRegisterExt.VATOut33Att>,
-        //                               And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-        //                                          Or<TWNGUITrans.eGUIExported, IsNull>>,
-        //                                    And<Where<TWNGUITrans.taxNbr, IsNull,
-        //                                              Or<TWNGUITrans.taxNbr, Equal<StringEmpty>>>>>>>> GUITranProc;
         #endregion
 
         #region Ctor

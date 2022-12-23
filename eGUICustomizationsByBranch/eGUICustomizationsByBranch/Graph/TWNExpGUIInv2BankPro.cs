@@ -7,16 +7,16 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CR;
+using PX.Objects.TX;
 using PX.Objects.SO;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using PX.Objects.TX;
 
 namespace eGUICustomizations.Graph
 {
     public class TWNExpGUIInv2BankPro : PXGraph<TWNExpGUIInv2BankPro>
     {
-        public const decimal fixedRate = (decimal)1.05;
+        public const decimal fixedRate = 1.05m;
         public const string  verticalBar = "|";
 
         #region String Constant Classes
@@ -46,7 +46,8 @@ namespace eGUICustomizations.Graph
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
                                               And<TWNGUITrans.gUIFormatCode, Equal<VATOutCode35>,
-                                                  And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
+                                                  And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>,
+                                                      And<TWNGUITrans.allowUpload, Equal<True>>>>>>> GUITranProc;
 
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
@@ -108,16 +109,23 @@ namespace eGUICustomizations.Graph
             }
         }
 
+        public virtual string GetInvoiceTaxCalcMode(PXGraph graph, string tranType, string refNbr)
+        {
+            return SelectFrom<ARRegister>.Where<ARRegister.docType.IsEqual<@P.AsString>
+                                                .And<ARRegister.refNbr.IsEqual<@P.AsString>>>
+                                         .View.ReadOnly.Select(graph, tranType, refNbr).TopFirst.TaxCalcMode;
+        }
+
         public bool AmountInclusiveTax(string taxCalcMode, string taxID)
         {
             bool value;
             switch (taxCalcMode)
             {
                 case TaxCalculationMode.Gross:
-                    value = false;
+                    value = true;
                     break;
                 case TaxCalculationMode.Net:
-                    value = true;
+                    value = false;
                     break;
                 case TaxCalculationMode.TaxSetting:
                     value = Tax.PK.Find(this, taxID).TaxCalcLevel == CSTaxCalcLevel.Inclusive;
@@ -141,13 +149,11 @@ namespace eGUICustomizations.Graph
 
                 TWNExpGUIInv2BankPro graph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string lines = "";
-
-                //TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
                 string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbBymBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
 
                 string fileName = $"{ourTaxNbrByBranch}-InvoiceMD-{ourTaxNbrByBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 
+                string lines = "";
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
                     #region M
@@ -217,23 +223,22 @@ namespace eGUICustomizations.Graph
                     lines += new string(char.Parse(verticalBar), 2) + "\r\n";
                     #endregion
 
-                    // The following method is only for voided invoice.
+                    #region D
                     if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
                     {
                         CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }
                     else
                     {
-                        #region D
+                        bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
+                        bool isInclusive = false;
+
                         PXResultset<ARTran> results = graph.RetrieveARTran(gUITrans.OrderNbr);
 
                         foreach (PXResult<ARTran> result in results)
                         {
                             ARTran aRTran = result;
 
-                            string taxCalcMode = SelectFrom<ARRegister>.Where<ARRegister.docType.IsEqual<@P.AsString>
-                                                                              .And<ARRegister.refNbr.IsEqual<@P.AsString>>>
-                                                                       .View.ReadOnly.Select(graph, aRTran.TranType, aRTran.RefNbr).TopFirst.TaxCalcMode;
                             // File Type
                             lines += "D" + verticalBar;
                             // Description
@@ -294,17 +299,18 @@ namespace eGUICustomizations.Graph
                             //    }
                             //}
                             #endregion
+
                             decimal? unitPrice = (aRTran.CuryDiscAmt == 0m) ? aRTran.UnitPrice : (aRTran.TranAmt / aRTran.Qty);
-                            decimal? tranAmt = aRTran.TranAmt;
+                            decimal? tranAmt   = aRTran.TranAmt;
 
-                            bool isInclusive = graph.AmountInclusiveTax(taxCalcMode, gUITrans.TaxID);
+                            isInclusive = graph.AmountInclusiveTax(graph.GetInvoiceTaxCalcMode(graph, aRTran.TranType, aRTran.RefNbr), gUITrans.TaxID);
 
-                            if (string.IsNullOrEmpty(gUITrans.TaxNbr) && isInclusive == false)//taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
+                            if (isB2C && isInclusive == false)
                             {
                                 unitPrice *= fixedRate;
                                 tranAmt *= fixedRate;
                             }
-                            else if (!string.IsNullOrEmpty(gUITrans.TaxNbr) && isInclusive == true)//taxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross)
+                            else if (!isB2C && isInclusive == true)
                             {
                                 unitPrice /= fixedRate;
                                 tranAmt /= fixedRate;
@@ -337,9 +343,18 @@ namespace eGUICustomizations.Graph
 
                         if (results.Count <= 0)
                         {
-                            foreach (TWNGUIPrintedLineDet line in SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>>
-                                                                                                  .View.Select(graph, gUITrans.GUINbr))
+                            isInclusive = graph.AmountInclusiveTax(TaxCalculationMode.TaxSetting, gUITrans.TaxID);
+
+                            foreach (TWNGUIPrintedLineDet line in SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
+                                                                                                         .And<TWNGUIPrintedLineDet.gUIFormatcode.IsEqual<@P.AsString>
+                                                                                                              .And<TWNGUIPrintedLineDet.refNbr.IsEqual<@P.AsString>>>>
+                                                                                                  .View.Select(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode, gUITrans.OrderNbr))
                             {
+                                (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(isInclusive,
+                                                                                                                           !isB2C,
+                                                                                                                           line.UnitPrice.Value,
+                                                                                                                           line.Amount.Value);
+
                                 // File Type
                                 lines += "D" + verticalBar;
                                 // Description
@@ -347,9 +362,9 @@ namespace eGUICustomizations.Graph
                                 // Quantity
                                 lines += (line.Qty ?? 1) + verticalBar;
                                 // Unit Price
-                                lines += string.Format("{0:0.####}", line.UnitPrice) + verticalBar;
+                                lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
                                 // Amount
-                                lines += string.Format("{0:0.####}", line.Amount) + verticalBar;
+                                lines += string.Format("{0:0.####}", ExtPrice) + verticalBar;
                                 // Unit
                                 lines += verticalBar;
                                 // Package
@@ -374,9 +389,9 @@ namespace eGUICustomizations.Graph
                                 lines += new string(char.Parse(verticalBar), 11) + "\r\n";
                             }
                         }
-                        #endregion
                     }
                 }
+                #endregion
 
                 // Total Records
                 lines += tWNGUITrans.Count;

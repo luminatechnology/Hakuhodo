@@ -27,13 +27,6 @@ namespace eGUICustomizations.Graph
                                                And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                           Or<TWNGUITrans.eGUIExported, IsNull>>,
                                                    And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
-        //public PXProcessing<TWNGUITrans,
-        //                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-        //                          And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
-        //                               And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-        //                                          Or<TWNGUITrans.eGUIExported, IsNull>>,
-        //                                    And<Where<TWNGUITrans.taxNbr, IsNull,
-        //                                              Or<TWNGUITrans.taxNbr, Equal<StringEmpty>>>>>>>> GUITranProc;
         #endregion
 
         #region Ctor
@@ -60,7 +53,6 @@ namespace eGUICustomizations.Graph
 
                 string lines = "", verticalBar = TWNExpGUIInv2BankPro.verticalBar;
 
-                //TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
                 string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbBymBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
 
                 string fileName = $"{ourTaxNbrByBranch}-O-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
@@ -71,7 +63,7 @@ namespace eGUICustomizations.Graph
                     bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
                     ARRegister    register = ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
-                    ARRegisterExt regisExt = register.GetExtension<ARRegisterExt>();
+                    ARRegisterExt regisExt = register?.GetExtension<ARRegisterExt>();
 
                     #region Header
                     // 主檔代號
@@ -147,18 +139,19 @@ namespace eGUICustomizations.Graph
                     lines += 0 + verticalBar + "\r\n";
                     #endregion
 
-                    bool isInclusive = invGraph.AmountInclusiveTax(register.TaxCalcMode, gUITrans.TaxID);
+                    #region Common Details (ARTran)
+                    bool isInclusive = invGraph.AmountInclusiveTax(register?.TaxCalcMode, gUITrans.TaxID);
                     int num = 1;
                     string refNbr = string.Empty;
                     decimal? totalUP = 0m, totalEP = 0m, totalTA = 0m;
                     foreach (ARTran tran in invGraph.RetrieveARTran(gUITrans.OrderNbr))
                     {
-                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(isInclusive == true,//invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross,
-                                                                                 !isB2C,
-                                                                                 tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
-                                                                                 tran.CuryTranAmt.Value/*tran.CuryExtPrice.Value*/);
+                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(isInclusive,
+                                                                                    !isB2C,
+                                                                                    tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
+                                                                                    tran.CuryTranAmt.Value);
 
-                        if (regisExt.UsrSummaryPrint == false)
+                        if (regisExt?.UsrSummaryPrint == false)
                         {
                             if (isCM == true && lines.Contains(FixedMsg) == true && !string.IsNullOrEmpty(tran.OrigInvoiceNbr))
                             {
@@ -186,7 +179,7 @@ namespace eGUICustomizations.Graph
                             // 未稅金額
                             lines += ExtPrice + verticalBar;
                             // 含稅金額
-                            lines += (/*invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross*/ isInclusive == false ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt) + verticalBar;
+                            lines += (isInclusive == false ? decimal.Multiply(tran.CuryTranAmt.Value, 1.05m) : tran.CuryTranAmt) + verticalBar;
                             // 健康捐
                             lines += 0 + verticalBar;
                             // 稅率別
@@ -197,15 +190,16 @@ namespace eGUICustomizations.Graph
                         }
                         else
                         {
-                            refNbr   = isCM == false ? tran.RefNbr : tran.OrigInvoiceNbr;
+                            refNbr = isCM == false ? tran.RefNbr : tran.OrigInvoiceNbr;
                             totalUP += UnitPrice;
                             totalEP += ExtPrice;
-                            totalTA += /*invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross*/ isInclusive == false ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt;
+                            totalTA += isInclusive == false ? decimal.Multiply(tran.CuryTranAmt.Value, 1.05m) : tran.CuryTranAmt;
                         }
                     }
+                    #endregion
 
                     #region GUI Summary 
-                    if (regisExt.UsrSummaryPrint == true)
+                    if (regisExt?.UsrSummaryPrint == true)
                     {
                         // 明細代號
                         lines += "D" + verticalBar;
@@ -217,7 +211,7 @@ namespace eGUICustomizations.Graph
                         // 商品條碼
                         lines += new string(char.Parse(verticalBar), 2);
                         // 商品名稱
-                        lines += (CSAttributeDetail.PK.Find(graph, ARRegisterExt.GUISummary, regisExt.UsrGUISummary ?? string.Empty)?.Description ?? string.Empty) + verticalBar;
+                        lines += (CSAttributeDetail.PK.Find(graph, ARRegisterExt.GUISummary, regisExt?.UsrGUISummary ?? string.Empty)?.Description ?? string.Empty) + verticalBar;
                         // 商品規格
                         // 單位
                         lines += new string(char.Parse(verticalBar), 2);
@@ -309,6 +303,8 @@ namespace eGUICustomizations.Graph
         #region Methods
         private (string addressLine, string postalCode) GetBillingAddress(PXGraph graph, string docType, string refNbr, string customer)
         {
+            if (string.IsNullOrEmpty(customer)) { return (null, null); }
+
             IAddressBase address = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
                                                         .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst;
 
@@ -334,16 +330,18 @@ namespace eGUICustomizations.Graph
 
             if (address == null)
             {
-                address = SelectFrom<Address>.InnerJoin<Customer>.On<Customer.defBillAddressID.IsEqual<Address.addressID>>
-                                                 .Where<Customer.acctCD.IsEqual<@P.AsString>>.View
+                address = SelectFrom<Address>.InnerJoin<BAccount>.On<BAccount.defAddressID.IsEqual<Address.addressID>>
+                                                 .Where<BAccount.acctCD.IsEqual<@P.AsString>>.View
                                                  .SelectSingleBound(graph, null, customer).TopFirst;
             }
 
-            return (address.AddressLine1, address.PostalCode);
+            return (address?.AddressLine1, address.PostalCode);
         }
 
         private (string phone, string email, string attention) GetBillingInfo(PXGraph graph, string docType, string refNbr, string customer)
         {
+            if (string.IsNullOrEmpty(customer)) { return(null, null, null); }
+
             IContact contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>
                                                     .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst;
 
@@ -369,8 +367,9 @@ namespace eGUICustomizations.Graph
 
             if (contact == null)
             {
-                contact = SelectFrom<Contact>.InnerJoin<Customer>.On<Customer.defBillContactID.IsEqual<Contact.contactID>>
-                                             .Where<Customer.acctCD.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, customer).TopFirst;
+                contact = SelectFrom<Contact>.InnerJoin<BAccount2>.On<BAccount2.defContactID.IsEqual<Contact.contactID>>
+                                             .Where<BAccount2.acctCD.IsEqual<@P.AsString>>
+                                             .View.SelectSingleBound(graph, null, customer).TopFirst;
             }
 
             return (contact.Phone1, contact.Email, contact.Attention);
@@ -387,22 +386,22 @@ namespace eGUICustomizations.Graph
             return iseGUICust == true ? strings[0] + strings[1] : strings[0];
         }
 
-        public virtual (decimal UnitPrice, decimal ExtPrice) CalcTaxAmt(bool isGross, bool hasTaxNbr, decimal unitPrice, decimal extPrice)
+        public virtual (decimal UnitPrice, decimal ExtPrice) CalcTaxAmt(bool isInclusive, bool hasTaxNbr, decimal unitPrice, decimal extPrice)
         {
             // B2C
             if (hasTaxNbr == false)
             {
-                if (isGross == false)
+                if (isInclusive == false)
                 {
-                    return (decimal.Multiply(unitPrice, (decimal)1.05), decimal.Multiply(extPrice, (decimal)1.05));
+                    return (decimal.Multiply(unitPrice, 1.05m), decimal.Multiply(extPrice, 1.05m));
                 }
             }
             // B2B
             else
             {
-                if (isGross == true)
+                if (isInclusive == true)
                 {
-                    return (decimal.Divide(unitPrice, (decimal)1.05), decimal.Divide(extPrice, (decimal)1.05));
+                    return (decimal.Divide(unitPrice, 1.05m), decimal.Divide(extPrice, 1.05m));
                 }
             }
 
