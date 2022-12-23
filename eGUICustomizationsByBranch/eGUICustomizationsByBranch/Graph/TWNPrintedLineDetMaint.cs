@@ -3,10 +3,10 @@ using System.Collections;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
+using PX.Objects.AR;
+using PX.Objects.CS;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using PX.Objects.CS;
-using PX.Objects.AR;
 
 namespace eGUICustomizations.Graph
 {
@@ -33,7 +33,7 @@ namespace eGUICustomizations.Graph
 
                 int startRow = 0, totalRows = 0;
 
-                foreach (TWNGUIPrintedLineDet row in /*new PXView(this, false, cmd)*/PrintedLineDet.View.Select(new[] { filter }, //Pass filter context to the grid view delegate
+                foreach (TWNGUIPrintedLineDet row in PrintedLineDet.View.Select(new[] { filter }, //Pass filter context to the grid view delegate
                                                                                 null, null, null, null,
                                                                                 PrintedLineDet.View.GetExternalFilters(), //Get grid user filters
                                                                                 ref startRow,
@@ -58,19 +58,39 @@ namespace eGUICustomizations.Graph
         }
         #endregion
 
+        #region Override Method
+        public override void Persist()
+        {
+            base.Persist();
+
+            var filter = Filter.Current;
+
+            if (filter != null && filter?.RevisedAmount != null)
+            {
+                PXUpdate<Set<TWNGUITrans.allowUpload, Required<TWNGUITrans.allowUpload>>,
+                         TWNGUITrans,
+                         Where<TWNGUITrans.gUIFormatCode, Equal<Required<TWNPrintedLineFilter.gUIFormatcode>>,
+                               And<TWNGUITrans.orderNbr, Equal<Required<TWNPrintedLineFilter.refNbr>>,
+                                   And<TWNGUITrans.gUINbr, Equal<Required<TWNPrintedLineFilter.gUINbr>>>>>>
+                         .Update(this, filter.RevisedAmount == filter.OrigAmount, filter.GUIFormatcode, filter.RefNbr, filter.GUINbr);
+            }
+        }
+        #endregion
+
         #region Event Handlers
         protected virtual void _(Events.RowPersisting<TWNPrintedLineFilter> e)
         {
-            if (e.Row.RevisedAmount > e.Row.OrigAmount) 
+            if (e.Row.RevisedAmount != e.Row.OrigAmount) 
             {
-                string errorMsg = "Revised Amount Cannot Be Greater Than Orig. Inv. Amt.";
+                string warningMsg = "Revised Amount Cannot Be Greater Than Orig. Inv. Amt.";
 
-                throw new PXSetPropertyException<TWNPrintedLineFilter.revisedAmount>(errorMsg);
+                e.Cache.RaiseExceptionHandling<TWNPrintedLineFilter.revisedAmount>(e.Row, e.Row.RevisedAmount, new PXSetPropertyException(warningMsg, PXErrorLevel.Warning));
             }
         }
         #endregion
     }
 
+    #region Unbound DAC
     [Serializable]
     [PXCacheName("TWN Printed Line Filter")]
     public class TWNPrintedLineFilter : IBqlTable
@@ -105,7 +125,9 @@ namespace eGUICustomizations.Graph
         [PXUIField(DisplayName = "GUI Number")]
         [PXSelector(typeof(SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIStatus.IsEqual<TWNStringList.TWNGUIStatus.used>
                                                          .And<TWNGUITrans.eGUIExcluded.IsEqual<False>
-                                                             .And<TWNGUITrans.orderNbr.IsEqual<refNbr.AsOptional>>>>.SearchFor<TWNGUITrans.gUINbr>),
+                                                             .And<TWNGUITrans.orderNbr.IsEqual<refNbr.AsOptional>
+                                                                  .And<TWNGUITrans.gUIFormatCode.IsEqual<gUIFormatcode.AsOptional>>>>>
+                                                  .SearchFor<TWNGUITrans.gUINbr>),
                     typeof(TWNGUITrans.gUINbr),
                     typeof(TWNGUITrans.gUIDate),
                     typeof(TWNGUITrans.custVend),
@@ -129,4 +151,5 @@ namespace eGUICustomizations.Graph
         public abstract class revisedAmount : PX.Data.BQL.BqlDecimal.Field<revisedAmount> { }
         #endregion
     }
+    #endregion
 }
