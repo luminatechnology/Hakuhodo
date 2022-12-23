@@ -27,13 +27,6 @@ namespace eGUICustomizations.Graph
                                                And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                           Or<TWNGUITrans.eGUIExported, IsNull>>,
                                                    And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
-        //public PXProcessing<TWNGUITrans,
-        //                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-        //                          And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
-        //                               And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-        //                                          Or<TWNGUITrans.eGUIExported, IsNull>>,
-        //                                    And<Where<TWNGUITrans.taxNbr, IsNull,
-        //                                              Or<TWNGUITrans.taxNbr, Equal<StringEmpty>>>>>>>> GUITranProc;
         #endregion
 
         #region Ctor
@@ -146,6 +139,7 @@ namespace eGUICustomizations.Graph
                     lines += 0 + verticalBar + "\r\n";
                     #endregion
 
+                    #region Common Details (ARTran)
                     bool isInclusive = invGraph.AmountInclusiveTax(register?.TaxCalcMode, gUITrans.TaxID);
                     int num = 1;
                     string refNbr = string.Empty;
@@ -153,9 +147,9 @@ namespace eGUICustomizations.Graph
                     foreach (ARTran tran in invGraph.RetrieveARTran(gUITrans.OrderNbr))
                     {
                         (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(isInclusive,
-                                                                                 !isB2C,
-                                                                                 tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
-                                                                                 tran.CuryTranAmt.Value/*tran.CuryExtPrice.Value*/);
+                                                                                    !isB2C,
+                                                                                    tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
+                                                                                    tran.CuryTranAmt.Value);
 
                         if (regisExt?.UsrSummaryPrint == false)
                         {
@@ -196,12 +190,13 @@ namespace eGUICustomizations.Graph
                         }
                         else
                         {
-                            refNbr   = isCM == false ? tran.RefNbr : tran.OrigInvoiceNbr;
+                            refNbr = isCM == false ? tran.RefNbr : tran.OrigInvoiceNbr;
                             totalUP += UnitPrice;
                             totalEP += ExtPrice;
                             totalTA += isInclusive == false ? decimal.Multiply(tran.CuryTranAmt.Value, 1.05m) : tran.CuryTranAmt;
                         }
                     }
+                    #endregion
 
                     #region GUI Summary 
                     if (regisExt?.UsrSummaryPrint == true)

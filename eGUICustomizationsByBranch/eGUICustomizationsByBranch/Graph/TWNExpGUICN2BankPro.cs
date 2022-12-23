@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using PX.Data;
+using PX.Data.BQL;
+using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CR;
 using eGUICustomizations.DAC;
@@ -28,9 +30,8 @@ namespace eGUICustomizations.Graph
                                           And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                      Or<TWNGUITrans.eGUIExported, IsNull>>,
                                               And<TWNGUITrans.gUIFormatCode, In3<ARRegisterExt.VATOut33Att, VATOutCode34>,
-                                                  And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>>>>>> GUITranProc;
-
-        public PXSetup<TWNGUIPreferences> gUIPreferSetup;
+                                                  And<TWNGUITrans.branchID, Equal<Current<WHTTranFilter.branchID>>,
+                                                      And<TWNGUITrans.allowUpload, Equal<True>>>>>>> GUITranProc;
         #endregion
 
         #region Ctor
@@ -52,15 +53,14 @@ namespace eGUICustomizations.Graph
 
                 TWNExpGUIInv2BankPro graph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string lines = "";
-
-                //TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
                 string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbBymBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
 
                 string fileName = $"{ourTaxNbrByBranch}-AllowanceMD-{ourTaxNbrByBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 
+                string lines = "";
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
+                    #region M
                     // File Type
                     lines += "M" + verticalBar;
                     // Bill type
@@ -121,60 +121,123 @@ namespace eGUICustomizations.Graph
                     // Void Reason
                     // Project Number Void Approved
                     lines += new string(char.Parse(verticalBar), 6) + "\r\n";
+                    #endregion
 
-                    foreach (PXResult<ARTran> result in graph.RetrieveARTran(gUITrans.OrderNbr))
-                    {
-                        ARTran aRTran = result;
-
-                        // File Type
-                        lines += "D" + verticalBar;
-                        // Description
-                        lines += aRTran.TranDesc + verticalBar;
-                        // Quantity
-                        lines += aRTran.Qty + verticalBar;
-                        // Unit Price
-                        // Amount
-                        if (gUITrans.TaxNbr != null)
-                        {
-                            lines += aRTran.UnitPrice + verticalBar;
-                            lines += aRTran.TranAmt + verticalBar;
-                        }
-                        else
-                        {
-                            lines += (aRTran.UnitPrice * TWNExpGUIInv2BankPro.fixedRate) + verticalBar;
-                            lines += (aRTran.TranAmt * TWNExpGUIInv2BankPro.fixedRate) + verticalBar;
-                        }
-                        // Unit
-                        lines += verticalBar;
-                        // Package
-                        lines += "0" + verticalBar;
-                        // Gift Number 1 (Box)
-                        lines += "0" + verticalBar;
-                        // Gift Number 2 (Piece)
-                        lines += "0" + verticalBar;
-                        // Order No
-                        lines += (gUITrans.OrderNbr.Length > 16) ? gUITrans.OrderNbr.Substring(0, 16) : gUITrans.OrderNbr + verticalBar;
-                        // Buyer Barcode
-                        // Buyer Prod No
-                        // Seller Prod No
-                        // Seller Account No
-                        // Seller Shipping No
-                        // Remark
-                        // Relate Number1
-                        // Relate Number2 (Invoice No)
-                        lines += new string(char.Parse(verticalBar), 7) + gUITrans.GUINbr + verticalBar;
-                        // Relate Number3 (Invoice Date)
-                        // Relate Number4
-                        // Relate Number5
-                        lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
-                        lines += new string(char.Parse(verticalBar), 2) + "\r\n";
-                    }
-
+                    #region D
                     // The following method is only for voided invoice.
                     if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
                     {
                         TWNExpGUIInv2BankPro.CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }
+                    else
+                    {
+                        bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
+                        bool isInclusive = false;
+
+                        PXResultset<ARTran> results = graph.RetrieveARTran(gUITrans.OrderNbr);
+
+                        foreach (PXResult<ARTran> result in results)
+                        {
+                            ARTran aRTran = result;
+
+                            // File Type
+                            lines += "D" + verticalBar;
+                            // Description
+                            lines += aRTran.TranDesc + verticalBar;
+                            // Quantity
+                            lines += aRTran.Qty + verticalBar;
+                            // Unit Price
+                            // Amount
+                            isInclusive = graph.AmountInclusiveTax(graph.GetInvoiceTaxCalcMode(graph, aRTran.TranType, aRTran.RefNbr), gUITrans.TaxID);
+
+                            if (isB2C && isInclusive == false)
+                            {
+                                lines += aRTran.UnitPrice + verticalBar;
+                                lines += aRTran.TranAmt + verticalBar;
+                            }
+                            else
+                            {
+                                lines += (aRTran.UnitPrice * TWNExpGUIInv2BankPro.fixedRate) + verticalBar;
+                                lines += (aRTran.TranAmt * TWNExpGUIInv2BankPro.fixedRate) + verticalBar;
+                            }
+                            // Unit
+                            lines += verticalBar;
+                            // Package
+                            lines += "0" + verticalBar;
+                            // Gift Number 1 (Box)
+                            lines += "0" + verticalBar;
+                            // Gift Number 2 (Piece)
+                            lines += "0" + verticalBar;
+                            // Order No
+                            lines += (gUITrans.OrderNbr.Length > 16) ? gUITrans.OrderNbr.Substring(0, 16) : gUITrans.OrderNbr + verticalBar;
+                            // Buyer Barcode
+                            // Buyer Prod No
+                            // Seller Prod No
+                            // Seller Account No
+                            // Seller Shipping No
+                            // Remark
+                            // Relate Number1
+                            // Relate Number2 (Invoice No)
+                            lines += new string(char.Parse(verticalBar), 7) + gUITrans.GUINbr + verticalBar;
+                            // Relate Number3 (Invoice Date)
+                            // Relate Number4
+                            // Relate Number5
+                            lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
+                            lines += new string(char.Parse(verticalBar), 2) + "\r\n";
+                        }
+
+                        if (results.Count <= 0)
+                        {
+                            isInclusive = graph.AmountInclusiveTax(PX.Objects.TX.TaxCalculationMode.TaxSetting, gUITrans.TaxID);
+
+                            foreach (TWNGUIPrintedLineDet line in SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
+                                                                                                         .And<TWNGUIPrintedLineDet.gUIFormatcode.IsEqual<@P.AsString>
+                                                                                                              .And<TWNGUIPrintedLineDet.refNbr.IsEqual<@P.AsString>>>>
+                                                                                                  .View.Select(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode, gUITrans.OrderNbr))
+                            {
+                                (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(isInclusive,
+                                                                                                                           !isB2C,
+                                                                                                                           line.UnitPrice.Value,
+                                                                                                                           line.Amount.Value);
+
+                                // File Type
+                                lines += "D" + verticalBar;
+                                // Description
+                                lines += line.Descr + verticalBar;
+                                // Quantity
+                                lines += (line.Qty ?? 1) + verticalBar;
+                                // Unit Price
+                                lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
+                                // Amount
+                                lines += string.Format("{0:0.####}", ExtPrice) + verticalBar;
+                                // Unit
+                                lines += verticalBar;
+                                // Package
+                                lines += "0" + verticalBar;
+                                // Gift Number 1 (Box)
+                                lines += "0" + verticalBar;
+                                // Gift Number 2 (Piece)
+                                lines += "0" + verticalBar;
+                                // Order No
+                                lines += (gUITrans.OrderNbr.Length > 16) ? gUITrans.OrderNbr.Substring(0, 16) : gUITrans.OrderNbr + verticalBar;
+                                // Buyer Barcode
+                                // Buyer Prod No
+                                // Seller Prod No
+                                // Seller Account No
+                                // Seller Shipping No
+                                // Remark
+                                // Relate Number1
+                                // Relate Number2 (Invoice No)
+                                lines += new string(char.Parse(verticalBar), 7) + gUITrans.GUINbr + verticalBar;
+                                // Relate Number3 (Invoice Date)
+                                // Relate Number4
+                                // Relate Number5
+                                lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
+                                lines += new string(char.Parse(verticalBar), 2) + "\r\n";
+                            }
+                        }
+                    }
+                    #endregion
                 }
 
                 // Total Records

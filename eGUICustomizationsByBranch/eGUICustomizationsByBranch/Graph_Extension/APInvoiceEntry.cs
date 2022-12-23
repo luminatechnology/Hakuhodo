@@ -106,8 +106,6 @@ namespace PX.Objects.AP
         }
 
         #region TWNManualGUIAPBill
-        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
-
         protected virtual void _(Events.RowInserting<TWNManualGUIAPBill> e)
         {
             e.Row.SortOrder = e.Cache.Cached.RowCast<TWNManualGUIAPBill>().Count() + 1;
