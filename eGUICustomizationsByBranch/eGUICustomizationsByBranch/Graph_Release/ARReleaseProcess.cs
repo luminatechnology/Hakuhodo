@@ -139,7 +139,7 @@ namespace PX.Objects.AR
                                 BranchID      = doc.BranchID,
                                 GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
                                 GUIDate       = docExt.UsrGUIDate.Value.Date.Add(doc.CreatedDateTime.Value.TimeOfDay),
-                                GUITitle      = docExt.UsrGUITitle ?? ARContact.PK.Find(Base, (doc as ARInvoice)?.BillContactID)?.FullName, // As David's email [GUI Form Adjustment] # 6
+                                GUITitle      = docExt.UsrGUITitle ?? ARContact.PK.Find(Base, (doc as ARInvoice)?.BillContactID)?.FullName,
                                 TaxZoneID     = taxZoneID,
                                 TaxCategoryID = taxCateID,
                                 TaxID         = taxID,
@@ -149,7 +149,7 @@ namespace PX.Objects.AR
                                 TaxAmount     = settledTax < 0 ? 0 : settledTax,
                                 AcctCD        = customer.AcctCD,
                                 AcctName      = customer.AcctName,
-                                Remark        = doc.DocDesc,//(appointment is null) ? string.Empty : appointment.RefNbr,
+                                Remark        = doc.DocDesc,
                                 BatchNbr      = doc.BatchNbr,
                                 DocType       = doc.DocType,
                                 OrderNbr      = doc.RefNbr,
@@ -157,7 +157,8 @@ namespace PX.Objects.AR
                                 CarrierID     = docExt.UsrB2CType == TWNStringList.TWNB2CType.MC ? tuple.Item2 : null,
                                 NPONbr        = docExt.UsrB2CType == TWNStringList.TWNB2CType.NPO ? tuple.Item3 : null,
                                 B2CPrinted    = docExt.UsrB2CType == TWNStringList.TWNB2CType.DEF && string.IsNullOrEmpty(docExt.UsrTaxNbr),
-                                TranDate      = doc.DocDate
+                                TranDate      = doc.DocDate,
+                                AddressLine   = ARAddress.PK.Find(Base, (doc as ARInvoice).BillAddressID)?.AddressLine1
                             });
 
                             #region Prepayment Adjust
