@@ -1,4 +1,5 @@
 ﻿using PX.Data;
+using PX.Objects.CT;
 using PX.Objects.PM;
 using System.Collections;
 
@@ -12,7 +13,7 @@ namespace PX.Objects.EP
         [PXButton]
         public virtual IEnumerable viewProject(PXAdapter adapter)
         {
-            
+
             var projectID = Base.Claim.Current.GetExtension<EPExpenseClaimWorkGroupExt>().UsrProjectID;
             if (projectID != null && !ProjectDefaultAttribute.IsNonProject(projectID))
             {
@@ -22,5 +23,11 @@ namespace PX.Objects.EP
             }
             return adapter.Get();
         }
+
+        #region CacheAttached
+        [PXMergeAttributes(Method =MergeMethod.Merge)]
+        [PXUIField(DisplayName = "Project Description")]
+        protected virtual void _(Events.CacheAttached<Contract.description> e) { }
+        #endregion
     }
 }

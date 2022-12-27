@@ -8,6 +8,12 @@
                     <Prop Key="LinkCommand" Value="ViewProject" />
                 </PXGridColumn>
             </AddItem>
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="UsrProjectID_description" />
+                    <Prop Key="Width" Value="280" />
+                </PXGridColumn>
+            </AddItem>
             <PXGridColumn DataField="Status" OriginalIndex="2" />
         </Children>
     </PXGridLevel>
