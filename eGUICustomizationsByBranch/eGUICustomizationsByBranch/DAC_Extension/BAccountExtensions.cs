@@ -58,11 +58,18 @@ namespace PX.Objects.CR
         #endregion
 
         #region Static Methods
-        public static string GetOurTaxNbBymBranch(PXCache cache, int? branchID)
+        public static string GetOurTaxNbByBranch(PXCache cache, int? branchID)
         {
             return SelectFrom<BAccount2>.InnerJoin<Branch>.On<Branch.bAccountID.IsEqual<BAccount2.bAccountID>>
                                         .Where<Branch.branchID.IsEqual<@P.AsInt>>.View.Select(cache.Graph, branchID)
                                         .TopFirst?.GetExtension<BAccountExt>().UsrOurTaxNbr;
+        }
+
+        public static BAccountExt GetTWGUIByBranch(PXCache cache, int? branchID)
+        {
+            return SelectFrom<BAccount2>.InnerJoin<Branch>.On<Branch.bAccountID.IsEqual<BAccount2.bAccountID>>
+                                        .Where<Branch.branchID.IsEqual<@P.AsInt>>.View.Select(cache.Graph, branchID)
+                                        .TopFirst?.GetExtension<BAccountExt>();
         }
         #endregion
     }

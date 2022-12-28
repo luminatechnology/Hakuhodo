@@ -149,7 +149,7 @@ namespace eGUICustomizations.Graph
 
                 TWNExpGUIInv2BankPro graph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbBymBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
+                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
 
                 string fileName = $"{ourTaxNbrByBranch}-InvoiceMD-{ourTaxNbrByBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 
