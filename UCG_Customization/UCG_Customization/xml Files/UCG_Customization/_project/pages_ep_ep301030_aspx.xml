@@ -17,4 +17,7 @@
             <PXGridColumn DataField="Status" OriginalIndex="2" />
         </Children>
     </PXGridLevel>
+    <PXGrid ID="grid" ParentId="phG_grid" TypeFullName="PX.Web.UI.PXGrid">
+        <Prop Key="RepaintColumns" Value="True" />
+    </PXGrid>
 </Page>

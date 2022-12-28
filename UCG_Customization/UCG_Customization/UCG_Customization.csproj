@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="DAC\APARTeleTransView.cs" />
     <Compile Include="DAC_Extension\APRegisterUCGExt.cs" />
+    <Compile Include="DAC_Extension\APSetupUCGExt.cs" />
     <Compile Include="DAC_Extension\APTranUCGExt.cs" />
     <Compile Include="DAC_Extension\ARPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\APPaymentTTExt.cs" />
