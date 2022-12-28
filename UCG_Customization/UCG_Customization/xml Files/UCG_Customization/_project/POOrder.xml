@@ -9,4 +9,5 @@
     <Column TableName="POOrder" ColumnName="UsrApproveWG08" ColumnType="string" AllowNull="True" MaxLength="40" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
     <Column TableName="POOrder" ColumnName="UsrApproveWG09" ColumnType="string" AllowNull="True" MaxLength="40" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
     <Column TableName="POOrder" ColumnName="UsrApproveWG10" ColumnType="string" AllowNull="True" MaxLength="40" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="POOrder" ColumnName="UsrOpportunityID" ColumnType="string" AllowNull="True" MaxLength="10" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
 </Table>

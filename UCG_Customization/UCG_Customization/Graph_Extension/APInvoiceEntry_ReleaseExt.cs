@@ -10,9 +10,15 @@ using PX.Objects.CA;
 using PX.Common;
 using PX.Data.BQL.Fluent;
 using PX.Data.BQL;
+using UCG_Customization.Utils;
 
 namespace PX.Objects.AP
 {
+    /**
+     * 廠商代墊/員工代墊/員工暫借
+     * 
+     * 2022-12-28 - 員工代墊邏輯改為與廠商代墊相同
+     * **/
     public class APInvoiceEntry_ReleaseExt : PXGraphExtension<PX.Objects.AP.APInvoiceEntry>
     {
         #region const
@@ -40,9 +46,11 @@ namespace PX.Objects.AP
         const string MSG_EPPAYAMT_INSUFFICIENT = "代墊/暫借款{0}餘額不足";
         const string MSG_EPPAYAMT_FORMAT_ERR = "代墊/暫借款：僅供輸入數字";
         const string MSG_EPPAYAMT_GREATER_AMT = "代墊/暫借款大於請款金額，請確認金額";
+        const string MSG_EPPAYAMT_ZERO_AMT = "代墊金額不得為0";
         const string MSG_CANNOT_AUTO_ADJ = "暫借款 {0} 無法自動沖銷，請人工作業";
         const string MSG_PLZ_EPLENT = "請維護執行項目EPLENT";
         const string MSG_CASH_ACCOUNT_NOT_FOUND = "銀行帳戶查無對應的{0}";
+        const string MSG_VENDOR_CAN_NOT_SAME = "代墊廠商/員工 與 供應商 不能相同";
         #endregion
         #endregion
 
@@ -105,7 +113,69 @@ namespace PX.Objects.AP
 
         #endregion
 
+        #region Event
+        protected virtual void _(Events.RowPersisting<APInvoice> e)
+        {
+            var row = e.Row;
+            if (row == null) return;
+            APSetupUCGExt setupExt = Base.APSetup.Current.GetExtension<APSetupUCGExt>();
+            if (setupExt.UsrIsCheckAdvVendor == true) ValidateAdvAcct(e.Cache, row);
+            if (setupExt.UsrIsCheckAdvAmt == true) ValidateAdvAmt(e.Cache, row);
+
+        }
+        #endregion
+
         #region Method
+        /// <summary>
+        /// 檢核代墊廠商/員工 與 AP供應商 不能相同
+        /// </summary>
+        protected virtual void ValidateAdvAcct(PXCache cache, APInvoice row)
+        {
+            string epPayType = (PXStringState)cache.GetValueExt(row, EPPAYTYPE);
+            if (epPayType.IsIn(EMP_ADV_CODE, VEN_ADV_CODE))
+            {
+                //代墊廠商/代墊員工
+                string vendor = (PXStringState)cache.GetValueExt(row, VENDOR);
+                BAccount baccount = GetBaccountByCD(Base, vendor);
+                if (row.VendorID == baccount?.BAccountID)
+                {
+                    ErrorMsg.SetError<APInvoice.vendorID>(cache, row, vendor, MSG_VENDOR_CAN_NOT_SAME);
+                    ErrorMsg.SetError(cache, VENDOR, row, vendor, MSG_VENDOR_CAN_NOT_SAME);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 檢核 當選擇員工代墊款或廠商代墊款時，代墊金額不得為0
+        /// </summary>
+        protected virtual void ValidateAdvAmt(PXCache cache, APInvoice row)
+        {
+            string epPayType = (PXStringState)cache.GetValueExt(row, EPPAYTYPE);
+            if (epPayType.IsIn(EMP_ADV_CODE, VEN_ADV_CODE))
+            {
+                string _epPayAmt = (PXStringState)cache.GetValueExt(row, EPPAYAMT);
+                decimal epPayAmt = 0;
+                string error = null;
+                try
+                {
+                    epPayAmt = Decimal.Parse(_epPayAmt);
+                }
+                catch (Exception)
+                {
+                    error = MSG_EPPAYAMT_FORMAT_ERR;
+                }
+                if (epPayAmt == 0m)
+                {
+                    error = MSG_EPPAYAMT_ZERO_AMT;
+                }
+                else if (epPayAmt > row.CuryOrigDocAmt)
+                {
+                    error = MSG_EPPAYAMT_GREATER_AMT;
+                }
+                if (error != null) ErrorMsg.SetError(cache, EPPAYAMT, row, _epPayAmt, error);
+            }
+        }
+
         private void DoCustRelease(PXAdapter adapter, ReleaseDelegate baseMethod, APInvoice invoice, PXCache cache, string epPayType)
         {
 
@@ -139,24 +209,16 @@ namespace PX.Objects.AP
                 }
                 else if (epPayType.IsIn(EMP_ADV_CODE, VEN_ADV_CODE))
                 {
-                    int? vendorID = null;
-                    if (epPayType == EMP_ADV_CODE)
-                    {
-                        //Vendor = 原單 經辦人
-                        BAccount baccount = GetBaccountByDefContact(Base, invoice.EmployeeID);
-                        vendorID = baccount.BAccountID;
-                    }
-                    else
-                    {
-                        //代墊廠商
-                        string vendor = (PXStringState)cache.GetValueExt(invoice, VENDOR);
-                        BAccount baccount = GetBaccountByCD(Base, vendor);
-                        vendorID = baccount.BAccountID;
-                    }
+                    //代墊廠商/代墊員工
+                    string vendor = (PXStringState)cache.GetValueExt(invoice, VENDOR);
+                    BAccount baccount = GetBaccountByCD(Base, vendor);
+                    int? vendorID = baccount.BAccountID;
 
+                    //產生APInvoice
                     string epLentAP = CreateAPInvoice4Adv(invoice, epPayAmt, vendorID, epPayType);
                     cache.SetValueExt<APRegisterUCGExt.usrEPLentAP>(invoice, epLentAP);
                     baseMethod(adapter);
+                    //產生APPayment
                     CreateAPPayment4Adv(invoice, epPayAmt, epPayType);
                 }
 

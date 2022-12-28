@@ -1,0 +1,23 @@
+﻿<Page path="~/pages/ep/ep301030.aspx" pageSource="rVbBbts4ED1ngf4DwSK3reU0PQV2sbZltwHsVIjSJLcFLU1sthSpkpRj9dBv3yEpxY6jLgKjPtEjcTjvzXtDDU7/IQlbAZkzuapwMaSTt5QsmLGg3YMZFxj7Fe0iJpopXcRgGRe9wocpGVVWTTcg7R3XUJVDanUFlNwywXNm4Rp+VGDskD4wYTA+UXmTeZqc98/65/0eM+W2lxlKLuUaNLdmSN1p/7YvUHLDrdvxVVq3yH3dlJx+fPPXAFGEAm/qEsgt17ZiImF2/YrSXQJMgedfTJS0iIFcxkOa4frMVepDiWAZfFYiB+0elus4pURXkiGmFPQGE2Gak0G5vUjuY2ZZqiqdgc+UI6g7nrtizvr9U0qwQMOXDsuNZ6nJY0Ie4jBcsQIfJ/e9L8tvkFnTmya96bYEaWAiGC8WjEuLmRLNC6brWw6PQ4qMekQO6lyxfAxrtuFKYyJVVgL7kLIN5NgUbEaoNzoo2JEZ7VHxsYOZZv0/5Mw6uCGEBHZcC1y9Ptfu79kLHnZVtSymtnas/XzHZQ7bC4J0HlA7YaXlSrqDBfKGy5BnAcUS9BNFvhz/i+GBVcI6JFoJdxDk06IUqgbszJWyqFMQ+ZA2GPxvcAP4CvK5FyNPAOesVpW9rgQ0EHeB9y9AppZpPF1UhWzlMGdLEKaBlS4CzVhcyn8i+HsMRJ3nBshK4/tFwe1kjZYG02Y9hNZBdoO0fecyRoHtHzWIDnA38mlb+BrxOFud/145n7qV0yD8pHnus6xw8QLCZ+CrNf7/0O+X2wNddCpnJIR6RLNwuWpZ8qEUmM7W7Qwb5d8qY52nQgPcqOsU53cufb+DJS/ljwpnIcZrmSXK8KDLcMwMZ0+Qouccm3QND1dL/XesshhMFgZqOM/vcGY9Gcxhg8rw65MdIz76TOV+RNADkXgag9JMx6PnLIf39lXhKsPOvxTfazYHdChtLr87dTLpdJZzG2YxPSYnOsdW5rh6nmg+avek0jVmGDOBwxq2diT4Clt77eR3XD0uo7PbMXv37Rpzg/6sF3i9onCwtKOYnWjATufj+s+ljKHEOVeg5f9czlFZarUBr8pj9o81k9n6d7QPop1XnN2i534Lhoz2HDloLeuHG97Pzol3OG/UIyVTyfDCz1v/L7hsp9V7N4lcASf+1JG/tMZMtzdTCDxzi7/g9dNHxMx/U0V797mrsmMY/wc=">
+    <PXGridLevel DataMember="Claim" ParentId="phG_grid_Levels#0" TypeFullName="PX.Web.UI.PXGridLevel">
+        <Children Key="Columns">
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="UsrProjectID" />
+                    <Prop Key="Width" Value="70" />
+                    <Prop Key="LinkCommand" Value="ViewProject" />
+                </PXGridColumn>
+            </AddItem>
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="UsrProjectID_description" />
+                    <Prop Key="Width" Value="280" />
+                </PXGridColumn>
+            </AddItem>
+            <PXGridColumn DataField="Status" OriginalIndex="2" />
+        </Children>
+    </PXGridLevel>
+    <PXGrid ID="grid" ParentId="phG_grid" TypeFullName="PX.Web.UI.PXGrid">
+        <Prop Key="RepaintColumns" Value="True" />
+    </PXGrid>
+</Page>

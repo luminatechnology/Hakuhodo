@@ -128,6 +128,22 @@ namespace PX.Objects.EP
         public abstract class usrProjectID : PX.Data.BQL.BqlInt.Field<usrProjectID> { }
         #endregion
 
+        #region UsrOpportunityID 
+        [PXDBString(10)]
+        [PXUIField(DisplayName = "Opportunity ID")]
+        [PXSelector(typeof(Search<CROpportunity.opportunityID,
+            Where<CROpportunity.branchID, Equal<Current<EPExpenseClaim.branchID>>>>),
+            typeof(CROpportunity.opportunityID),
+            typeof(CROpportunity.status),
+            typeof(CROpportunity.bAccountID),
+            typeof(CROpportunity.ownerID),
+            typeof(CROpportunity.subject),
+            DescriptionField = typeof(CROpportunity.subject)
+            )]
+        public virtual string UsrOpportunityID { get; set; }
+        public abstract class usrOpportunityID : PX.Data.BQL.BqlString.Field<usrOpportunityID> { }
+        #endregion
+
         #region unbound
         #region IsApproving 
         [PXBool]

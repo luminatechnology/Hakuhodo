@@ -1,4 +1,5 @@
 ﻿using PX.Data;
+using PX.Objects.CR;
 using PX.Objects.EP;
 using PX.Objects.PM;
 using PX.TM;
@@ -30,7 +31,7 @@ namespace UCG_Customization.Utils
         #endregion
 
 
-        public static void SetUsrApproveWG(PXCache cache, object row, string deptID, string empAcctCD, int? projectID = null)
+        public static void SetUsrApproveWG(PXCache cache, object row, string deptID, string empAcctCD, int? projectID, string opportunityID)
         {
             PXGraph graph = new PXGraph();
             #region 取得層級資料
@@ -43,17 +44,25 @@ namespace UCG_Customization.Utils
                 || projectID == ProjectDefaultAttribute.NonProject()
                 || IsNoApproveProject(projectCD))
             {
-                #region 一般情境
+                #region NonProject 情境
+                //取得商機內容
+                var tempAcctCDs = GetUsrApproveWGByOpportunityID(graph, opportunityID);
+                //取得組織樹內容
                 if (thisTree != null)
                 {
                     saveAcctCDs = GetUsrApproveWG(graph, thisTree);
+                }
+                //當商機最高人員非自己，則使用商機簽核
+                if (tempAcctCDs != null && empAcctCD != tempAcctCDs[4])
+                {
+                    saveAcctCDs = tempAcctCDs;
                 }
                 #endregion
             }
             else
             {
-                #region 需判斷Project 且不為NonProject時
-                var tempAcctCDs = GetUsrApproveWGByNonProject(graph, projectID);
+                #region Project情境
+                var tempAcctCDs = GetUsrApproveWGByProject(graph, projectID);
                 //如果最高層 則走 nonProject邏輯
                 if (empAcctCD == tempAcctCDs[4])
                 {
@@ -90,7 +99,7 @@ namespace UCG_Customization.Utils
             }
         }
 
-        private static string[] GetUsrApproveWGByNonProject(PXGraph graph, int? projectID)
+        private static string[] GetUsrApproveWGByProject(PXGraph graph, int? projectID)
         {
             //建立虛構空間
             string[] saveAcctCDs = new string[TREE_SIZE];
@@ -101,6 +110,21 @@ namespace UCG_Customization.Utils
             saveAcctCDs[6] = (PXStringState)projectCache.GetValueExt(project, UD_APPROVE3);
             saveAcctCDs[7] = (PXStringState)projectCache.GetValueExt(project, UD_APPROVE2);
             saveAcctCDs[8] = (PXStringState)projectCache.GetValueExt(project, UD_APPROVE1);
+            return saveAcctCDs;
+        }
+
+        private static string[] GetUsrApproveWGByOpportunityID(PXGraph graph, string opportunityID)
+        {
+            //建立虛構空間
+            string[] saveAcctCDs = new string[TREE_SIZE];
+            if (opportunityID == null) return null;
+            CROpportunity opportunity = CROpportunity.PK.Find(graph, opportunityID);
+            CROpportunityUCGExt oppExt = opportunity.GetExtension<CROpportunityUCGExt>();
+            saveAcctCDs[4] = EPEmployee.PK.Find(graph, oppExt.UsrApprover5)?.AcctCD;
+            saveAcctCDs[5] = EPEmployee.PK.Find(graph, oppExt.UsrApprover4)?.AcctCD;
+            saveAcctCDs[6] = EPEmployee.PK.Find(graph, oppExt.UsrApprover3)?.AcctCD;
+            saveAcctCDs[7] = EPEmployee.PK.Find(graph, oppExt.UsrApprover2)?.AcctCD;
+            saveAcctCDs[8] = EPEmployee.PK.Find(graph, oppExt.UsrApprover1)?.AcctCD;
             return saveAcctCDs;
         }
 
@@ -148,7 +172,9 @@ namespace UCG_Customization.Utils
         /// </summary>
         private static bool IsNoApproveProject(string projectCD)
         {
-            string[] noApproveProject = { NO_APPROVE_PROJECT_INT001, NO_APPROVE_PROJECT_INT002 };
+            string[] noApproveProject = { NO_APPROVE_PROJECT_INT001
+                   // , NO_APPROVE_PROJECT_INT002 //2022-12-23 INT002 走回專案路線
+            };
             foreach (var cd in noApproveProject)
             {
                 //start with NoApproveProject

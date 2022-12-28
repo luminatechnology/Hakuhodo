@@ -1,4 +1,5 @@
 ﻿using PX.Data;
+using PX.Objects.CR;
 using System.Collections.Generic;
 using UCG_Customization.Descriptor;
 
@@ -12,6 +13,22 @@ namespace PX.Objects.AP
         [PXDBDefault(PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual string UsrEPLentAP { get; set; }
         public abstract class usrEPLentAP : PX.Data.BQL.BqlString.Field<usrEPLentAP> { }
+        #endregion
+
+        #region UsrOpportunityID 
+        [PXDBString(10)]
+        [PXUIField(DisplayName = "Opportunity ID")]
+        [PXSelector(typeof(Search<CROpportunity.opportunityID,
+            Where<CROpportunity.branchID, Equal<Current<APRegister.branchID>>>>),
+            typeof(CROpportunity.opportunityID),
+            typeof(CROpportunity.status),
+            typeof(CROpportunity.bAccountID),
+            typeof(CROpportunity.ownerID),
+            typeof(CROpportunity.subject),
+            DescriptionField = typeof(CROpportunity.subject)
+            )]
+        public virtual string UsrOpportunityID { get; set; }
+        public abstract class usrOpportunityID : PX.Data.BQL.BqlString.Field<usrOpportunityID> { }
         #endregion
 
         #region Unbound

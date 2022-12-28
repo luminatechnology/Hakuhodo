@@ -1,0 +1,4 @@
+﻿<Table TableName="APSetup">
+    <Column TableName="APSetup" ColumnName="UsrIsCheckAdvVendor" ColumnType="bool" AllowNull="True" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="APSetup" ColumnName="UsrIsCheckAdvAmt" ColumnType="bool" AllowNull="True" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
+</Table>
