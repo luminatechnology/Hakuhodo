@@ -19,5 +19,6 @@
     </PXGridLevel>
     <PXGrid ID="grid" ParentId="phG_grid" TypeFullName="PX.Web.UI.PXGrid">
         <Prop Key="RepaintColumns" Value="True" />
+        <Prop Key="FastFilterFields" Value="RefNbr,DocDesc,UsrProjectID,UsrProjectID_description" />
     </PXGrid>
 </Page>
