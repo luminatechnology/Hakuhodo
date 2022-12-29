@@ -105,7 +105,7 @@ namespace PX.Objects.EP
             e.NewValue = Base.ExpenseClaim.Current?.BranchID;
 
             // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
-            manGUIExpense.Cache.SetValueExt<TWNManualGUIExpense.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
+            manGUIExpense.Cache.SetValueExt<TWNManualGUIExpense.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbByBranch(e.Cache, (int?)e.NewValue));
         }
 
         protected virtual void _(Events.FieldDefaulting<TWNManualGUIExpense.createdDateTime> e)

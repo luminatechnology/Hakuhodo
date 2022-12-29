@@ -122,7 +122,7 @@ namespace PX.Objects.AP
             e.NewValue = Base.Document.Current?.BranchID;
 
             // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
-            ManualAPBill.Cache.SetValueExt<TWNManualGUIAPBill.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
+            ManualAPBill.Cache.SetValueExt<TWNManualGUIAPBill.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbByBranch(e.Cache, (int?)e.NewValue));
         }
 
         protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.vATInCode> e)

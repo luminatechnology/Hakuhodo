@@ -174,7 +174,7 @@ namespace eGUICustomizations.Graph
         {
             var row = (TWNManualGUIAP)e.Row;
 
-            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
+            row.OurTaxNbr = BAccountExt.GetOurTaxNbByBranch(e.Cache, (int?)e.NewValue);
         }
         #endregion
     }

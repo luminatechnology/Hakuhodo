@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using PX.Data;
 using PX.Objects.AR;
+using PX.Objects.CR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Descriptor.TWNStringList;
@@ -22,7 +23,6 @@ namespace eGUICustomizations.Graph
                                                   And<TWNGUITrans.gUIStatus, NotEqual<TWNGUIStatus.voided>,
                                                       And<Where<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut34Att>,
                                                                 Or<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut33Att>>>>>>>>> GUITranProc;
-        public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
         #region Ctor
@@ -59,34 +59,35 @@ namespace eGUICustomizations.Graph
         {
             try
             {
-                TWNGenGUIMediaFile genGUIMediaFile = PXGraph.CreateInstance<TWNGenGUIMediaFile>();
-                TWNGUIPreferences  gUIPreferences  = gUIPreferSetup.Current;
+                TWNGenGUIMediaFile mediaFile = PXGraph.CreateInstance<TWNGenGUIMediaFile>();
 
                 int    count = 1;
-                string lines = "", fileName = "", ticketType = "X7";
+                string lines = "", ticketType = "X7";
 
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (StreamWriter sw = new StreamWriter(ms, Encoding.ASCII))
                     {
-                        fileName = gUIPreferences.OurTaxNbr + ".t02";
+                        string fileName = $"{BAccountExt.GetOurTaxNbByBranch(mediaFile.GUITransList.Cache, tWNGUITrans[0].BranchID)}.t02";
 
                         foreach (TWNGUITrans gUITrans in tWNGUITrans)
                         {
+                            BAccountExt branchExt = BAccountExt.GetTWGUIByBranch(mediaFile.GUITransList.Cache, gUITrans.BranchID);
+
                             // Tax ID
-                            lines =  gUIPreferences.OurTaxNbr;
+                            lines = branchExt?.UsrOurTaxNbr;
                             // Country No
-                            lines += gUIPreferences.ZeroTaxCntry;
+                            lines += branchExt?.UsrZeroTaxTaxCntry;
                             // Tax Registration ID
-                            lines += gUIPreferences.TaxRegistrationID;
+                            lines += branchExt?.UsrTaxRegistrationID;
                             // Tax Filling Date
-                            lines += genGUIMediaFile.GetGUILegal(FilterGUITran.Current.ToDate.Value);
+                            lines += mediaFile.GetGUILegal(FilterGUITran.Current.ToDate.Value);
                             // GUI Date
-                            lines += genGUIMediaFile.GetGUILegal(gUITrans.GUIDate.Value);
+                            lines += mediaFile.GetGUILegal(gUITrans.GUIDate.Value);
                             // GUI Number
-                            lines += genGUIMediaFile.GetGUINbr(gUITrans);
+                            lines += mediaFile.GetGUINbr(gUITrans);
                             // Customer Tax ID
-                            lines += gUITrans.TaxNbr ?? new string(genGUIMediaFile.space, 8);
+                            lines += gUITrans.TaxNbr ?? new string(mediaFile.space, 8);
                             // Export Method
                             lines += gUITrans.ExportMethods;                               
                             // Custom Method
@@ -95,8 +96,8 @@ namespace eGUICustomizations.Graph
                             // Ticket Number
                             if (gUITrans.ExportTicketType == ticketType)
                             {
-                                lines += new String(genGUIMediaFile.space, 2);
-                                lines += new String(genGUIMediaFile.space, 14);
+                                lines += new String(mediaFile.space, 2);
+                                lines += new String(mediaFile.space, 14);
                             }
                             else
                             {
@@ -104,7 +105,7 @@ namespace eGUICustomizations.Graph
                                 lines += gUITrans.ExportTicketNbr;
                             }
                             // Amount
-                            lines += genGUIMediaFile.GetNetAmt(gUITrans);
+                            lines += mediaFile.GetNetAmt(gUITrans);
                             // Custom Clearing Date
                             lines += GetTWNDate(gUITrans.ClearingDate.Value);
 

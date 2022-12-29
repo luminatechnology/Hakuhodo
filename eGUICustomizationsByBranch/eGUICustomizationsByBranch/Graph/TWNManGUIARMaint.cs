@@ -181,7 +181,7 @@ namespace eGUICustomizations.Graph
         {
             var row = (TWNManualGUIAR)e.Row;
 
-            row.OurTaxNbr = BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue);
+            row.OurTaxNbr = BAccountExt.GetOurTaxNbByBranch(e.Cache, (int?)e.NewValue);
         }
         #endregion
 

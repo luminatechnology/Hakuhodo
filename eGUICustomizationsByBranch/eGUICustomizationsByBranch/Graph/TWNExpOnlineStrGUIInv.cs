@@ -53,7 +53,7 @@ namespace eGUICustomizations.Graph
 
                 string lines = "", verticalBar = TWNExpGUIInv2BankPro.verticalBar;
 
-                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbBymBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
+                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
 
                 string fileName = $"{ourTaxNbrByBranch}-O-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 

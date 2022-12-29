@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using PX.Objects.CR;
 using PX.Objects.CS;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
@@ -31,10 +32,6 @@ namespace eGUICustomizations.Graph
                                               And2<Where2<Where<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.receipt>>,
                                                                 And<TWNGUITrans.taxAmount, Greater<decimal0>>>,
                                                    Or<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>>>>>> GUITransList;
-        //public PXFilteredProcessing<TWNGUITrans, GUITransFilter,
-        //                            Where<TWNGUITrans.gUIDecPeriod, LessEqual<Current<GUITransFilter.toDate>>,
-        //                                  And<TWNGUITrans.gUIDecPeriod, GreaterEqual<Current<GUITransFilter.fromDate>>,
-        //                                      And<TWNWHTTran.branchID, Equal<Current<GUITransFilter.branchID>>>>>> GUITransList;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
@@ -77,22 +74,22 @@ namespace eGUICustomizations.Graph
                 TWNGUIPreferences gUIPreferences = gUIPreferSetup.Current;
 
                 int    count = 1;
-                string lines = "", fileName = "";
+                string lines = "";
 
                 using (MemoryStream stream = new MemoryStream())
                 {
                     using (StreamWriter sw = new StreamWriter(stream, Encoding.ASCII))
                     {
-                        fileName = gUIPreferences.OurTaxNbr + ".txt";
+                        ourTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, tWNGUITrans[0].BranchID);
+
+                        string fileName = $"{ourTaxNbr}.txt";
 
                         foreach (TWNGUITrans gUITrans in tWNGUITrans)
                         {
-                            ourTaxNbr = gUITrans.OurTaxNbr;
-
                             // Reporting Code
                             lines = gUITrans.GUIFormatCode;
                             // Tax Registration
-                            lines += gUIPreferences.TaxRegistrationID;
+                            lines += BAccountExt.GetTWGUIByBranch(this.GUITransList.Cache, gUITrans.BranchID)?.UsrTaxRegistrationID;
                             // Sequence Number
                             lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, gUITrans, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                             // GUI LegalYM

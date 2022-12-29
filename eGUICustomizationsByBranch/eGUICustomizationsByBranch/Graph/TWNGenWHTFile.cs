@@ -56,22 +56,24 @@ namespace eGUICustomizations.Graph
                 TWNGUIPreferences gUIPreferences = GUISetup.Current;
 
                 int count = 1;
-                string lines = "", fileName = "";
+                string lines = "";
 
                 using (MemoryStream stream = new MemoryStream())
                 {
                     using (StreamWriter sw = new StreamWriter(stream, Encoding.Unicode))
                     {
-                        fileName = this.Accessinfo.BusinessDate.Value.ToString("yyyyMMdd") + ".txt";
+                        string fileName = $"{this.Accessinfo.BusinessDate.Value.ToString("yyyyMMdd")}.txt";
 
                         foreach (TWNWHTTran row in wHTTranList)
                         {
+                            BAccountExt branchExt = BAccountExt.GetTWGUIByBranch(this.WHTTranProc.Cache, row.BranchID);
+
                             // 稽徵機關代號
-                            lines = gUIPreferences?.WHTTaxAuthority;
+                            lines = branchExt?.UsrWHTTaxAuthority;
                             // 流水號
                             lines += AutoNumberAttribute.GetNextNumber(WHTTranProc.Cache, row, gUIPreferences.WHTFileNumbering, Accessinfo.BusinessDate);
                             // 扣繳單位或營利事業統一編號
-                            lines += gUIPreferences.OurTaxNbr;
+                            lines += branchExt?.UsrOurTaxNbr;
                             // Remark
                             lines += mediaGraph.space;
                             // Format Code

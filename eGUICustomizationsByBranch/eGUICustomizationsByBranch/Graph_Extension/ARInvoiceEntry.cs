@@ -262,7 +262,7 @@ namespace PX.Objects.AR
                 }
 
                 e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, vATInCode);
-                e.Cache.SetValue<ARRegisterExt.usrOurTaxNbr>(row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, row.BranchID));
+                e.Cache.SetValue<ARRegisterExt.usrOurTaxNbr>(row, BAccountExt.GetOurTaxNbByBranch(e.Cache, row.BranchID));
             }
         }
 

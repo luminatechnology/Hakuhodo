@@ -83,7 +83,7 @@ namespace PX.Objects.CA
             e.NewValue = Base.CAAdjRecords.Current?.BranchID;
 
             // Since the BranchAttribute will bring default value, it cannot immediately respond to the new value to the event and trigger the related event.
-            ManGUIBank.Cache.SetValueExt<TWNManualGUIBank.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbBymBranch(e.Cache, (int?)e.NewValue));
+            ManGUIBank.Cache.SetValueExt<TWNManualGUIBank.ourTaxNbr>(e.Row, BAccountExt.GetOurTaxNbByBranch(e.Cache, (int?)e.NewValue));
         }
         #endregion
     }
