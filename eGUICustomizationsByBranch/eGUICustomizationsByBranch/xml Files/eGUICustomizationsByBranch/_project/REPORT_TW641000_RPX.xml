@@ -3356,7 +3356,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             </Font>
                             <TextAlign>Center</TextAlign>
                         </Style>
-                        <Value>=[ARInvoice.UsrGUIDate]#010;/*Format('{0}-{1}-{2}', Year(Today()), Month(Today()), Day(Today()))*/</Value>
+                        <Value>=[TWNGUITrans.GUIDate]#010;/*Format('{0}-{1}-{2}', Year(Today()), Month(Today()), Day(Today()))*/</Value>
                     </TextBox>
                     <TextBox Name="textBox4">
                         <Location>15.44974cm, 1.26984cm</Location>
