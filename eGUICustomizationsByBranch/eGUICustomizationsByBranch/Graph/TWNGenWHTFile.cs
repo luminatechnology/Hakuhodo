@@ -95,14 +95,14 @@ namespace eGUICustomizations.Graph
                             // Error Remark
                             lines += mediaGraph.space;
                             // Income Year
-                            lines += mediaGraph.GetGUILegal(row.PaymDate.Value);
+                            lines += mediaGraph.GetTWNDate(row.PaymDate.Value);
                             // Income Chinese Name
                             lines += row.PayeeName;
                             // Income Chinese Address
                             lines += row.PayeeAddr;
                             // 所得所屬期間
                             // The format is YYYMMYYYMM (From payment date and To payment date), the Chinese year and month are retrieved from the payment date entered in the selection criteria. 
-                            lines += mediaGraph.GetGUILegal(Filter.Current.FromPaymDate.Value) + mediaGraph.GetGUILegal(Filter.Current.ToPaymDate.Value);
+                            lines += mediaGraph.GetTWNDate(Filter.Current.FromPaymDate.Value) + mediaGraph.GetTWNDate(Filter.Current.ToPaymDate.Value);
                             // Blank
                             lines += mediaGraph.space;
                             // 是否滿183天

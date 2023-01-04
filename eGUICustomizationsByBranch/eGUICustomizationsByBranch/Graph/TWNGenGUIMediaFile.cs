@@ -1,25 +1,26 @@
-using PX.Common;
-using PX.Data;
 using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using PX.Common;
+using PX.Data;
 using PX.Objects.CR;
 using PX.Objects.CS;
+using PX.Objects.GL;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Graph
 {
     public class TWNGenGUIMediaFile : PXGraph<TWNGenGUIMediaFile>
     {
         #region Variable Defintions
+        public string ourTaxNbr = "";
         public char   zero      = '0';
         public char   space     = ' ';       
         public int    fixedLen  = 0;
-        public string ourTaxNbr = "";
         public string combinStr = "";
+        public const string FixedBranch = "P-PILOT";
         #endregion
 
         #region Features & Setup
@@ -29,9 +30,10 @@ namespace eGUICustomizations.Graph
                                     GUITransFilter,
                                     Where<TWNGUITrans.gUIDecPeriod, Between<Current<GUITransFilter.fromDate>, Current<GUITransFilter.toDate>>,
                                           And<TWNGUITrans.branchID, Equal<Current<GUITransFilter.branchID>>,
-                                              And2<Where2<Where<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.receipt>>,
+                                              And<Where2<Where<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.receipt>,
                                                                 And<TWNGUITrans.taxAmount, Greater<decimal0>>>,
-                                                   Or<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>>>>>> GUITransList;
+                                                         Or<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>>>>>>,
+                                    OrderBy<Asc<TWNGUITrans.gUIDecPeriod>>> GUITransList;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
@@ -45,17 +47,14 @@ namespace eGUICustomizations.Graph
         #endregion
 
         #region Constant String Classes
-        public const string fixedGUI2 = "GUI2%";
-        public const string fixedGUI3 = "GUI3%";
-
         public class GUI2x : PX.Data.BQL.BqlString.Constant<GUI2x>
         {
-            public GUI2x() : base(fixedGUI2) { }
+            public GUI2x() : base("GUI2%") { }
         }
 
         public class GUI3x : PX.Data.BQL.BqlString.Constant<GUI3x>
         {
-            public GUI3x() : base(fixedGUI3) { }
+            public GUI3x() : base("GUI3%") { }
         }
         #endregion
 
@@ -80,7 +79,7 @@ namespace eGUICustomizations.Graph
                 {
                     using (StreamWriter sw = new StreamWriter(stream, Encoding.ASCII))
                     {
-                        ourTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, tWNGUITrans[0].BranchID);
+                        ourTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, Branch.UK.Find(this, FixedBranch)?.BranchID);
 
                         string fileName = $"{ourTaxNbr}.txt";
 
@@ -93,7 +92,7 @@ namespace eGUICustomizations.Graph
                             // Sequence Number
                             lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, gUITrans, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                             // GUI LegalYM
-                            lines += GetGUILegal(gUITrans.GUIDate.Value);
+                            lines += GetTWNDate(gUITrans.GUIDate.Value);
                             // Tax ID (Buyer)
                             lines += GetBuyerTaxID(gUITrans);
                             // Tax ID (Seller)
@@ -151,7 +150,7 @@ namespace eGUICustomizations.Graph
                                 // Sequence Number
                                 lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, numSeq, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                                 // GUI LegalYM
-                                lines += GetGUILegal(Filter.Current.ToDate.Value);
+                                lines += GetTWNDate(Filter.Current.ToDate.Value);
                                 // Tax ID (Buyer)
                                 lines += numSeq.EndNbr.Substring(2);
                                 // Tax ID (Seller)
@@ -195,12 +194,19 @@ namespace eGUICustomizations.Graph
             }
         }
 
-        public virtual string GetGUILegal(DateTime dateTime)
+        public virtual string GetTWNDate(DateTime dateTime, bool fullDate = false)
         {
             var tWCalendar = new System.Globalization.TaiwanCalendar();
 
             int    year  = tWCalendar.GetYear(dateTime);
             string month = DateTime.Parse(dateTime.ToString()).ToString("MM");
+            
+            if (fullDate == true)
+            {
+                string day = DateTime.Parse(dateTime.ToString()).ToString("dd");
+
+                return string.Format("{0}{1}{2}", year, month, day);
+            }
 
             return string.Format("{0}{1}", year, month);
         }
@@ -218,7 +224,7 @@ namespace eGUICustomizations.Graph
 
             if (gUITrans.GUIFormatCode.IsIn(TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode35) ) { buyerFmtCode = true; }
 
-            if (gUITrans.GUIStatus == TWNGUIStatus.Voided)
+            if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
             {
                 combinStr = new string(zero, fixedLen);
             }
@@ -259,7 +265,7 @@ namespace eGUICustomizations.Graph
             {
                 return gUITrans.OurTaxNbr;
             }
-            else if (gUITrans.GUIFormatCode.StartsWith("3") && gUITrans.GUIStatus != TWNGUIStatus.Voided)
+            else if (gUITrans.GUIFormatCode.StartsWith("3") && gUITrans.GUIStatus != TWNStringList.TWNGUIStatus.Voided)
             {
                 return gUITrans.TaxNbr ?? new string(space, 8);
             }
@@ -290,11 +296,11 @@ namespace eGUICustomizations.Graph
 
         private string GetTaxGroup(TWNGUITrans gUITrans)
         {
-            if      (gUITrans.GUIStatus == TWNGUIStatus.Voided) { return "F"; }
-            else if (gUITrans.VATType == TWNGUIVATType.Five)    { return "1"; }
-            else if (gUITrans.VATType == TWNGUIVATType.Zero)    { return "2"; }
-            else if (gUITrans.VATType == TWNGUIVATType.Exclude) { return "3"; }
-            else                                                { return new string(space, 1); }
+            if      (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided) { return "F"; }
+            else if (gUITrans.VATType == TWNStringList.TWNGUIVATType.Five)    { return "1"; }
+            else if (gUITrans.VATType == TWNStringList.TWNGUIVATType.Zero)    { return "2"; }
+            else if (gUITrans.VATType == TWNStringList.TWNGUIVATType.Exclude) { return "3"; }
+            else                                                              { return new string(space, 1); }
         }
 
         private string GetTaxAmt(TWNGUITrans gUITrans)
@@ -313,7 +319,7 @@ namespace eGUICustomizations.Graph
                 (gUITrans.GUIFormatCode == TWGUIFormatCode.vATOutCode35 && (string.IsNullOrEmpty(buyerTaxID) || buyerTaxID == new string(space, 8)) )
                ) { buyerFmtCode = true; }
 
-            if (gUITrans.GUIStatus == TWNGUIStatus.Voided || fixedFmtCode || sellerFmtCode || buyerFmtCode)
+            if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided || fixedFmtCode || sellerFmtCode || buyerFmtCode)
             {
                 return new string(zero, fixedLen);
             }
@@ -332,35 +338,31 @@ namespace eGUICustomizations.Graph
             {
                 return "A";
             }
-            else
-            {
-                return new string(space, 1);
-            }
+            
+            return new string(space, 1);
         }
 
         private string GetExportMethod(TWNGUITrans gUITrans)
         {
-            if (gUITrans.VATType == TWNGUIVATType.Zero &&
-                gUITrans.GUIStatus != TWNGUIStatus.Voided &&
+            if (gUITrans.VATType == TWNStringList.TWNGUIVATType.Zero &&
+                gUITrans.GUIStatus != TWNStringList.TWNGUIStatus.Voided &&
                 gUITrans.SequenceNo == 0)
             {
-                return gUITrans.CustomType == TWNGUICustomType.NotThruCustom ? "1" : "2";
+                return gUITrans.CustomType == TWNStringList.TWNGUICustomType.NotThruCustom ? "1" : "2";
             }
-            else
-            {
-                return new string(space, 1);
-            }
+            
+            return new string(space, 1);
         }
         #endregion
     }
 
     #region Filter DAC
     [Serializable]
-    [PXCacheName("GUI Trans Filter")]
+    [PXCacheName("TWN GUI Tran Filter")]
     public partial class GUITransFilter : PX.Data.IBqlTable
     {
         #region BranchID
-        [PX.Objects.GL.Branch()]
+        [Branch()]
         [PXDefault(typeof(AccessInfo.branchID))]
         public virtual int? BranchID { get; set; }
         public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
