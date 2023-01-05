@@ -15,7 +15,6 @@ namespace eGUICustomizations.Graph
     public class TWNGenGUIMediaFile : PXGraph<TWNGenGUIMediaFile>
     {
         #region Variable Defintions
-        public string ourTaxNbr = "";
         public char   zero      = '0';
         public char   space     = ' ';       
         public int    fixedLen  = 0;
@@ -79,16 +78,18 @@ namespace eGUICustomizations.Graph
                 {
                     using (StreamWriter sw = new StreamWriter(stream, Encoding.ASCII))
                     {
-                        ourTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, Branch.UK.Find(this, FixedBranch)?.BranchID);
+                        int?   branchID  = Branch.UK.Find(this, FixedBranch)?.BranchID;
+                        string OurTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, branchID);
+                        string TaxRegiID = BAccountExt.GetTWGUIByBranch(this.GUITransList.Cache, branchID)?.UsrTaxRegistrationID;
 
-                        string fileName = $"{ourTaxNbr}.txt";
+                        string fileName = $"{OurTaxNbr}.txt";
 
                         foreach (TWNGUITrans gUITrans in tWNGUITrans)
                         {
                             // Reporting Code
                             lines = gUITrans.GUIFormatCode;
                             // Tax Registration
-                            lines += BAccountExt.GetTWGUIByBranch(this.GUITransList.Cache, gUITrans.BranchID)?.UsrTaxRegistrationID;
+                            lines += TaxRegiID;
                             // Sequence Number
                             lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, gUITrans, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                             // GUI LegalYM
@@ -136,27 +137,29 @@ namespace eGUICustomizations.Graph
 
                         foreach (NumberingSequence numSeq in query.Select())
                         {
-                            int endNbr  = int.Parse(numSeq.EndNbr.Substring(2));
-                            int lastNbr = int.Parse(numSeq.LastNbr.Substring(2));
+                            string StrEndNbr = numSeq.EndNbr.Substring(2);
+                            string StrLastNbr = numSeq.LastNbr.Substring(2);
 
-                            if (numSeq.StartNbr.Equals(numSeq.LastNbr) || lastNbr <= endNbr)
+                            int LastNbr = Convert.ToInt32(StrLastNbr);
+
+                            if (numSeq.StartNbr == numSeq.LastNbr || LastNbr <= Convert.ToInt32(StrEndNbr))
                             {
-
                                 lines = "\r\n";
                                 // Reporting Code
                                 lines += numSeq.NumberingID.Substring(numSeq.NumberingID.IndexOf('I') + 1, 2);
                                 // Tax Registration
-                                lines += gUIPreferences.TaxRegistrationID;
+                                lines += TaxRegiID;
                                 // Sequence Number
-                                lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, numSeq, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
+                                lines += AutoNumberAttribute.GetNextNumber(query.Cache, numSeq, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                                 // GUI LegalYM
                                 lines += GetTWNDate(Filter.Current.ToDate.Value);
                                 // Tax ID (Buyer)
                                 lines += numSeq.EndNbr.Substring(2);
                                 // Tax ID (Seller)
-                                lines += ourTaxNbr;
+                                lines += OurTaxNbr;
                                 // GUI Number
-                                lines += string.Format("{0}{1}", numSeq.LastNbr.Substring(0, 2), lastNbr + 1);
+                                string Next2LastNbr = (LastNbr + 1).ToString();
+                                lines += string.Format("{0}{1}", numSeq.LastNbr.Substring(0, 2), Next2LastNbr.Length < StrLastNbr.Length ? Next2LastNbr.PadLeft(StrLastNbr.Length, zero) : Next2LastNbr);
                                 // Net Amount
                                 lines += new string(zero, 12);
                                 // Tax Group
