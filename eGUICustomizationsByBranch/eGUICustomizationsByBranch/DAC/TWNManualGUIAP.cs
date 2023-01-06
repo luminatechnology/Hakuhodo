@@ -139,7 +139,7 @@ namespace eGUICustomizations.DAC
         #endregion
         
         #region Remark
-        [PXDBString(20, IsUnicode = true)]
+        [PXDBString(50, IsUnicode = true)]
         [PXUIField(DisplayName = "Remark")]
         public virtual string Remark { get; set; }
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }
