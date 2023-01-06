@@ -19,7 +19,6 @@ namespace eGUICustomizations.Graph
         public char   space     = ' ';       
         public int    fixedLen  = 0;
         public string combinStr = "";
-        public const string FixedBranch = "P-PILOT";
         #endregion
 
         #region Features & Setup
@@ -78,18 +77,17 @@ namespace eGUICustomizations.Graph
                 {
                     using (StreamWriter sw = new StreamWriter(stream, Encoding.ASCII))
                     {
-                        int?   branchID  = Branch.UK.Find(this, FixedBranch)?.BranchID;
-                        string OurTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, branchID);
-                        string TaxRegiID = BAccountExt.GetTWGUIByBranch(this.GUITransList.Cache, branchID)?.UsrTaxRegistrationID;
+                        string ourTaxNbr = BAccountExt.GetOurTaxNbByBranch(this.GUITransList.Cache, tWNGUITrans[0].BranchID);
+                        string taxRegiID = BAccountExt.GetTWGUIByBranch(this.GUITransList.Cache, tWNGUITrans[0].BranchID)?.UsrTaxRegistrationID;
 
-                        string fileName = $"{OurTaxNbr}.txt";
+                        string fileName = $"{ourTaxNbr}.txt";
 
                         foreach (TWNGUITrans gUITrans in tWNGUITrans)
                         {
                             // Reporting Code
                             lines = gUITrans.GUIFormatCode;
                             // Tax Registration
-                            lines += TaxRegiID;
+                            lines += taxRegiID;
                             // Sequence Number
                             lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, gUITrans, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                             // GUI LegalYM
@@ -137,7 +135,7 @@ namespace eGUICustomizations.Graph
 
                         foreach (NumberingSequence numSeq in query.Select())
                         {
-                            string StrEndNbr = numSeq.EndNbr.Substring(2);
+                            string StrEndNbr  = numSeq.EndNbr.Substring(2);
                             string StrLastNbr = numSeq.LastNbr.Substring(2);
 
                             int LastNbr = Convert.ToInt32(StrLastNbr);
@@ -148,7 +146,7 @@ namespace eGUICustomizations.Graph
                                 // Reporting Code
                                 lines += numSeq.NumberingID.Substring(numSeq.NumberingID.IndexOf('I') + 1, 2);
                                 // Tax Registration
-                                lines += TaxRegiID;
+                                lines += taxRegiID;
                                 // Sequence Number
                                 lines += AutoNumberAttribute.GetNextNumber(query.Cache, numSeq, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                                 // GUI LegalYM
@@ -156,7 +154,7 @@ namespace eGUICustomizations.Graph
                                 // Tax ID (Buyer)
                                 lines += numSeq.EndNbr.Substring(2);
                                 // Tax ID (Seller)
-                                lines += OurTaxNbr;
+                                lines += ourTaxNbr;
                                 // GUI Number
                                 string Next2LastNbr = (LastNbr + 1).ToString();
                                 lines += string.Format("{0}{1}", numSeq.LastNbr.Substring(0, 2), Next2LastNbr.Length < StrLastNbr.Length ? Next2LastNbr.PadLeft(StrLastNbr.Length, zero) : Next2LastNbr);

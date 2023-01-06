@@ -7,6 +7,7 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CR;
+using PX.Objects.GL;
 using PX.Objects.TX;
 using PX.Objects.SO;
 using eGUICustomizations.DAC;
@@ -18,6 +19,7 @@ namespace eGUICustomizations.Graph
     {
         public const decimal fixedRate = 1.05m;
         public const string  verticalBar = "|";
+        public const string  fixedBranch = "P-PILOT";
 
         #region String Constant Classes
         public class VATOutCode31 : PX.Data.BQL.BqlString.Constant<VATOutCode31>
@@ -142,16 +144,16 @@ namespace eGUICustomizations.Graph
         #region Static Methods
         public static void Upload(List<TWNGUITrans> tWNGUITrans)
         {
-            try
-            {
+            //try
+            //{
                 // Avoid to create empty content file in automation schedule.
                 if (tWNGUITrans.Count == 0) { return; }
 
                 TWNExpGUIInv2BankPro graph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
+                string ourTaxNbrFixedBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, Branch.UK.Find(graph, fixedBranch)?.BranchID);
 
-                string fileName = $"{ourTaxNbrByBranch}-InvoiceMD-{ourTaxNbrByBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
+                string fileName = $"{ourTaxNbrFixedBranch}-InvoiceMD-{ourTaxNbrFixedBranch}-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 
                 string lines = "";
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
@@ -398,12 +400,12 @@ namespace eGUICustomizations.Graph
 
                 graph.UpdateGUITran(tWNGUITrans);
                 graph.UploadFile2FTP(fileName, lines);
-            }
-            catch (Exception ex)
-            {
-                PXProcessing<TWNGUITrans>.SetError(ex);
-                throw;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    PXProcessing<TWNGUITrans>.SetError(ex);
+            //    throw;
+            //}
         }
 
         public static string GetBillType(TWNGUITrans gUITran)
