@@ -102,7 +102,7 @@ namespace PX.Objects.AP
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            InsertDefaultWHT();
+            InsertOrUpdateDefaultWHT();
         }
 
         #region TWNManualGUIAPBill
@@ -142,7 +142,7 @@ namespace PX.Objects.AP
         /// <summary>
         /// TX206000 新增 “代扣稅相關” checkbox, AP301000 如果選出來的 供應商稅務區域 是與代扣稅相關，則將代扣稅相關欄位由供應商帶出.
         /// </summary>
-        protected virtual void InsertDefaultWHT()
+        protected virtual void InsertOrUpdateDefaultWHT()
         {
             var invoice = Base.Document.Current;
             var vendor  = Base.vendor.Current;
@@ -164,39 +164,49 @@ namespace PX.Objects.AP
                     wNWHT = WHTView.Insert(wNWHT);
 
                     // Avoid returning an Null cache with the same PK.
-                    if (wNWHT == null) { return; }
-
-                    foreach (CSAnswers answers in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.Select(Base, vendor.NoteID))
+                    if (wNWHT == null)
                     {
-                        switch (answers.AttributeID)
-                        {
-                            case TWNWHT.PersonalName:
-                                wNWHT.PersonalID = answers.Value;
-                                break;
-                            case TWNWHT.PropertyName:
-                                wNWHT.PropertyID = answers.Value;
-                                break;
-                            case TWNWHT.TypeOfInName:
-                                wNWHT.TypeOfIn = answers.Value;
-                                break;
-                            case TWNWHT.WHTFmtCodeName:
-                                wNWHT.WHTFmtCode = answers.Value;
-                                break;
-                            case TWNWHT.WHTFmtSubName:
-                                wNWHT.WHTFmtSub = answers.Value;
-                                break;
-                            case TWNWHT.WHTTaxPctName:
-                                wNWHT.WHTTaxPct = answers.Value;
-                                break;
-                            case TWNWHT.SecNHICodeName:
-                                wNWHT.SecNHICode = answers.Value;
-                                break;
-                        }
+                        wNWHT = TWNWHT.PK.Find(Base, invoice.DocType, invoice.RefNbr);
+
+                        wNWHT.WHTTaxPct = invoice.CuryTaxTotal > 0m ? System.Convert.ToString(System.Convert.ToInt32(Base.Taxes.Cache.Cached.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT") && w.TaxZoneID == invoice.TaxZoneID).FirstOrDefault()?.TaxRate ?? 0)) : 0.ToString();
+                        wNWHT.SecNHIPct = invoice.CuryTaxTotal > 0m ? pref?.SecGenerationNHIPct : 0m;
+
+                        WHTView.Cache.Update(wNWHT);
                     }
+                    else
+                    {
+                        foreach (CSAnswers answers in SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>>.View.Select(Base, vendor.NoteID))
+                        {
+                            switch (answers.AttributeID)
+                            {
+                                case TWNWHT.PersonalName:
+                                    wNWHT.PersonalID = answers.Value;
+                                    break;
+                                case TWNWHT.PropertyName:
+                                    wNWHT.PropertyID = answers.Value;
+                                    break;
+                                case TWNWHT.TypeOfInName:
+                                    wNWHT.TypeOfIn = answers.Value;
+                                    break;
+                                case TWNWHT.WHTFmtCodeName:
+                                    wNWHT.WHTFmtCode = answers.Value;
+                                    break;
+                                case TWNWHT.WHTFmtSubName:
+                                    wNWHT.WHTFmtSub = answers.Value;
+                                    break;
+                                case TWNWHT.WHTTaxPctName:
+                                    wNWHT.WHTTaxPct = answers.Value;
+                                    break;
+                                case TWNWHT.SecNHICodeName:
+                                    wNWHT.SecNHICode = answers.Value;
+                                    break;
+                            }
+                        }
 
-                    wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
+                        wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
 
-                    WHTView.Cache.Update(wNWHT);
+                        WHTView.Cache.Update(wNWHT);
+                    }
                 }
             }
         }
