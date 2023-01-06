@@ -47,6 +47,7 @@
   <col name="QREncrypter" type="NVarChar(80)" nullable="true" />
   <col name="AddressLine" type="NVarChar(50)" nullable="true" />
   <col name="AllowUpload" type="Bit" nullable="true" />
+  <col name="CRMDate" type="DateTime" nullable="true" />
   <col name="CreatedByID" type="UniqueIdentifier" />
   <col name="CreatedByScreenID" type="Char(8)" />
   <col name="CreatedDateTime" type="DateTime" />

@@ -61,6 +61,7 @@ namespace eGUICustomizations.Graph_Release
             row.NPONbr        = sGUITran.NPONbr;
             row.B2CPrinted    = sGUITran.B2CPrinted;
             row.AddressLine   = sGUITran.AddressLine;
+            row.CRMDate       = row.TransDate;
             //row.QREncrypter   = sGUITran.GUIDirection.Equals(TWNGUIDirection.Issue) && sGUITran.NetAmount > 0 && sGUITran.eGUIExcluded.Equals(false) ? GetQREncrypter(sGUITran) : null;
 
             ViewGUITrans.Update(row);

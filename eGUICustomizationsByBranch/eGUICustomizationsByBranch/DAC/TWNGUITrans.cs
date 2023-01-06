@@ -383,6 +383,13 @@ namespace eGUICustomizations.DAC
         public abstract class allowUpload : PX.Data.BQL.BqlBool.Field<allowUpload> { }
         #endregion
 
+        #region CRMDate
+        [PXDBDate()]
+        [PXUIField(DisplayName = "Credit Note Date")]
+        public virtual DateTime? CRMDate { get; set; }
+        public abstract class cRMDate : PX.Data.BQL.BqlDateTime.Field<cRMDate> { }
+        #endregion
+
         #region CreatedByID
         [PXDBCreatedByID]
         public virtual Guid? CreatedByID { get; set; }
