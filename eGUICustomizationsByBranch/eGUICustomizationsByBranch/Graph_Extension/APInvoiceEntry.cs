@@ -102,7 +102,10 @@ namespace PX.Objects.AP
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            InsertOrUpdateDefaultWHT();
+            if (e.NewValue != e.OldValue)
+            {
+                InsertOrUpdateDefaultWHT();
+            }
         }
 
         #region TWNManualGUIAPBill
@@ -166,7 +169,7 @@ namespace PX.Objects.AP
                     // Avoid returning an Null cache with the same PK.
                     if (wNWHT == null)
                     {
-                        wNWHT = TWNWHT.PK.Find(Base, invoice.DocType, invoice.RefNbr);
+                        wNWHT = TWNWHT.PK.Find(Base, invoice.DocType, invoice.RefNbr) ?? WHTView.Cache.Inserted.RowCast<TWNWHT>().FirstOrDefault();
 
                         wNWHT.WHTTaxPct = invoice.CuryTaxTotal > 0m ? System.Convert.ToString(System.Convert.ToInt32(Base.Taxes.Cache.Cached.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT") && w.TaxZoneID == invoice.TaxZoneID).FirstOrDefault()?.TaxRate ?? 0)) : 0.ToString();
                         wNWHT.SecNHIPct = invoice.CuryTaxTotal > 0m ? pref?.SecGenerationNHIPct : 0m;
