@@ -39,6 +39,7 @@
 				<px:PXGridColumn DataField="DocType" Width="50"></px:PXGridColumn>
 				<px:PXGridColumn DataField="OrderNbr" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="TransDate" Width="90" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="CRMDate" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUITitle" Width="140" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="AddressLine" Width="180" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="AllowUpload" Width="90" Type="CheckBox" ></px:PXGridColumn>

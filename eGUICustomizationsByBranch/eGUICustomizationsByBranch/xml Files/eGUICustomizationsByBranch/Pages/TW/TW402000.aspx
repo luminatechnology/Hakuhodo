@@ -2,10 +2,8 @@
 <%@ MasterType VirtualPath="~/MasterPages/ListView.master" %>
 
 <asp:Content ID="cont1" ContentPlaceHolderID="phDS" Runat="Server">
-	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%"
-        TypeName="eGUICustomizations.Graph.TWNWHTInquiry" PrimaryView="WHTTran">
+	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="eGUICustomizations.Graph.TWNWHTInquiry" PrimaryView="WHTTran">
 		<CallbackCommands>
-
 		</CallbackCommands>
 	</px:PXDataSource>
 </asp:Content>
@@ -31,7 +29,9 @@
 				<px:PXGridColumn DataField="SecNHICode" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="SecNHIAmt" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="WHTTaxPct" Width="100" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="WHTAmt" Width="100" ></px:PXGridColumn></Columns>
+				<px:PXGridColumn DataField="WHTAmt" Width="100" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="NetAmt" Width="100" ></px:PXGridColumn>
+			    </Columns>
 				<RowTemplate>
 					<px:PXSelector runat="server" ID="CstPXSelector1" DataField="RefNbr" AllowEdit="True" ></px:PXSelector>
 					<px:PXSelector runat="server" ID="CstPXSelector2" DataField="BatchNbr" AllowEdit="True" ></px:PXSelector>

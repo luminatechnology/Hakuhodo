@@ -5,6 +5,7 @@ using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
 using PX.Objects.CR;
+using PX.Objects.GL;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Graph.TWNExpGUIInv2BankPro;
@@ -53,9 +54,9 @@ namespace eGUICustomizations.Graph
 
                 TWNExpGUIInv2BankPro graph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string ourTaxNbrByBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, tWNGUITrans[0].BranchID);
+                string ourTaxNbrFixedBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, Branch.UK.Find(graph, fixedBranch)?.BranchID);
 
-                string fileName = $"{ourTaxNbrByBranch}-AllowanceMD-{ourTaxNbrByBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
+                string fileName = $"{ourTaxNbrFixedBranch}-AllowanceMD-{ourTaxNbrFixedBranch }-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
 
                 string lines = "";
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)

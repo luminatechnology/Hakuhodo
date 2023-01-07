@@ -7,7 +7,6 @@ using PX.Objects.AR;
 using PX.Objects.CR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Graph
 {
@@ -17,12 +16,11 @@ namespace eGUICustomizations.Graph
         public PXCancel<GUITransFilter> Cancel;
         public PXFilter<GUITransFilter> FilterGUITran;
         public PXFilteredProcessing<TWNGUITrans, GUITransFilter,
-                                    Where<TWNGUITrans.gUIDecPeriod, GreaterEqual<Current<GUITransFilter.fromDate>>,
-                                          And<TWNGUITrans.gUIDecPeriod, LessEqual<Current<GUITransFilter.toDate>>,
-                                              And<TWNGUITrans.vATType, Equal<TWNGUIVATType.zero>,
-                                                  And<TWNGUITrans.gUIStatus, NotEqual<TWNGUIStatus.voided>,
-                                                      And<Where<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut34Att>,
-                                                                Or<TWNGUITrans.gUIFormatCode, NotEqual<ARRegisterExt.VATOut33Att>>>>>>>>> GUITranProc;
+                                    Where<TWNGUITrans.gUIDecPeriod, Between<Current<GUITransFilter.fromDate>, Current<GUITransFilter.toDate>>,
+                                          And<TWNGUITrans.vATType, Equal<TWNStringList.TWNGUIVATType.zero>,
+                                              And<TWNGUITrans.gUIStatus, NotEqual<TWNStringList.TWNGUIStatus.voided>,
+                                                  And<TWNGUITrans.gUIFormatCode, NotIn3<ARRegisterExt.VATOut34Att, 
+                                                                                        ARRegisterExt.VATOut33Att>>>>>> GUITranProc;
         #endregion
 
         #region Ctor
@@ -81,9 +79,9 @@ namespace eGUICustomizations.Graph
                             // Tax Registration ID
                             lines += branchExt?.UsrTaxRegistrationID;
                             // Tax Filling Date
-                            lines += mediaFile.GetGUILegal(FilterGUITran.Current.ToDate.Value);
+                            lines += mediaFile.GetTWNDate(FilterGUITran.Current.ToDate.Value);
                             // GUI Date
-                            lines += mediaFile.GetGUILegal(gUITrans.GUIDate.Value);
+                            lines += mediaFile.GetTWNDate(gUITrans.GUIDate.Value);
                             // GUI Number
                             lines += mediaFile.GetGUINbr(gUITrans);
                             // Customer Tax ID
@@ -107,7 +105,7 @@ namespace eGUICustomizations.Graph
                             // Amount
                             lines += mediaFile.GetNetAmt(gUITrans);
                             // Custom Clearing Date
-                            lines += GetTWNDate(gUITrans.ClearingDate.Value);
+                            lines += mediaFile.GetTWNDate(gUITrans.ClearingDate.Value, true);
 
                             // Only the last line does not need to be broken.
                             if (count < tWNGUITrans.Count)
@@ -139,19 +137,6 @@ namespace eGUICustomizations.Graph
                 PXProcessing<TWNGUITrans>.SetError(ex);
                 throw;
             }
-        }
-        #endregion
-
-        #region Static Method
-        public static string GetTWNDate(DateTime dateTime)
-        {
-            var tWCalendar = new System.Globalization.TaiwanCalendar();
-
-            int year     = tWCalendar.GetYear(dateTime);
-            string month = DateTime.Parse(dateTime.ToString()).ToString("MM");
-            string day   = DateTime.Parse(dateTime.ToString()).ToString("dd");
-
-            return string.Format("{0}{1}{2}", year, month, day);
         }
         #endregion
     }

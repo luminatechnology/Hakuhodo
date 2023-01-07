@@ -3,6 +3,7 @@ using PX.Data;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AP;
 using eGUICustomizations.Descriptor;
+using PX.Data.ReferentialIntegrity.Attributes;
 
 namespace eGUICustomizations.DAC
 {
@@ -10,6 +11,13 @@ namespace eGUICustomizations.DAC
     [PXCacheName("Withholding Tax")]
     public class TWNWHT : IBqlTable
     {
+        #region Keys
+        public class PK : PrimaryKeyOf<TWNWHT>.By<docType, refNbr>
+        {
+            public static TWNWHT Find(PXGraph graph, string docType, string refNbr) => FindBy(graph, docType, refNbr);
+        }
+        #endregion
+
         #region PersonalID
         public const string PersonalName = "PERSONALID";
         public class PersonalAtt : PX.Data.BQL.BqlString.Constant<PersonalAtt>
@@ -53,9 +61,6 @@ namespace eGUICustomizations.DAC
 
         [PXDBString(12, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Property ID")]
-        //[PXDefault(typeof(Search<CSAnswers.value, Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-        //                                                And<CSAnswers.attributeID, Equal<PropertyAtt>>>>),
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual string PropertyID { get; set; }
         public abstract class propertyID : PX.Data.BQL.BqlString.Field<propertyID> { }
         #endregion
@@ -69,9 +74,6 @@ namespace eGUICustomizations.DAC
 
         [PXDBString(1, IsFixed = true, InputMask = "")]
         [PXUIField(DisplayName = "Type Of Income")]
-        //[PXDefault(typeof(Search<CSAnswers.value, Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-        //                                                And<CSAnswers.attributeID, Equal<TypeOfInAtt>>>>),
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
         [TypeOfInSelector]
         public virtual string TypeOfIn { get; set; }
         public abstract class typeOfIn : PX.Data.BQL.BqlString.Field<typeOfIn> { }
@@ -86,9 +88,6 @@ namespace eGUICustomizations.DAC
 
         [PXDBString(2, IsFixed = true, InputMask = "")]
         [PXUIField(DisplayName = "Format Code")]
-        //[PXDefault(typeof(Search<CSAnswers.value, Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-        //                                                And<CSAnswers.attributeID, Equal<WHTFmtCodeAtt>>>>),
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
         [WHTFmtCodeSelector]
         public virtual string WHTFmtCode { get; set; }
         public abstract class wHTFmtCode : PX.Data.BQL.BqlString.Field<wHTFmtCode> { }
@@ -103,9 +102,6 @@ namespace eGUICustomizations.DAC
 
         [PXDBString(2, IsFixed = true, InputMask = "")]
         [PXUIField(DisplayName = "Format Sub Code")]
-        //[PXDefault(typeof(Search<CSAnswers.value, Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-        //                                                And<CSAnswers.attributeID, Equal<WHTFmtSubAtt>>>>),
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
         [WHTFmtSubSelector]
         public virtual string WHTFmtSub { get; set; }
         public abstract class wHTFmtSub : PX.Data.BQL.BqlString.Field<wHTFmtSub> { }
@@ -120,9 +116,6 @@ namespace eGUICustomizations.DAC
 
         [PXDBString(5, IsFixed = true)]
         [PXUIField(DisplayName = "WHT Tax %")]
-        //[PXDefault(typeof(Search<CSAnswers.value, Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-        //                                                And<CSAnswers.attributeID, Equal<WHTTaxPctAtt>>>>),
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual string WHTTaxPct { get; set; }
         public abstract class wHTTaxPct : PX.Data.BQL.BqlString.Field<wHTTaxPct> { }
         #endregion
@@ -142,12 +135,8 @@ namespace eGUICustomizations.DAC
             public SecNHICodeAtt() : base(SecNHICodeName) { }
         }
 
-
         [PXDBString(2, IsFixed = true, InputMask = "")]
         [PXUIField(DisplayName = "2GNHI Code")]
-        //[PXDefault(typeof(Search<CSAnswers.value, Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-        //                                                And<CSAnswers.attributeID, Equal<SecNHICodeAtt>>>>),
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
         [SecNHICodeSelector]
         public virtual string SecNHICode { get; set; }
         public abstract class secNHICode : PX.Data.BQL.BqlString.Field<secNHICode> { }

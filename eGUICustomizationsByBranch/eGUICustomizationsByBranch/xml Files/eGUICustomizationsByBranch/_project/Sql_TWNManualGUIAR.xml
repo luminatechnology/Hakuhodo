@@ -19,7 +19,7 @@
   <col name="ExportTicketType" type="NVarChar(2)" nullable="true" />
   <col name="ExportTicketNbr" type="NVarChar(14)" nullable="true" />
   <col name="ClearingDate" type="DateTime" nullable="true" />
-  <col name="Remark" type="NChar(20)" nullable="true" />
+  <col name="Remark" type="NVarChar(50)" nullable="true" />
   <col name="BranchID" type="Int" nullable="true" />
   <col name="GUITitle" type="NVarChar(80)" nullable="true" />
   <col name="AddressLine" type="NVarChar(50)" nullable="true" />
