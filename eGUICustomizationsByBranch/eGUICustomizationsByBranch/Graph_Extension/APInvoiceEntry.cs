@@ -38,8 +38,11 @@ namespace PX.Objects.AP
 
             if (invoice != null && string.IsNullOrEmpty(invoice.InvoiceNbr))
             {
-                Base.CurrentDocument.Cache.SetValue<APInvoice.invoiceNbr>(invoice, ManualAPBill.Select().TopFirst?.GUINbr);
-                Base.CurrentDocument.UpdateCurrent();
+                var invoiceNbr = ManualAPBill.Select().TopFirst?.GUINbr;
+                if (invoiceNbr != null) { 
+                    Base.CurrentDocument.Cache.SetValue<APInvoice.invoiceNbr>(invoice, invoiceNbr);
+                    Base.CurrentDocument.UpdateCurrent();
+                }
             }
 
             baseMethod();
