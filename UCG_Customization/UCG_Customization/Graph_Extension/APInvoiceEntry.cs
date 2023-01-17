@@ -33,7 +33,6 @@ namespace PX.Objects.AP
         {
             var row = e.Row;
             if (row == null) return;
-            if (row.OpenDoc ?? false == true) return;
             // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
             SetUsrApproveWG(e.Cache, row);
         }
