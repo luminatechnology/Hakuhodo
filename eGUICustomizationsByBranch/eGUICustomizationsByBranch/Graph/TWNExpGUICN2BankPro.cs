@@ -137,6 +137,12 @@ namespace eGUICustomizations.Graph
 
                         PXResultset<ARTran> results = graph.RetrieveARTran(gUITrans.OrderNbr);
 
+                        var validate = new TWNGUIValidation();
+
+                        validate.CheckCorrespondingInv(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode);
+
+                        DateTime? origGUIDate = validate.tWNGUITrans?.GUIDate;
+
                         foreach (PXResult<ARTran> result in results)
                         {
                             ARTran aRTran = result;
@@ -183,7 +189,7 @@ namespace eGUICustomizations.Graph
                             // Relate Number3 (Invoice Date)
                             // Relate Number4
                             // Relate Number5
-                            lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
+                            lines += origGUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
                             lines += new string(char.Parse(verticalBar), 2) + "\r\n";
                         }
 
@@ -233,7 +239,7 @@ namespace eGUICustomizations.Graph
                                 // Relate Number3 (Invoice Date)
                                 // Relate Number4
                                 // Relate Number5
-                                lines += gUITrans.GUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
+                                lines += origGUIDate.Value.ToString("yyyy/MM/dd HH:mm:ss");
                                 lines += new string(char.Parse(verticalBar), 2) + "\r\n";
                             }
                         }
