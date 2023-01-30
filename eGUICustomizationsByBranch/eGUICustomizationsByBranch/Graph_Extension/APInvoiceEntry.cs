@@ -1,10 +1,12 @@
 using System.Linq;
+using System.Collections.Generic;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.CS;
 using PX.Objects.CR;
+using PX.Objects.TX;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 
@@ -38,8 +40,13 @@ namespace PX.Objects.AP
 
             if (invoice != null && string.IsNullOrEmpty(invoice.InvoiceNbr))
             {
-                Base.CurrentDocument.Cache.SetValue<APInvoice.invoiceNbr>(invoice, ManualAPBill.Select().TopFirst?.GUINbr);
-                Base.CurrentDocument.UpdateCurrent();
+                var invoiceNbr = ManualAPBill.Select().TopFirst?.GUINbr;
+                // Add a condition to avoid returning a data version validation error when clicking "PAY".
+                if (invoiceNbr != null)
+                {
+                    Base.CurrentDocument.Cache.SetValue<APInvoice.invoiceNbr>(invoice, invoiceNbr);
+                    Base.CurrentDocument.UpdateCurrent();
+                }
             }
 
             baseMethod();
@@ -152,7 +159,11 @@ namespace PX.Objects.AP
 
             if (invoice == null || vendor == null || activateGUI == false) { return; }
 
-            if (TX.TaxZone.PK.Find(Base, invoice.TaxZoneID)?.GetExtension<TX.TaxZoneExt>().UsrWHTTaxRelated == true)
+            TaxZone tZone = TaxZone.PK.Find(Base, invoice.TaxZoneID);
+
+            bool isNHITaxRelated = tZone?.GetExtension<TaxZoneExt>().UsrNHITaxRelated ?? false;
+
+            if (tZone?.GetExtension<TaxZoneExt>().UsrWHTTaxRelated == true || isNHITaxRelated == true)
             {
                 TWNGUIPreferences pref = GUISetup.Select();
 
@@ -171,8 +182,11 @@ namespace PX.Objects.AP
                     {
                         wNWHT = TWNWHT.PK.Find(Base, invoice.DocType, invoice.RefNbr) ?? WHTView.Cache.Inserted.RowCast<TWNWHT>().FirstOrDefault();
 
-                        wNWHT.WHTTaxPct = invoice.CuryTaxTotal > 0m ? System.Convert.ToString(System.Convert.ToInt32(Base.Taxes.Cache.Cached.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT") && w.TaxZoneID == invoice.TaxZoneID).FirstOrDefault()?.TaxRate ?? 0)) : 0.ToString();
-                        wNWHT.SecNHIPct = invoice.CuryTaxTotal > 0m ? pref?.SecGenerationNHIPct : 0m;
+                        List<APTaxTran> trans = Base.Taxes.Cache.Inserted.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT")).ToList();
+                        trans.AddRange(Base.Taxes.Cache.Updated.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT")));
+
+                        wNWHT.WHTTaxPct = invoice.CuryTaxTotal > 0m ? System.Convert.ToInt32(trans.SingleOrDefault<APTaxTran>()?.TaxRate ?? 0).ToString() : 0.ToString();
+                        wNWHT.SecNHIPct = invoice.CuryTaxTotal > 0m && isNHITaxRelated == true ? pref?.SecGenerationNHIPct : 0m;
 
                         WHTView.Cache.Update(wNWHT);
                     }
@@ -201,16 +215,23 @@ namespace PX.Objects.AP
                                     wNWHT.WHTTaxPct = answers.Value;
                                     break;
                                 case TWNWHT.SecNHICodeName:
-                                    wNWHT.SecNHICode = answers.Value;
+                                    wNWHT.SecNHICode = isNHITaxRelated == true ? answers.Value : null;
                                     break;
                             }
                         }
 
-                        wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
+                        if (isNHITaxRelated == true)
+                        {
+                            wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
+                        }
 
                         WHTView.Cache.Update(wNWHT);
                     }
                 }
+            }
+            else 
+            {
+                WHTView.Cache.Delete(WHTView.Current);
             }
         }
         #endregion
