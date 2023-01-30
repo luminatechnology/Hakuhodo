@@ -123,7 +123,7 @@ namespace eGUICustomizations.DAC
         #region SecNHIPct
         [PXDBDecimal()]
         [PXUIField(DisplayName = "2GNHI %")]
-        [PXDefault(typeof(Search<TWNGUIPreferences.secGenerationNHIPct>), PersistingCheck = PXPersistingCheck.Nothing)]
+        //[PXDefault(typeof(Search<TWNGUIPreferences.secGenerationNHIPct>), PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual decimal? SecNHIPct { get; set; }
         public abstract class secNHIPct : PX.Data.BQL.BqlDecimal.Field<secNHIPct> { }
         #endregion
