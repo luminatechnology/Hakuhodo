@@ -132,6 +132,36 @@
                 </Links>
                 <ParentName>TWNGUITrans</ParentName>
             </ReportRelation>
+            <ReportRelation>
+                <ChildAlias>OrigGUITran35</ChildAlias>
+                <ChildName>TWNGUITrans</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>GUIFormatCode</ChildField>
+                        <ParentField>=Switch([@GUIFormatCode] = '33', '35', [@GUIFormatCode] = '34', '32',#010;[@GUIFormatCode] = '23', '25', [@GUIFormatCode] = '24', '22')</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>GUINbr</ChildField>
+                        <ParentField>GUINbr</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildAlias>OrigGUITran31</ChildAlias>
+                <ChildName>TWNGUITrans</ChildName>
+                <Links>
+                    <RelationRow>
+                        <ChildField>GUIFormatCode</ChildField>
+                        <ParentField>=Switch([@GUIFormatCode] = '33', '31', [@GUIFormatCode] = '34', '32',#010;[@GUIFormatCode] = '23', '21', [@GUIFormatCode] = '24', '22')</ParentField>
+                    </RelationRow>
+                    <RelationRow>
+                        <ChildField>GUINbr</ChildField>
+                        <ParentField>GUINbr</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>TWNGUITrans</ParentName>
+            </ReportRelation>
         </Relations>
         <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>
         <Style>
@@ -205,6 +235,17 @@
                     <ReportField Name="CreatedDateTime_Month">
                     </ReportField>
                     <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="CRMDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CRMDate_Day">
+                    </ReportField>
+                    <ReportField Name="CRMDate_Hour">
+                    </ReportField>
+                    <ReportField Name="CRMDate_Month">
+                    </ReportField>
+                    <ReportField Name="CRMDate_Quarter">
                     </ReportField>
                     <ReportField Name="CustomType">
                     </ReportField>
@@ -1204,7 +1245,7 @@
                             <TextAlign>Center</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=Year([TWNGUITrans.GUIDate]) - 1911</Value>
+                        <Value>=Year(IsNull([OrigGUITran35.GUIDate], [OrigGUITran31.GUIDate])) - 1911</Value>
                     </TextBox>
                     <TextBox Name="textBox34">
                         <Location>42px, 0px</Location>
@@ -1219,7 +1260,7 @@
                             <TextAlign>Center</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=Month([TWNGUITrans.GUIDate])</Value>
+                        <Value>=Month(IsNull([OrigGUITran35.GUIDate], [OrigGUITran31.GUIDate]))</Value>
                     </TextBox>
                     <TextBox Name="textBox44">
                         <Location>60px, 0px</Location>
@@ -1234,7 +1275,7 @@
                             <TextAlign>Center</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=Day([TWNGUITrans.GUIDate])</Value>
+                        <Value>=Day(IsNull([OrigGUITran35.GUIDate], [OrigGUITran31.GUIDate]))</Value>
                     </TextBox>
                     <TextBox Name="textBox45">
                         <Location>78px, 0px</Location>
@@ -1533,7 +1574,7 @@
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=Concat('中華民國     ', Year([TWNGUITrans.TransDate]) - 1911, '  年  ', Month([TWNGUITrans.TransDate]), '  月  ', Day([TWNGUITrans.TransDate]), '  日')</Value>
+                        <Value>=Concat('中華民國     ', Year([TWNGUITrans.CRMDate]) - 1911, '  年  ', Month([TWNGUITrans.CRMDate]), '  月  ', Day([TWNGUITrans.CRMDate]), '  日')</Value>
                     </TextBox>
                     <TextBox Name="textBox12">
                         <Location>0px, 80px</Location>
@@ -2796,7 +2837,7 @@
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUITrans.NetAmount] + [TWNGUITrans.TaxAmount]</Value>
+                        <Value>=[TWNGUITrans.TaxAmount]</Value>
                     </TextBox>
                     <TextBox Name="textBox77">
                         <Location>400px, 32px</Location>
