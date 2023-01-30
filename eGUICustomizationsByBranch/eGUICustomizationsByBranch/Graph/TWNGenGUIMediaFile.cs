@@ -128,12 +128,12 @@ namespace eGUICustomizations.Graph
                         }
 
                         count = 1;
-                        PXSelectBase<NumberingSequence> query = new PXSelect<NumberingSequence, Where<NumberingSequence.numberingID, Like<GUI2x>,
-                                                                                                      Or<NumberingSequence.numberingID, Like<GUI3x>,
-                                                                                                         And<NumberingSequence.startDate, GreaterEqual<Current<GUITransFilter.fromDate>>,
-                                                                                                             And<NumberingSequence.startDate, LessEqual<Current<GUITransFilter.toDate>>>>>>>(this);
+                        PXSelectBase<NumberingSequence> query = new PXSelect<NumberingSequence, Where<NumberingSequence.startDate, Between<Current<GUITransFilter.fromDate>, Current<GUITransFilter.toDate>>,
+                                                                                                      And<NumberingSequence.nBranchID, Equal<Required<TWNGUITrans.branchID>>,
+                                                                                                          And<Where<NumberingSequence.numberingID, Like<GUI2x>,
+                                                                                                                    Or<NumberingSequence.numberingID, Like<GUI3x>>>>>>>(this);
 
-                        foreach (NumberingSequence numSeq in query.Select())
+                        foreach (NumberingSequence numSeq in query.Select(tWNGUITrans[0].BranchID))
                         {
                             string StrEndNbr  = numSeq.EndNbr.Substring(2);
                             string StrLastNbr = numSeq.LastNbr.Substring(2);
