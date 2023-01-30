@@ -60,7 +60,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <Name>guirptfmt</Name>
             </EmbeddedImage>
         </EmbeddedImages>
-        <ExportFileName>=Format('GUI Invoice {0} {1}', IsNull([TWNGUITrans.GUIFormatcode],''),IsNull([TWNGUITrans.GUINbr],''))</ExportFileName>
+        <ExportFileName>=Format('GUI INVOICE-{0}-{1}{2}', IsNull([TWNGUITrans.GUIFormatCode],''), IsNull([TWNGUITrans.GUINbr],''), IsNull('-'+[ARInvoice.ProjectID], ''))</ExportFileName>
         <Filters>
             <FilterExp>
                 <Condition>NotEqual</Condition>
@@ -2174,6 +2174,17 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </ReportField>
                     <ReportField Name="CreatedDateTime_Quarter">
                     </ReportField>
+                    <ReportField Name="CRMDate">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CRMDate_Day">
+                    </ReportField>
+                    <ReportField Name="CRMDate_Hour">
+                    </ReportField>
+                    <ReportField Name="CRMDate_Month">
+                    </ReportField>
+                    <ReportField Name="CRMDate_Quarter">
+                    </ReportField>
                     <ReportField Name="CustomType">
                     </ReportField>
                     <ReportField Name="CustVend">
@@ -3146,7 +3157,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                 <FullName>eGUICustomizations.Graph.TWNPrintedLineFilter</FullName>
             </ReportTable>
         </Tables>
-        <Version>20221017</Version>
+        <Version>20230113</Version>
         <ViewerFields>
             <ViewerField Name="ARInvoice.DocType">
             </ViewerField>
