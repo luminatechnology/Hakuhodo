@@ -67,23 +67,81 @@ namespace eGUICustomizations.Descriptor
     #endregion
 
     #region GUINumberAttribute
-    public class GUINumberAttribute : PXDBStringAttribute, IPXFieldVerifyingSubscriber
+    public class GUINumberAttribute : PXDBStringAttribute/*, IPXFieldVerifyingSubscriber*/, IPXRowUpdatedSubscriber
     {
         public GUINumberAttribute(int length) : base(length) { }
 
-        public void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
-        {
-            if (string.IsNullOrEmpty((string)e.NewValue) || TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }
+        /// <summary>
+        /// After trying for two hours, still can't get the current row record after entering the GUI number. It will be null. 
+        /// Guess the GUI number is one of the PK then forced to change event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        //public virtual void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
+        //{
+        //    if (string.IsNullOrEmpty((string)e.NewValue) || TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }
 
-            bool reverse = false;
-            string vATCode = null;
-            string erroMsg = null;
+        //    bool   reverse = false;
+        //    string vATCode = null, erroMsg = null;
+
+        //    switch (this.BqlTable.Name)
+        //    {
+        //        case nameof(ARRegister):
+        //            vATCode = (string)sender.GetValue<ARRegisterExt.usrVATOutCode>(e.Row);
+        //            reverse = sender.GetValue<ARRegister.docType>(e.Row).Equals(ARDocType.CreditMemo);
+        //            break;
+        //        case nameof(TWNGUITrans):
+        //            vATCode = (string)sender.GetValue<TWNGUITrans.gUIFormatCode>(e.Row);
+        //            break;
+        //        case nameof(TWNManualGUIAP):
+        //            vATCode = (string)sender.GetValue<TWNManualGUIAP.vATInCode>(e.Row);
+        //            break;
+        //        case nameof(TWNManualGUIAR):
+        //            vATCode = (string)sender.GetValue<TWNManualGUIAR.vatOutCode>(e.Row);
+        //            break;
+        //        case nameof(TWNManualGUIBank):
+        //            vATCode = (string)sender.GetValue<TWNManualGUIBank.vATInCode>(e.Row);
+        //            break;
+        //        case nameof(TWNManualGUIExpense):
+        //            vATCode = (string)sender.GetValue<TWNManualGUIExpense.vATInCode>(e.Row);
+        //            break;
+        //        case nameof(TWNManualGUIAPBill):
+        //            vATCode = (string)sender.GetValue<TWNManualGUIAPBill.vATInCode>(e.Row);
+        //            break;
+        //    }
+
+        //    if (!vATCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34))
+        //    {
+        //        erroMsg = (vATCode.IsIn(TWGUIFormatCode.vATInCode21, TWGUIFormatCode.vATInCode23, TWGUIFormatCode.vATInCode25) && e.NewValue.ToString().Length != 10) ? TWMessages.GUINbrLength :
+        //                                                                                                                                                                (e.NewValue.ToString().Length < 10) ? TWMessages.GUINbrMini :
+        //                                                                                                                                                                                                      null;
+        //    }
+
+        //    if (!string.IsNullOrEmpty(erroMsg))
+        //    {
+        //        throw new PXSetPropertyException(erroMsg, PXErrorLevel.Error);
+        //    }
+
+        //    if (reverse == false)
+        //    {
+        //        new TWNGUIValidation().CheckGUINbrExisted(sender.Graph, (string)e.NewValue, vATCode);
+        //    }
+        //}
+        public virtual void RowUpdated(PXCache sender, PXRowUpdatedEventArgs e)
+        {
+            string gUINbr = (string)sender.GetValue(e.Row, "GUINbr");
+
+            if (string.IsNullOrEmpty(gUINbr) || TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }
+
+            bool   reverse = false;
+            string vATCode = null, erroMsg = null;
 
             switch (this.BqlTable.Name)
             {
                 case nameof(ARRegister):
-                    vATCode = (string)sender.GetValue<ARRegisterExt.usrVATOutCode>(e.Row);
                     reverse = sender.GetValue<ARRegister.docType>(e.Row).Equals(ARDocType.CreditMemo);
+
+                    vATCode = (string)sender.GetValue<ARRegisterExt.usrVATOutCode>(e.Row);
                     break;
                 case nameof(TWNGUITrans):
                     vATCode = (string)sender.GetValue<TWNGUITrans.gUIFormatCode>(e.Row);
@@ -107,19 +165,21 @@ namespace eGUICustomizations.Descriptor
 
             if (!vATCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34))
             {
-                erroMsg = (vATCode.IsIn(TWGUIFormatCode.vATInCode21, TWGUIFormatCode.vATInCode23, TWGUIFormatCode.vATInCode25) && e.NewValue.ToString().Length != 10) ? TWMessages.GUINbrLength :
-                                                                                                                                                                        (e.NewValue.ToString().Length < 10) ? TWMessages.GUINbrMini :
-                                                                                                                                                                                                              null;
+                erroMsg = (vATCode.IsIn(TWGUIFormatCode.vATInCode21,
+                                        TWGUIFormatCode.vATInCode23,
+                                        TWGUIFormatCode.vATInCode25) && gUINbr.Length != 10) ? TWMessages.GUINbrLength :
+                                                                                               (gUINbr.Length < 10) ? TWMessages.GUINbrMini :
+                                                                                                                      null;
             }
 
             if (!string.IsNullOrEmpty(erroMsg))
             {
-                throw new PXSetPropertyException(erroMsg, PXErrorLevel.Error);
+                throw new PXSetPropertyException(erroMsg);
             }
 
             if (reverse == false)
             {
-                new TWNGUIValidation().CheckGUINbrExisted(sender.Graph, (string)e.NewValue, vATCode);
+                new TWNGUIValidation().CheckGUINbrExisted(sender.Graph, gUINbr, vATCode);
             }
         }
     }
