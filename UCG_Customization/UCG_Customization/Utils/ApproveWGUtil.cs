@@ -63,17 +63,18 @@ namespace UCG_Customization.Utils
             {
                 #region Project情境
                 var tempAcctCDs = GetUsrApproveWGByProject(graph, projectID);
+                saveAcctCDs = tempAcctCDs;
                 //如果最高層 則走 nonProject邏輯
-                if (empAcctCD == tempAcctCDs[4])
+                for (int i = tempAcctCDs.Length - 1; i >= 0; i--)
                 {
-                    if (thisTree != null)
+                    if (tempAcctCDs[i] == null) continue;
+                    //2023-01-31 改為有填的最高層
+                    if (empAcctCD == tempAcctCDs[i] && thisTree != null)
                     {
                         saveAcctCDs = GetUsrApproveWG(graph, thisTree);
+                        break;
                     }
-                }
-                else
-                {
-                    saveAcctCDs = tempAcctCDs;
+                    break;
                 }
                 #endregion
             }
