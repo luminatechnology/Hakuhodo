@@ -1230,7 +1230,7 @@
                             <TextAlign>Center</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=IsNull([OrigGUITran35.GUIFormatCode], [OrigGUITran31.GUIFormatCode])</Value>
+                        <Value>三</Value>
                     </TextBox>
                     <TextBox Name="textBox33">
                         <Location>22px, 0px</Location>
