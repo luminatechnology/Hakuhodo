@@ -65,7 +65,7 @@ namespace UCG_Customization.Utils
                 var tempAcctCDs = GetUsrApproveWGByProject(graph, projectID);
                 saveAcctCDs = tempAcctCDs;
                 //如果最高層 則走 nonProject邏輯
-                for (int i = tempAcctCDs.Length - 1; i >= 0; i--)
+                for (int i = 0; i < tempAcctCDs.Length ; i++)
                 {
                     if (tempAcctCDs[i] == null) continue;
                     //2023-01-31 改為有填的最高層
