@@ -129,9 +129,11 @@ namespace eGUICustomizations.Descriptor
         //}
         public virtual void RowUpdated(PXCache sender, PXRowUpdatedEventArgs e)
         {
-            string gUINbr = (string)sender.GetValue(e.Row, "GUINbr");
+            string newGUINbr = (string)sender.GetValue(e.Row, "GUINbr");
+            string oldGUINbr = (string)sender.GetValue(e.OldRow, "GUINbr");
 
-            if (string.IsNullOrEmpty(gUINbr) || TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }
+            if (string.IsNullOrEmpty(newGUINbr) || 
+                TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }
 
             bool   reverse = false;
             string vATCode = null, erroMsg = null;
@@ -167,9 +169,9 @@ namespace eGUICustomizations.Descriptor
             {
                 erroMsg = (vATCode.IsIn(TWGUIFormatCode.vATInCode21,
                                         TWGUIFormatCode.vATInCode23,
-                                        TWGUIFormatCode.vATInCode25) && gUINbr.Length != 10) ? TWMessages.GUINbrLength :
-                                                                                               (gUINbr.Length < 10) ? TWMessages.GUINbrMini :
-                                                                                                                      null;
+                                        TWGUIFormatCode.vATInCode25) && newGUINbr.Length != 10) ? TWMessages.GUINbrLength :
+                                                                                                  (newGUINbr.Length < 10) ? TWMessages.GUINbrMini :
+                                                                                                                            null;
             }
 
             if (!string.IsNullOrEmpty(erroMsg))
@@ -177,9 +179,9 @@ namespace eGUICustomizations.Descriptor
                 throw new PXSetPropertyException(erroMsg);
             }
 
-            if (reverse == false)
+            if (reverse == false && newGUINbr != oldGUINbr)
             {
-                new TWNGUIValidation().CheckGUINbrExisted(sender.Graph, gUINbr, vATCode);
+                new TWNGUIValidation().CheckGUINbrExisted(sender.Graph, newGUINbr, vATCode);
             }
         }
     }

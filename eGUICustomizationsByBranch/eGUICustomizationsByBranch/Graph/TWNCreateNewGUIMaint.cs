@@ -120,7 +120,7 @@ namespace eGUICustomizations.Graph
 
         public PXAction<TWNGUIInvCredit> printGUIInvoice;
         [PXLookupButton]
-        [PXUIField(DisplayName = "Print GUI Invoice", MapEnableRights = PXCacheRights.Select, MapViewRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = TWMessages.PrintGUIInvRpt, MapEnableRights = PXCacheRights.Select, MapViewRights = PXCacheRights.Select)]
         public virtual void PrintGUIInvoice()
         {
             if (Document.Current != null)

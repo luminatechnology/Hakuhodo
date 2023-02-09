@@ -82,7 +82,7 @@ namespace PX.Objects.AR
 
         public PXAction<ARInvoice> printGUIInvoice;
         [PXButton()]
-        [PXUIField(DisplayName = "Print GUI Invoice", MapEnableRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = TWMessages.PrintGUIInvRpt, MapEnableRights = PXCacheRights.Select)]
         protected virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
         {
             var current = Base.Document.Current;
@@ -99,7 +99,7 @@ namespace PX.Objects.AR
 
         public PXAction<ARInvoice> printGUICreditNote;
         [PXButton()]
-        [PXUIField(DisplayName = "Print GUI Credit Note", MapEnableRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = TWMessages.PrintGUICRMRpt, MapEnableRights = PXCacheRights.Select)]
         protected virtual IEnumerable PrintGUICreditNote(PXAdapter adapter)
         {
             var current = Base.Document.Current;
@@ -116,7 +116,7 @@ namespace PX.Objects.AR
 
         public PXAction<ARInvoice> openGUIPrintedLineForm;
         [PXButton()]
-        [PXUIField(DisplayName = "GUI Printed Line Details")]
+        [PXUIField(DisplayName = TWMessages.GUIPrintedLineDet)]
         protected virtual IEnumerable OpenGUIPrintedLineForm(PXAdapter adapter)
         {
             var current = Base.Document.Current;

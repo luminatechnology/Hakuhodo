@@ -100,7 +100,7 @@ namespace eGUICustomizations.Graph
         }
 
         public PXAction<TWNGUIManualFilter> printGUIInvoice;
-        [PXButton(ImageSet = "main", ImageKey = PX.Web.UI.Sprite.Main.ReportF), PXUIField(DisplayName = "Print GUI Invoice")]
+        [PXButton(ImageSet = "main", ImageKey = PX.Web.UI.Sprite.Main.ReportF), PXUIField(DisplayName = TWMessages.PrintGUIInvRpt)]
         public virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
         {
             var current = ManualGUIAR.Current;

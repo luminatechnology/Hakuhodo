@@ -39,7 +39,7 @@ namespace PX.Objects.SO
         #region Actions
         public PXAction<ARInvoice> printGUIInvoice;
         [PXButton()]
-        [PXUIField(DisplayName = "Print GUI Invoice", MapEnableRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = TWMessages.PrintGUIInvRpt, MapEnableRights = PXCacheRights.Select)]
         protected virtual IEnumerable PrintGUIInvoice(PXAdapter adapter)
         {
             var current = Base.Document.Current;
@@ -56,7 +56,7 @@ namespace PX.Objects.SO
 
         public PXAction<ARInvoice> printGUICreditNote;
         [PXButton()]
-        [PXUIField(DisplayName = "Print GUI Credit Note", MapEnableRights = PXCacheRights.Select)]
+        [PXUIField(DisplayName = TWMessages.PrintGUICRMRpt, MapEnableRights = PXCacheRights.Select)]
         protected virtual IEnumerable PrintGUICreditNote(PXAdapter adapter)
         {
             var current = Base.Document.Current;
