@@ -54,6 +54,22 @@ namespace PX.Objects.AP
         #endregion
 
         #region Event Handlers
+        protected void _(Events.RowSelected<APInvoice> e, PXRowSelected baseHandler)
+        {
+            baseHandler?.Invoke(e.Cache, e.Args);
+
+            var row = e.Row as APInvoice;
+
+            if (row != null)
+            {
+                ManualAPBill.Cache.AllowSelect = activateGUI;
+                ManualAPBill.Cache.AllowDelete = ManualAPBill.Cache.AllowInsert = ManualAPBill.Cache.AllowUpdate = row.Status.IsIn(APDocStatus.Hold, APDocStatus.Balanced);
+            }
+
+            WHTView.AllowSelect = GUISetup.Select().TopFirst?.EnableWHT == true;
+            WHTView.AllowDelete = WHTView.AllowInsert = WHTView.AllowUpdate = Base.Transactions.AllowUpdate;
+        }
+
         protected void _(Events.RowPersisting<APInvoice> e, PXRowPersisting baseHandler)
         {
             baseHandler?.Invoke(e.Cache, e.Args);
@@ -87,22 +103,6 @@ namespace PX.Objects.AP
                     }
                 }
             }
-        }
-
-        protected void _(Events.RowSelected<APInvoice> e, PXRowSelected baseHandler)
-        {
-            baseHandler?.Invoke(e.Cache, e.Args);
-
-            var row = e.Row as APInvoice;
-
-            if (row != null)
-            {
-                ManualAPBill.Cache.AllowSelect = activateGUI;
-                ManualAPBill.Cache.AllowDelete = ManualAPBill.Cache.AllowInsert = ManualAPBill.Cache.AllowUpdate = row.Status.IsIn(APDocStatus.Hold, APDocStatus.Balanced);
-            }
-
-            WHTView.AllowSelect = GUISetup.Select().TopFirst?.EnableWHT == true;
-            WHTView.AllowDelete = WHTView.AllowInsert = WHTView.AllowUpdate = Base.Transactions.AllowUpdate;
         }
 
         protected void _(Events.FieldUpdated<APInvoice.taxZoneID> e, PXFieldUpdated baseHandler)
@@ -143,6 +143,17 @@ namespace PX.Objects.AP
         protected virtual void _(Events.FieldDefaulting<TWNManualGUIAPBill, TWNManualGUIAPBill.createdDateTime> e)
         {
             e.NewValue = System.DateTime.UtcNow;
+        }
+        #endregion
+
+        #region TWNWHT
+        protected virtual void _(Events.RowSelected<TWNWHT> e)
+        {
+            ///<remarks> 
+            /// Due to user accidentally misfilling the value and clearing it but the cache is created and returns the key field cannot be empty error. 
+            /// RowPersisting event is later than standard exception and therefore executed in this event.
+            /// </remarks>
+            if (string.IsNullOrEmpty(e.Row.PersonalID)) { e.Cache.Clear(); }
         }
         #endregion
 
