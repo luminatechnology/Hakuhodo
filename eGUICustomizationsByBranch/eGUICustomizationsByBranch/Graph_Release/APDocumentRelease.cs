@@ -141,7 +141,7 @@ namespace PX.Objects.AP
                         wHTTran.NetAmt     = doc.CuryOrigDocAmt;
                         wHTTran.SecNHIPct  = tWNWHT.SecNHIPct;
                         wHTTran.SecNHICode = tWNWHT.SecNHICode;
-                        wHTTran.SecNHIAmt  = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.SecNHIPct).Value);
+                        wHTTran.SecNHIAmt  = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * (wHTTran.SecNHIPct ?? 0m)).Value);
                         wHTTran.SecNHIAmt  = wHTTran.SecNHIAmt == 0m ? 0m : wHTTran.SecNHIAmt / 100m;
 
                         WHTTranView.Update(wHTTran);
