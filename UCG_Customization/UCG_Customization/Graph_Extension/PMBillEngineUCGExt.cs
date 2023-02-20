@@ -13,9 +13,13 @@ namespace PX.Objects.PM
         public virtual PMProformaLine InsertTransaction(PMProject project, PMProformaLine tran, string subCD, string note, Guid[] files, InsertTransactionDelegate baseMethod)
         {
             var returnValue = baseMethod(project, tran, subCD, note, files);
-
-            var tax = TX.TaxCategory.PK.Find(Base, "TAXABLE");
-            if (tax != null) returnValue.TaxCategoryID = tax.TaxCategoryID;
+            if (tran.Type != PMProformaLineType.Transaction)
+            {
+                var tax = TX.TaxCategory.PK.Find(Base, "TAXABLE");
+                if (tax != null)
+                    Base.ProformaEntry.Caches[typeof(PMProformaProgressLine)].SetValueExt<PMProformaProgressLine.taxCategoryID>(returnValue, tax.TaxCategoryID);
+                Base.ProformaEntry.ProgressiveLines.Update((PMProformaProgressLine)returnValue);
+            }
 
             return returnValue;
         }
