@@ -24,21 +24,21 @@ namespace PX.Objects.AP
         #region const
         #region User Defined
         /// <summary>User Defined - 折讓/退傭單號</summary>
-        const string DJNBR = "AttributeDJNBR";
+        public const string DJNBR = "AttributeDJNBR";
         /// <summary>User Defined - 代墊/暫借沖銷金額</summary>
-        const string EPPAYAMT = "AttributeEPPAYAMT";
+        public const string EPPAYAMT = "AttributeEPPAYAMT";
         /// <summary>User Defined - 暫借款單號</summary>
-        const string EPPAYREFNB = "AttributeEPPAYREFNB";
+        public const string EPPAYREFNB = "AttributeEPPAYREFNB";
         /// <summary>User Defined - 代墊款/暫借款</summary>
-        const string EPPAYTYPE = "AttributeEPPAYTYPE";
+        public const string EPPAYTYPE = "AttributeEPPAYTYPE";
         /// <summary>User Defined - 代墊廠商</summary>
-        const string VENDOR = "AttributeVENDOR";
+        public const string VENDOR = "AttributeVENDOR";
         /// <summary>員工代墊款-代碼</summary>
-        const string EMP_ADV_CODE = "A";
+        public const string EMP_ADV_CODE = "A";
         /// <summary>員工暫借款-代碼</summary>
-        const string EMP_TEMP_BOR_CODE = "B";
+        public const string EMP_TEMP_BOR_CODE = "B";
         /// <summary>廠商代墊-代碼</summary>
-        const string VEN_ADV_CODE = "C";
+        public const string VEN_ADV_CODE = "C";
         #endregion
         #region Message
         const string MSG_EPREFNBR_NOT_FOUND = "查無暫借款{0}";
@@ -394,6 +394,10 @@ namespace PX.Objects.AP
             cache.SetValueExt<APInvoice.dueDate>(invoice, inv.DueDate);
             //經辦人 = ADMIN(emp = 24)
             cache.SetValueExt<APInvoice.employeeID>(invoice, 24);
+            var taxZone = TX.TaxZone.PK.Find(Base, "TAXABLE");
+            //2023-02-20 員工代墊 稅額預設為TAXABLE，為了排除代扣稅
+            if (taxZone != null) cache.SetValueExt<APInvoice.taxZoneID>(invoice, taxZone.TaxZoneID);
+
             invoice = graph.Document.Update(invoice);
 
             //Item
