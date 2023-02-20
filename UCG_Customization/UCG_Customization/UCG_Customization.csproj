@@ -84,6 +84,7 @@
     <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntryUCGExt.cs" />
+    <Compile Include="Graph_Extension\ARInvoiceEntryUCGExtByPM.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\EPApprovalProcessUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Graph\LMTeleTransProcess.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimMaintUCGExt.cs" />
+    <Compile Include="Graph_Extension\PMBillEngineUCGExt.cs" />
     <Compile Include="Graph_Extension\POOrderEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ProformaEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ProjectEntryUCGExt.cs" />
