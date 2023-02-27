@@ -2,7 +2,8 @@
 <%@ MasterType VirtualPath="~/MasterPages/FormDetail.master" %>
 
 <asp:Content ID="cont1" ContentPlaceHolderID="phDS" Runat="Server">
-	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="eGUICustomizations.Graph.TWNPrintedLineDetMaint" PrimaryView="Filter">
+	<%--Due to the Tools/Audit History in detail form it may be necessary to specify the bound DAC of the data view in the PrimaryView.--%> 
+	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="eGUICustomizations.Graph.TWNPrintedLineDetMaint" PrimaryView="PrintedLineDet">
 		<CallbackCommands>
 		</CallbackCommands>
 	</px:PXDataSource>

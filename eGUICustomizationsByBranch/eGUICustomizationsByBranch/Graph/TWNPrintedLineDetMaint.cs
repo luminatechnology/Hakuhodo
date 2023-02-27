@@ -13,9 +13,10 @@ namespace eGUICustomizations.Graph
     public class TWNPrintedLineDetMaint : PXGraph<TWNPrintedLineDetMaint>
     {
         #region Features & Selets
-        public PXSave<TWNPrintedLineFilter> Save;
-        public PXCancel<TWNPrintedLineFilter> Cancel;
         public PXFilter<TWNPrintedLineFilter> Filter;
+
+        public PXSave<TWNGUIPrintedLineDet> Save;
+        public PXCancel<TWNGUIPrintedLineDet> Cancel;
         [PXImport(typeof(TWNGUIPrintedLineDet))]
         public PXSelect<TWNGUIPrintedLineDet, Where<TWNGUIPrintedLineDet.gUINbr, Equal<Current<TWNPrintedLineFilter.gUINbr>>,
                                                     And<TWNGUIPrintedLineDet.gUIFormatcode, Equal<Current<TWNPrintedLineFilter.gUIFormatcode>>,
