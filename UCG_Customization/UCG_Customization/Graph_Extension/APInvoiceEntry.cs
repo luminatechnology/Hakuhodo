@@ -70,7 +70,7 @@ namespace PX.Objects.AP
 
         #region CacheAttached
         [PXMergeAttributes(Method = MergeMethod.Append)]
-        [PXRestrictor(typeof(Where<Contract.defaultBranchID, Equal<Current<APInvoice.branchID>>, Or<Contract.defaultBranchID, IsNull>>), "±M®×©ÒÄİ¤À¤½¥q»P¤À¤½¥q¤£¬Û²Å")]
+        [PXRestrictor(typeof(Where<Contract.defaultBranchID, Equal<Current<APInvoice.branchID>>, Or<Contract.defaultBranchID, IsNull>>), "å°ˆæ¡ˆæ‰€å±¬åˆ†å…¬å¸èˆ‡åˆ†å…¬å¸ä¸ç›¸ç¬¦")]
         protected virtual void _(Events.CacheAttached<APInvoice.projectID> e) { }
         #endregion
 
@@ -84,11 +84,33 @@ namespace PX.Objects.AP
             {
                 var projectCD = (PXStringState)cache.GetValueExt(row, UD_PROJECT);
                 var pmProject = GetProjectByCD(projectCD);
-                if (pmProject == null) throw new PXException($"§ä¤£¨ì¹ïÀ³±M®×:{projectCD}");
+                if (pmProject == null) throw new PXException($"æ‰¾ä¸åˆ°å°æ‡‰å°ˆæ¡ˆ:{projectCD}");
                 projectID = pmProject.ContractID;
             }
-            var emp = GetEmployee(row.EmployeeID);
-            ApproveWGUtil.SetUsrApproveWG(cache, row, row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID, emp?.AcctCD?.Trim(), projectID, oppID);
+            ApproveWGUtil.SetUsrApproveWG(
+                cache, row, 
+                row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID,
+                GetApproveEmp(cache,row), projectID, oppID);
+        }
+
+        /// <summary>
+        /// å–å¾—åˆ¤æ–·å¯©æ ¸äººå“¡
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string GetApproveEmp(PXCache cache, APRegister row) {
+            EPEmployee emp = null;
+            //Step1. åˆ¤æ–·[æ›´å¤š] ä¸­çš„ å“¡å·¥ä»£å¢Š/å» å•†ä»£å¢Š
+            string vendor = (PXStringState)cache.GetValueExt(row, APInvoiceEntry_ReleaseExt.VENDOR);
+            if (!string.IsNullOrEmpty(vendor)) {
+                emp = EPEmployee.UK.Find(Base, vendor);
+                if (emp != null) return vendor.Trim();
+            }
+            //Step2. åˆ¤æ–·ä¾›æ‡‰å•†
+            emp = EPEmployee.PK.Find(Base, row.VendorID);
+            if(emp != null) return emp.AcctCD.Trim();
+            //Step3. åˆ¤æ–·ç¶“è¾¦äºº
+            emp = GetEmployee(row.EmployeeID);
+            return emp?.AcctCD?.Trim();
         }
 
         #endregion
@@ -96,7 +118,7 @@ namespace PX.Objects.AP
         #region BQL
         private EPEmployee GetEmployee(int? employeeID)
         {
-            //APRegisterªºemployeeID¨ä¹ê¬OContactID
+            //APRegisterçš„employeeIDå…¶å¯¦æ˜¯ContactID
             return PXSelect<EPEmployee, Where<EPEmployee.defContactID, Equal<Required<EPEmployee.defContactID>>>>.Select(Base, employeeID);
         }
 

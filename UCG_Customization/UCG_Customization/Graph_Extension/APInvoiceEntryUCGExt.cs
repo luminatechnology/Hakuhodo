@@ -29,6 +29,13 @@ namespace PX.Objects.AP
 
         #region Event
         #region APInvoice
+        protected virtual void _(Events.RowSelected<APInvoice> e, PXRowSelected baseMethod)
+        {
+            if (e.Row == null) return;
+            baseMethod?.Invoke(e.Cache, e.Args);
+            Base.payInvoice.SetCaption(PXLocalizer.Localize(Messages.APPayBill));
+        }
+
         protected virtual void _(Events.FieldUpdated<APInvoice, APInvoice.branchID> e)
         {
             if (e.Row == null) return;

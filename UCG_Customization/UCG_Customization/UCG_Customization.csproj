@@ -64,8 +64,10 @@
     <Compile Include="DAC_Extension\APRegisterUCGExt.cs" />
     <Compile Include="DAC_Extension\APSetupUCGExt.cs" />
     <Compile Include="DAC_Extension\APTranUCGExt.cs" />
+    <Compile Include="DAC_Extension\ARInvoiceUCGExt.cs" />
     <Compile Include="DAC_Extension\ARPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\APPaymentTTExt.cs" />
+    <Compile Include="DAC_Extension\ARSetupUCGExt.cs" />
     <Compile Include="DAC_Extension\CROpportunityUCGExt.cs" />
     <Compile Include="DAC_Extension\EPExpenseClaim.cs" />
     <Compile Include="DAC_Extension\EPDepartment.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntryUCGExt.cs" />
+    <Compile Include="Graph_Extension\ARInvoiceEntryUCGExtByPM.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\EPApprovalProcessUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
@@ -90,6 +93,9 @@
     <Compile Include="Graph\LMTeleTransProcess.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimMaintUCGExt.cs" />
+    <Compile Include="Graph_Extension\PMBillEngineUCGExt.cs" />
+    <Compile Include="Graph_Extension\POOrderEntryUCGExt.cs" />
+    <Compile Include="Graph_Extension\ProformaEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ProjectEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\RegisterEntry_UCGExt.cs" />
     <Compile Include="Graph_Extension\SubcontractEntry.cs" />

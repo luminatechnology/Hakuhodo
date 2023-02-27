@@ -1,5 +1,8 @@
 ﻿<Report Name="ap610500.rpx">
     <Report version="20211215" Name="report1">
+        <CommonSettings>
+            <ViewPdf>True</ViewPdf>
+        </CommonSettings>
         <ExcelColumns>
             <item>12</item>
             <item>12</item>
@@ -409,7 +412,7 @@
                 <ParentName>Vendor</ParentName>
             </ReportRelation>
         </Relations>
-        <SchemaUrl>http://localhost/AcumaticaUCG/</SchemaUrl>
+        <SchemaUrl>http://192.168.0.238/AcumaticaUCG/</SchemaUrl>
         <StylesTemplate>TemplateReport.rpx</StylesTemplate>
         <Tables>
             <ReportTable Name="APInvoice">
@@ -4456,6 +4459,7 @@
                 <FullName>PX.Objects.AP.Vendor</FullName>
             </ReportTable>
         </Tables>
+        <Version>20211215</Version>
         <ViewerFields>
             <ViewerField Name="BAccount.BAccountID">
             </ViewerField>
