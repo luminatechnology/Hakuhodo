@@ -81,8 +81,10 @@ namespace PX.Objects.AP
                             BatchNbr      = doc.BatchNbr,
                             DocType       = doc.DocType,
                             OrderNbr      = doc.RefNbr,
-                            TranDate      = doc.DocDate
-                        });
+                            TranDate      = doc.DocDate,
+                            GUIDecPeriod  = Base.Accessinfo.BusinessDate,
+                            CRMDate       = Base.Accessinfo.BusinessDate
+                        });;
 
                         if (tWNGUITrans != null)
                         {
@@ -123,6 +125,7 @@ namespace PX.Objects.AP
 
                         wHTTran = WHTTranView.Insert(wHTTran);
 
+                        wHTTran.BranchID   = doc.BranchID;
                         wHTTran.BatchNbr   = doc.BatchNbr;
                         wHTTran.TranDate   = doc.DocDate;
                         wHTTran.PaymDate   = Base.APInvoice_DocType_RefNbr.Current?.DueDate;
@@ -135,6 +138,7 @@ namespace PX.Objects.AP
                         wHTTran.PayeeAddr  = SelectFrom<Address>.InnerJoin<Vendor>.On<Vendor.bAccountID.IsEqual<Address.bAccountID>
                                                                                      .And<Vendor.defAddressID.IsEqual<Address.addressID>>>
                                                                .Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
+
                         wHTTran.WHTTaxPct  = string.IsNullOrEmpty(tWNWHT.WHTTaxPct) ? 0m : System.Convert.ToDecimal(tWNWHT.WHTTaxPct);
                         wHTTran.WHTAmt     = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.WHTTaxPct).Value);
                         wHTTran.WHTAmt     = wHTTran.WHTAmt == 0m ? 0m : wHTTran.WHTAmt / 100m;

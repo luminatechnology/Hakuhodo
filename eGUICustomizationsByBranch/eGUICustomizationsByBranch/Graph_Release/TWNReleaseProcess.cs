@@ -61,7 +61,7 @@ namespace eGUICustomizations.Graph_Release
             row.NPONbr        = sGUITran.NPONbr;
             row.B2CPrinted    = sGUITran.B2CPrinted;
             row.AddressLine   = sGUITran.AddressLine;
-            row.CRMDate       = row.GUIDate;
+            row.CRMDate       = sGUITran.CRMDate ?? row.GUIDate;
             //row.QREncrypter   = sGUITran.GUIDirection.Equals(TWNGUIDirection.Issue) && sGUITran.NetAmount > 0 && sGUITran.eGUIExcluded.Equals(false) ? GetQREncrypter(sGUITran) : null;
 
             ViewGUITrans.Update(row);
@@ -319,6 +319,7 @@ namespace eGUICustomizations.Graph_Release
         public DateTime? GUIDate;
         public DateTime? GUIDecPeriod;
         public DateTime? TranDate;
+        public DateTime? CRMDate;
 
         public decimal? NetAmount;
         public decimal? TaxAmount;
