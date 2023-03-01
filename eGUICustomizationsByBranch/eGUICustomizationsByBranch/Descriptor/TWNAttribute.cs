@@ -356,7 +356,8 @@ namespace eGUICustomizations.Descriptor
     public class MultiBAccountSelectorAttribute : PXSelectorAttribute
     {
         public MultiBAccountSelectorAttribute() : base(typeof(Search<BAccount.bAccountID, Where<BAccount.type.IsIn<BAccountType.customerType,
-                                                                                                                   BAccountType.vendorType>>>),
+                                                                                                                   BAccountType.vendorType,
+                                                                                                                   BAccountType.combinedType>>>),
                                                        typeof(BAccount.acctCD))
         {
             SubstituteKey = typeof(BAccount.acctCD);
