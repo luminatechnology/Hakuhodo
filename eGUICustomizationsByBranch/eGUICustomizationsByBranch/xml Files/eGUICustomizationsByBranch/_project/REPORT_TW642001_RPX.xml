@@ -2758,10 +2758,10 @@
                 <Height>5cm</Height>
                 <Items>
                     <PictureBox Name="pictureBox2">
-                        <Location>224px, 48px</Location>
+                        <Location>144px, 72px</Location>
                         <MimeType>image/png</MimeType>
                         <QRCodeSettings />
-                        <Size>88px, 56px</Size>
+                        <Size>208px, 112px</Size>
                         <Source>Database</Source>
                         <Value>=[UploadFile.Name]</Value>
                         <VisibleExpr>=$IsInvoice = False</VisibleExpr>
@@ -2859,7 +2859,7 @@
                     </TextBox>
                     <TextBox Name="textBox80">
                         <Location>312px, 48px</Location>
-                        <Size>40px, 32px</Size>
+                        <Size>40px, 24px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -2919,7 +2919,7 @@
                         <CanGrow>True</CanGrow>
                         <CanSplit>True</CanSplit>
                         <Location>128px, 48px</Location>
-                        <Size>96px, 16px</Size>
+                        <Size>176px, 16px</Size>
                         <Style>
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
