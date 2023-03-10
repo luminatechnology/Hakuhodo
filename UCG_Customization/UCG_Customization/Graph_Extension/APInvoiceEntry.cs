@@ -33,6 +33,7 @@ namespace PX.Objects.AP
         {
             var row = e.Row;
             if (row == null) return;
+            e.Cache.SetDefaultExt<APRegisterWorkGroupExt.usrDepartmentID>(e.Row);
             // Acuminator disable once PX1045 PXGraphCreateInstanceInEventHandlers [Justification]
             SetUsrApproveWG(e.Cache, row);
         }
@@ -48,7 +49,7 @@ namespace PX.Objects.AP
         {
             APRegister row = (APRegister)e.Row;
             if (row == null && row.EmployeeID != null) return;
-            var emp = GetEmployee(row.EmployeeID);
+            EPEmployee emp = EPEmployee.UK.Find(Base, GetApproveEmp(e.Cache, row));
             var newValue = emp.DepartmentID;
             e.NewValue = newValue;
             var rowExt = e.Cache.GetExtension<APRegisterWorkGroupExt>(row);
@@ -88,26 +89,28 @@ namespace PX.Objects.AP
                 projectID = pmProject.ContractID;
             }
             ApproveWGUtil.SetUsrApproveWG(
-                cache, row, 
+                cache, row,
                 row.GetExtension<APRegisterWorkGroupExt>().UsrDepartmentID,
-                GetApproveEmp(cache,row), projectID, oppID);
+                GetApproveEmp(cache, row), projectID, oppID);
         }
 
         /// <summary>
         /// 取得判斷審核人員
         /// </summary>
         /// <returns></returns>
-        protected virtual string GetApproveEmp(PXCache cache, APRegister row) {
+        protected virtual string GetApproveEmp(PXCache cache, APRegister row)
+        {
             EPEmployee emp = null;
             //Step1. 判斷[更多] 中的 員工代墊/廠商代墊
             string vendor = (PXStringState)cache.GetValueExt(row, APInvoiceEntry_ReleaseExt.VENDOR);
-            if (!string.IsNullOrEmpty(vendor)) {
+            if (!string.IsNullOrEmpty(vendor))
+            {
                 emp = EPEmployee.UK.Find(Base, vendor);
                 if (emp != null) return vendor.Trim();
             }
             //Step2. 判斷供應商
             emp = EPEmployee.PK.Find(Base, row.VendorID);
-            if(emp != null) return emp.AcctCD.Trim();
+            if (emp != null) return emp.AcctCD.Trim();
             //Step3. 判斷經辦人
             emp = GetEmployee(row.EmployeeID);
             return emp?.AcctCD?.Trim();

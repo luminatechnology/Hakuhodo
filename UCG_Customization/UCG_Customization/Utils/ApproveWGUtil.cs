@@ -69,7 +69,7 @@ namespace UCG_Customization.Utils
                 {
                     if (tempAcctCDs[i] == null) continue;
                     //2023-01-31 改為有填的最高層
-                    if (empAcctCD == tempAcctCDs[i] && thisTree != null)
+                    if (empAcctCD.Trim() == tempAcctCDs[i].Trim() && thisTree != null)
                     {
                         saveAcctCDs = GetUsrApproveWG(graph, thisTree);
                         break;
