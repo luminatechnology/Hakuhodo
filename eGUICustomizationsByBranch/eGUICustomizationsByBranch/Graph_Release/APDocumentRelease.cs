@@ -81,7 +81,6 @@ namespace PX.Objects.AP
                             BatchNbr      = doc.BatchNbr,
                             DocType       = doc.DocType,
                             OrderNbr      = doc.RefNbr,
-                            TranDate      = doc.DocDate,
                             GUIDecPeriod  = Base.Accessinfo.BusinessDate,
                             CRMDate       = Base.Accessinfo.BusinessDate
                         });;
@@ -166,11 +165,10 @@ namespace PX.Objects.AP
             {
                 if (doc != null && doc.Released == true && doc.DocType == APDocType.Check && Base.APPayment_DocType_RefNbr.Current != null)
                 {
-                    PXUpdate<Set<TWNWHTTran.paymDate, Required<APAdjust.adjgDocDate>,
-                                 Set<TWNWHTTran.paymRef, Required<APAdjust.adjgRefNbr>>>,
+                    PXUpdate<Set<TWNWHTTran.paymRef, Required<APAdjust.adjgRefNbr>>,
                              TWNWHTTran,
                              Where<TWNWHTTran.docType, Equal<Required<APAdjust.adjdDocType>>,
-                                   And<TWNWHTTran.refNbr, Equal<Required<APAdjust.adjdRefNbr>>>>>.Update(Base, Base.APPayment_DocType_RefNbr.Current.AdjDate, Base.APPayment_DocType_RefNbr.Current.ExtRefNbr,
+                                   And<TWNWHTTran.refNbr, Equal<Required<APAdjust.adjdRefNbr>>>>>.Update(Base, Base.APPayment_DocType_RefNbr.Current.ExtRefNbr,
                                                                                                                adjust.AdjdDocType, adjust.AdjdRefNbr);
                 }
             }

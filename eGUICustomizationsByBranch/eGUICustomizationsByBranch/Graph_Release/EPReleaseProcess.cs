@@ -58,7 +58,9 @@ namespace PX.Objects.EP
                             AcctName      = vendor.AcctName,
                             DeductionCode = manualGUIExp.Deduction,
                             Remark        = manualGUIExp.Remark,
-                            OrderNbr      = manualGUIExp.RefNbr
+                            OrderNbr      = manualGUIExp.RefNbr,
+                            GUIDecPeriod  = Base.Accessinfo.BusinessDate,
+                            CRMDate       = Base.Accessinfo.BusinessDate
                         });
                     }
                 }
