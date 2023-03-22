@@ -233,92 +233,30 @@ namespace eGUICustomizations.Graph
                     else
                     {
                         bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
-                        bool isInclusive = false;
+                        bool isInclusive = graph.AmountInclusiveTax(TaxCalculationMode.TaxSetting, gUITrans.TaxID);
 
-                        PXResultset<ARTran> results = graph.RetrieveARTran(gUITrans.OrderNbr);
-
-                        foreach (PXResult<ARTran> result in results)
+                        PXResultset<TWNGUIPrintedLineDet> results = SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
+                                                                                                           .And<TWNGUIPrintedLineDet.gUIFormatcode.IsEqual<@P.AsString>
+                                                                                                                .And<TWNGUIPrintedLineDet.refNbr.IsEqual<@P.AsString>>>>
+                                                                                                    .View.Select(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode, gUITrans.OrderNbr);
+                        foreach (var row in results)
                         {
-                            ARTran aRTran = result;
+                            TWNGUIPrintedLineDet line = row;
 
+                            (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(isInclusive,
+                                                                                                                       !isB2C,
+                                                                                                                       line.UnitPrice.Value,
+                                                                                                                       line.Amount.Value);
                             // File Type
                             lines += "D" + verticalBar;
                             // Description
-                            lines += aRTran.TranDesc + verticalBar;
+                            lines += line.Descr + verticalBar;
                             // Quantity
-                            lines += (aRTran.Qty ?? 1) + verticalBar;
+                            lines += (line.Qty ?? 1) + verticalBar;
                             // Unit Price
+                            lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
                             // Amount
-                            #region Convert design spec logic to code.
-                            //if (aRTran.CuryDiscAmt == 0m)
-                            //{
-                            //    if (taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
-                            //    {
-                            //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
-                            //        {
-                            //            lines += aRTran.UnitPrice + verticalBar;
-                            //        }
-                            //        else
-                            //        {
-                            //            lines += aRTran.UnitPrice * fixedRate + verticalBar;
-                            //        }
-                            //    }
-                            //    else
-                            //    {
-                            //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
-                            //        {
-                            //            lines += aRTran.UnitPrice / fixedRate + verticalBar;
-                            //        }
-                            //        else
-                            //        {
-                            //            lines += aRTran.UnitPrice + verticalBar;
-                            //        }
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    if (taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
-                            //    {
-                            //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
-                            //        {
-                            //            lines += aRTran.TranAmt / aRTran.Qty + verticalBar;
-                            //        }
-                            //        else
-                            //        {
-                            //            lines += aRTran.TranAmt / aRTran.Qty * fixedRate + verticalBar;
-                            //        }
-                            //    }
-                            //    else
-                            //    {
-                            //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
-                            //        {
-                            //            lines += aRTran.TranAmt / aRTran.Qty / fixedRate + verticalBar;
-                            //        }
-                            //        else
-                            //        {
-                            //            lines += aRTran.TranAmt / aRTran.Qty + verticalBar;
-                            //        }
-                            //    }
-                            //}
-                            #endregion
-
-                            decimal? unitPrice = (aRTran.CuryDiscAmt == 0m) ? aRTran.UnitPrice : (aRTran.TranAmt / aRTran.Qty);
-                            decimal? tranAmt   = aRTran.TranAmt;
-
-                            isInclusive = graph.AmountInclusiveTax(graph.GetInvoiceTaxCalcMode(graph, aRTran.TranType, aRTran.RefNbr), gUITrans.TaxID);
-
-                            if (isB2C && isInclusive == false)
-                            {
-                                unitPrice *= fixedRate;
-                                tranAmt *= fixedRate;
-                            }
-                            else if (!isB2C && isInclusive == true)
-                            {
-                                unitPrice /= fixedRate;
-                                tranAmt /= fixedRate;
-                            }
-                            lines += string.Format("{0:0.####}", unitPrice) + verticalBar;
-                            lines += string.Format("{0:0.####}", tranAmt) + verticalBar;
+                            lines += string.Format("{0:0.####}", ExtPrice) + verticalBar;
                             // Unit
                             lines += verticalBar;
                             // Package
@@ -345,28 +283,88 @@ namespace eGUICustomizations.Graph
 
                         if (results.Count <= 0)
                         {
-                            isInclusive = graph.AmountInclusiveTax(TaxCalculationMode.TaxSetting, gUITrans.TaxID);
-
-                            foreach (TWNGUIPrintedLineDet line in SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
-                                                                                                         .And<TWNGUIPrintedLineDet.gUIFormatcode.IsEqual<@P.AsString>
-                                                                                                              .And<TWNGUIPrintedLineDet.refNbr.IsEqual<@P.AsString>>>>
-                                                                                                  .View.Select(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode, gUITrans.OrderNbr))
+                            foreach (ARTran aRTran in graph.RetrieveARTran(gUITrans.OrderNbr))
                             {
-                                (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(isInclusive,
-                                                                                                                           !isB2C,
-                                                                                                                           line.UnitPrice.Value,
-                                                                                                                           line.Amount.Value);
+                                //ARTran aRTran = result;
 
                                 // File Type
                                 lines += "D" + verticalBar;
                                 // Description
-                                lines += line.Descr + verticalBar;
+                                lines += aRTran.TranDesc + verticalBar;
                                 // Quantity
-                                lines += (line.Qty ?? 1) + verticalBar;
+                                lines += (aRTran.Qty ?? 1) + verticalBar;
                                 // Unit Price
-                                lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
                                 // Amount
-                                lines += string.Format("{0:0.####}", ExtPrice) + verticalBar;
+                                #region Convert design spec logic to code.
+                                //if (aRTran.CuryDiscAmt == 0m)
+                                //{
+                                //    if (taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
+                                //    {
+                                //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
+                                //        {
+                                //            lines += aRTran.UnitPrice + verticalBar;
+                                //        }
+                                //        else
+                                //        {
+                                //            lines += aRTran.UnitPrice * fixedRate + verticalBar;
+                                //        }
+                                //    }
+                                //    else
+                                //    {
+                                //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
+                                //        {
+                                //            lines += aRTran.UnitPrice / fixedRate + verticalBar;
+                                //        }
+                                //        else
+                                //        {
+                                //            lines += aRTran.UnitPrice + verticalBar;
+                                //        }
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    if (taxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross)
+                                //    {
+                                //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
+                                //        {
+                                //            lines += aRTran.TranAmt / aRTran.Qty + verticalBar;
+                                //        }
+                                //        else
+                                //        {
+                                //            lines += aRTran.TranAmt / aRTran.Qty * fixedRate + verticalBar;
+                                //        }
+                                //    }
+                                //    else
+                                //    {
+                                //        if (!string.IsNullOrEmpty(gUITrans.TaxNbr))
+                                //        {
+                                //            lines += aRTran.TranAmt / aRTran.Qty / fixedRate + verticalBar;
+                                //        }
+                                //        else
+                                //        {
+                                //            lines += aRTran.TranAmt / aRTran.Qty + verticalBar;
+                                //        }
+                                //    }
+                                //}
+                                #endregion
+
+                                decimal? unitPrice = (aRTran.CuryDiscAmt == 0m) ? aRTran.UnitPrice : (aRTran.TranAmt / aRTran.Qty);
+                                decimal? tranAmt = aRTran.TranAmt;
+
+                                isInclusive = graph.AmountInclusiveTax(graph.GetInvoiceTaxCalcMode(graph, aRTran.TranType, aRTran.RefNbr), gUITrans.TaxID);
+
+                                if (isB2C && isInclusive == false)
+                                {
+                                    unitPrice *= fixedRate;
+                                    tranAmt *= fixedRate;
+                                }
+                                else if (!isB2C && isInclusive == true)
+                                {
+                                    unitPrice /= fixedRate;
+                                    tranAmt /= fixedRate;
+                                }
+                                lines += string.Format("{0:0.####}", unitPrice) + verticalBar;
+                                lines += string.Format("{0:0.####}", tranAmt) + verticalBar;
                                 // Unit
                                 lines += verticalBar;
                                 // Package
@@ -392,11 +390,11 @@ namespace eGUICustomizations.Graph
                             }
                         }
                     }
-                }
-                #endregion
+                    #endregion
 
-                // Total Records
-                lines += tWNGUITrans.Count;
+                    // Total Records
+                    lines += tWNGUITrans.Count;
+                }
 
                 graph.UpdateGUITran(tWNGUITrans);
                 graph.UploadFile2FTP(fileName, lines);
