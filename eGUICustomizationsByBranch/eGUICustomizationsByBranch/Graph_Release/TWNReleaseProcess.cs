@@ -25,6 +25,8 @@ namespace eGUICustomizations.Graph_Release
         #region Methods
         public virtual void CreateGUITrans(STWNGUITran sGUITran)
         {
+            new TWNGUIValidation().CheckGUINbrExisted(this, sGUITran.GUINbr, sGUITran.VATCode);
+
             TWNGUITrans row = ViewGUITrans.Cache.CreateInstance() as TWNGUITrans;
 
             row.GUIFormatCode = sGUITran.VATCode;
