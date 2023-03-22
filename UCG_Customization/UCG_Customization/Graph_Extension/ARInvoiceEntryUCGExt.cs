@@ -15,7 +15,7 @@ namespace PX.Objects.AR
         public virtual ARRegister OnBeforeRelease(ARRegister doc, OnBeforeReleaseDelegate baseMethod)
         {
             ARInvoice invoice = doc as ARInvoice;
-            if (invoice != null)
+            if (invoice != null && (invoice.GetExtension<ARInvoiceUCGExt>().UsrCheckTaxOfTotal ?? false))
             {
                 var invoiceExt = invoice.GetExtension<ARInvoiceUCGExt>();
                 var lineTotal = invoice.CuryLineTotal ?? 0m;
