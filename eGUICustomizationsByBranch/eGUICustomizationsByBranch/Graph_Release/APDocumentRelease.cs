@@ -40,8 +40,6 @@ namespace PX.Objects.AP
                 foreach (TWNManualGUIAPBill row in SelectFrom<TWNManualGUIAPBill>.Where<TWNManualGUIAPBill.docType.IsEqual<@P.AsString>
                                                                                         .And<TWNManualGUIAPBill.refNbr.IsEqual<@P.AsString>>>.View.Select(Base, doc.DocType, doc.RefNbr))
                 {
-                    gUIValidate.CheckCorrespondingInv(Base, row.GUINbr, row.VATInCode);
-
                     if (gUIValidate.errorOccurred == true)
                     {
                         throw new PXException(gUIValidate.errorMessage);
@@ -81,8 +79,8 @@ namespace PX.Objects.AP
                             BatchNbr      = doc.BatchNbr,
                             DocType       = doc.DocType,
                             OrderNbr      = doc.RefNbr,
-                            GUIDecPeriod  = Base.Accessinfo.BusinessDate,
-                            CRMDate       = Base.Accessinfo.BusinessDate
+                            GUIDecPeriod  = doc.DocDate,
+                            CRMDate       = doc.DocDate
                         });;
 
                         if (tWNGUITrans != null)

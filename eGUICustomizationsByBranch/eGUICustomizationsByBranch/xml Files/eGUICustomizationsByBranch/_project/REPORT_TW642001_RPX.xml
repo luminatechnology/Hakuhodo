@@ -1312,7 +1312,7 @@
                         <Location>160px, 0px</Location>
                         <Size>128px, 38px</Size>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUIPrintedLineDet.Descr]</Value>
+                        <Value>=IsNull([TWNGUIPrintedLineDet.Descr], '' )</Value>
                     </TextBox>
                     <TextBox Name="textBox48">
                         <Location>288px, 0px</Location>
@@ -1327,7 +1327,7 @@
                             <TextAlign>Right</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUIPrintedLineDet.Qty]</Value>
+                        <Value>=IIf([TWNGUIPrintedLineDet.Qty] &gt; 0, [TWNGUIPrintedLineDet.Qty], '')</Value>
                     </TextBox>
                     <TextBox Name="textBox49">
                         <Format>N0</Format>
@@ -1343,7 +1343,7 @@
                             <TextAlign>Right</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUIPrintedLineDet.Amount] * 0.05</Value>
+                        <Value>=IIf(([TWNGUIPrintedLineDet.Amount] * 0.05) &gt; 0, [TWNGUIPrintedLineDet.Amount] * 0.05, [TWNGUITrans.TaxAmount])</Value>
                     </TextBox>
                     <TextBox Name="textBox50">
                         <Location>344px, 0px</Location>
@@ -1358,7 +1358,7 @@
                             <TextAlign>Right</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUIPrintedLineDet.UnitPrice]</Value>
+                        <Value>=IIf([TWNGUIPrintedLineDet.UnitPrice] &gt; 0, [TWNGUIPrintedLineDet.UnitPrice], '')</Value>
                     </TextBox>
                     <TextBox Name="textBox51">
                         <Format>N0</Format>
@@ -1374,7 +1374,7 @@
                             <TextAlign>Right</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=[TWNGUIPrintedLineDet.Amount]</Value>
+                        <Value>=IIf([TWNGUIPrintedLineDet.Amount] &gt; 0, [TWNGUIPrintedLineDet.Amount], [TWNGUITrans.NetAmount])</Value>
                     </TextBox>
                     <TextBox Name="textBox52">
                         <Location>648px, 0px</Location>

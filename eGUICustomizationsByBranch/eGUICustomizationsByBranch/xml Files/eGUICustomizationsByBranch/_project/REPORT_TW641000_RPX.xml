@@ -3630,7 +3630,7 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                             <VerticalAlign>Middle</VerticalAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=IIf([TWNGUITrans.TaxNbr] = Null, '', [TWNGUITrans.TaxAmount])</Value>
+                        <Value>=IIf([TWNGUITrans.TaxNbr] = Null, 0, [TWNGUITrans.TaxAmount])</Value>
                         <VisibleExpr>=[PageIndex]=[PageCount]</VisibleExpr>
                     </TextBox>
                     <TextBox Name="textBox25">
