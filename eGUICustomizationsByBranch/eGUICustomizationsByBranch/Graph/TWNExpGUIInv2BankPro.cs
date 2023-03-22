@@ -153,7 +153,7 @@ namespace eGUICustomizations.Graph
 
                 string ourTaxNbrFixedBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, Branch.UK.Find(graph, fixedBranch)?.BranchID);
 
-                string fileName = $"{ourTaxNbrFixedBranch}-InvoiceMD-{ourTaxNbrFixedBranch}-Paper-{DateTime.Today.ToString("yyyyMMdd")}-{DateTime.Now.ToString("hhmmss")}.txt";
+                string fileName = $"{ourTaxNbrFixedBranch}-InvoiceMD-{ourTaxNbrFixedBranch}-Paper-{DateTime.Today:yyyMMdd}-{DateTime.Now:hhmmss}.txt";
 
                 string lines = "";
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
@@ -232,7 +232,7 @@ namespace eGUICustomizations.Graph
                     }
                     else
                     {
-                        bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
+                        bool isB2C       = string.IsNullOrEmpty(gUITrans.TaxNbr);
                         bool isInclusive = graph.AmountInclusiveTax(TaxCalculationMode.TaxSetting, gUITrans.TaxID);
 
                         PXResultset<TWNGUIPrintedLineDet> results = SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
@@ -243,10 +243,8 @@ namespace eGUICustomizations.Graph
                         {
                             TWNGUIPrintedLineDet line = row;
 
-                            (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(isInclusive,
-                                                                                                                       !isB2C,
-                                                                                                                       line.UnitPrice.Value,
-                                                                                                                       line.Amount.Value);
+                            (decimal UnitPrice, decimal ExtPrice) = (line.UnitPrice.Value, line.Amount.Value);
+
                             // File Type
                             lines += "D" + verticalBar;
                             // Description

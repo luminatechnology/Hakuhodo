@@ -56,7 +56,7 @@ namespace eGUICustomizations.Graph
 
                 string ourTaxNbrFixedBranch = BAccountExt.GetOurTaxNbByBranch(graph.GUITranProc.Cache, Branch.UK.Find(graph, fixedBranch)?.BranchID);
 
-                string fileName = $"{ourTaxNbrFixedBranch}-AllowanceMD-{ourTaxNbrFixedBranch }-Paper-{DateTime.Today:yyyyMMdd}-{DateTime.Now:hhmmss)}.txt";
+                string fileName = $"{ourTaxNbrFixedBranch}-AllowanceMD-{ourTaxNbrFixedBranch }-Paper-{DateTime.Today:yyyyMMdd}-{DateTime.Now:hhmmss}.txt";
 
                 string lines = "";
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
@@ -134,31 +134,33 @@ namespace eGUICustomizations.Graph
                     {
                         bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
-                        PXResultset<ARTran> results = graph.RetrieveARTran(gUITrans.OrderNbr);
-
                         var validate = new TWNGUIValidation();
 
                         validate.CheckCorrespondingInv(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode);
 
                         DateTime? origGUIDate = validate.tWNGUITrans?.GUIDate;
 
-                        foreach (PXResult<ARTran> result in results)
+                        PXResultset<TWNGUIPrintedLineDet> results = SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
+                                                                                   .And<TWNGUIPrintedLineDet.gUIFormatcode.IsEqual<@P.AsString>
+                                                                                        .And<TWNGUIPrintedLineDet.refNbr.IsEqual<@P.AsString>>>>
+                                                                            .View.Select(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode, gUITrans.OrderNbr);
+                       
+                        foreach (TWNGUIPrintedLineDet line in results)
                         {
-                            ARTran tran = result;
+                            (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(false,
+                                                                                                                       !isB2C,
+                                                                                                                       line.UnitPrice.Value,
+                                                                                                                       line.Amount.Value);
 
                             // File Type
                             lines += "D" + verticalBar;
                             // Description
-                            lines += tran.TranDesc + verticalBar;
+                            lines += line.Descr + verticalBar;
                             // Quantity
-                            lines += tran.Qty + verticalBar;
+                            lines += (line.Qty ?? 1) + verticalBar;
                             // Unit Price
-                            // Amount
-                            (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(graph.AmountInclusiveTax(graph.GetInvoiceTaxCalcMode(graph, tran.TranType, tran.RefNbr), gUITrans.TaxID),
-                                                                                                                       !isB2C,
-                                                                                                                       tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
-                                                                                                                       tran.CuryTranAmt.Value);
                             lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
+                            // Amount
                             lines += string.Format("{0:0.####}", ExtPrice) + verticalBar;
                             // Unit
                             lines += verticalBar;
@@ -188,25 +190,21 @@ namespace eGUICustomizations.Graph
 
                         if (results.Count <= 0)
                         {
-                            foreach (TWNGUIPrintedLineDet line in SelectFrom<TWNGUIPrintedLineDet>.Where<TWNGUIPrintedLineDet.gUINbr.IsEqual<@P.AsString>
-                                                                                                         .And<TWNGUIPrintedLineDet.gUIFormatcode.IsEqual<@P.AsString>
-                                                                                                              .And<TWNGUIPrintedLineDet.refNbr.IsEqual<@P.AsString>>>>
-                                                                                                  .View.Select(graph, gUITrans.GUINbr, gUITrans.GUIFormatCode, gUITrans.OrderNbr))
+                            foreach (ARTran tran in graph.RetrieveARTran(gUITrans.OrderNbr))
                             {
-                                (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(graph.AmountInclusiveTax(PX.Objects.TX.TaxCalculationMode.TaxSetting, gUITrans.TaxID),
-                                                                                                                           !isB2C,
-                                                                                                                           line.UnitPrice.Value,
-                                                                                                                           line.Amount.Value);
-
                                 // File Type
                                 lines += "D" + verticalBar;
                                 // Description
-                                lines += line.Descr + verticalBar;
+                                lines += tran.TranDesc + verticalBar;
                                 // Quantity
-                                lines += (line.Qty ?? 1) + verticalBar;
+                                lines += tran.Qty + verticalBar;
                                 // Unit Price
-                                lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
                                 // Amount
+                                (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(graph.AmountInclusiveTax(graph.GetInvoiceTaxCalcMode(graph, tran.TranType, tran.RefNbr), gUITrans.TaxID),
+                                                                                                                           !isB2C,
+                                                                                                                           tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
+                                                                                                                           tran.CuryTranAmt.Value);
+                                lines += string.Format("{0:0.####}", UnitPrice) + verticalBar;
                                 lines += string.Format("{0:0.####}", ExtPrice) + verticalBar;
                                 // Unit
                                 lines += verticalBar;
