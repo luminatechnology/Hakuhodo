@@ -13,7 +13,7 @@ namespace eGUICustomizations.DAC
     public class TWNGUIPrintedLineDet : IBqlTable
     {
         #region GUINbr
-        [PXDBString(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaa")]
+        [PXDBString(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr.", Visible = false)]
         [PXDefault(typeof(TWNPrintedLineFilter.gUINbr))]
         public virtual string GUINbr { get; set; }

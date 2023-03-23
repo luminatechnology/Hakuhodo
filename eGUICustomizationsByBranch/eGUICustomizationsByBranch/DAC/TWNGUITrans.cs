@@ -39,8 +39,8 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region GUINbr
-        [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaa")]
-        [PXUIField(DisplayName = "GUI Nbr")]
+        [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
+        [PXUIField(DisplayName = "GUI Nbr.")]
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr, Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                                             And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>>>>),
                     typeof(TWNGUITrans.gUINbr),

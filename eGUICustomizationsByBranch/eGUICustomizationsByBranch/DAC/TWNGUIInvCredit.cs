@@ -29,7 +29,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region GUINbr
-        [PXDBString(15, IsUnicode = true, InputMask = "")]
+        [PXDBString(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr.")]
         [PXSelector(typeof(Search2<TWNGUITrans.gUINbr, InnerJoin<Customer, On<Customer.acctCD, Equal<TWNGUITrans.custVend>>>,
                                                        Where<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,

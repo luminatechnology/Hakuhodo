@@ -68,8 +68,8 @@ namespace eGUICustomizations.DAC
         #endregion
     
         #region GUINbr
-        [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
-        [PXUIField(DisplayName = "GUI Nbr")]
+        [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
+        [PXUIField(DisplayName = "GUI Nbr.")]
         [PXDefault()]
         public string GUINbr { get; set; }
         public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }
