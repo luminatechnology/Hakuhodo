@@ -389,12 +389,12 @@ namespace eGUICustomizations.Graph
                         }
                     }
                     #endregion
-
-                    // Total Records
-                    lines += tWNGUITrans.Count;
                 }
 
-                graph.UpdateGUITran(tWNGUITrans);
+            // Total Records
+            lines += tWNGUITrans.Count;
+
+            graph.UpdateGUITran(tWNGUITrans);
                 graph.UploadFile2FTP(fileName, lines);
             //}
             //catch (Exception ex)

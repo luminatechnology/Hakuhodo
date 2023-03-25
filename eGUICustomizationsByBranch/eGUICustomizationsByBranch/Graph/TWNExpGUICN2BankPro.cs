@@ -87,7 +87,7 @@ namespace eGUICustomizations.Graph
                     // Buyer CName
                     lines += gUITrans.GUITitle + verticalBar;
                     // Sales Amount
-                    lines += TWNExpGUIInv2BankPro.GetSalesAmt(gUITrans) + verticalBar;
+                    lines += /*TWNExpGUIInv2BankPro.GetSalesAmt(gUITrans)*/gUITrans.NetAmount + verticalBar;
                     // Tax Type
                     lines += TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
                     // Tax Rate
@@ -148,7 +148,7 @@ namespace eGUICustomizations.Graph
                         foreach (TWNGUIPrintedLineDet line in results)
                         {
                             (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(false,
-                                                                                                                       !isB2C,
+                                                                                                                       isB2C,
                                                                                                                        line.UnitPrice.Value,
                                                                                                                        line.Amount.Value);
 
