@@ -23,6 +23,7 @@ namespace eGUICustomizations.DAC
         #region DocType
         [PXDBString(3, IsKey = true, IsFixed = true)]
         [PXUIField(DisplayName = "Doc Type")]
+        [APDocType.List()]
         public virtual string DocType { get; set; }
         public abstract class docType : PX.Data.BQL.BqlString.Field<docType> { }
         #endregion
@@ -30,18 +31,27 @@ namespace eGUICustomizations.DAC
         #region RefNbr
         [PXDBString(15, IsKey = true, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Ref. Nbr.")]
-        [PXSelector(typeof(Search<APInvoice.refNbr, Where<APInvoice.docType, Equal<Current<docType>>,
-                                                          And<APInvoice.refNbr, Equal<Current<refNbr>>>>>))]
+        [PXSelector(typeof(Search<APInvoice.refNbr, Where<APInvoice.docType, Equal<Current<docType>>>>), 
+                    Filterable = true)]
         public virtual string RefNbr { get; set; }
         public abstract class refNbr : PX.Data.BQL.BqlString.Field<refNbr> { }
         #endregion
 
         #region BatchNbr
-        [PXDBString(15, IsUnicode = true)]
+        [PXDBString(15, IsKey = true, IsUnicode = true)]
         [PXUIField(DisplayName = "Batch Nbr.")]
         [PXSelector(typeof(Search<Batch.batchNbr, Where<Batch.module, In3<BatchModule.moduleAP, BatchModule.moduleGL, BatchModule.moduleCA, BatchModule.moduleAR>>>))]
+        [PXDefault()]
         public virtual string BatchNbr { get; set; }
         public abstract class batchNbr : PX.Data.BQL.BqlString.Field<batchNbr> { }
+        #endregion
+
+        #region PersonalID
+        [PXDBString(10, IsKey = true, IsUnicode = true, InputMask = ">AAAAAAAAAA")]
+        [PXUIField(DisplayName = "Personal Tax ID")]
+        [PXDefault()]
+        public virtual string PersonalID { get; set; }
+        public abstract class personalID : PX.Data.BQL.BqlString.Field<personalID> { }
         #endregion
 
         #region TranDate
@@ -63,13 +73,6 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Payment Ref.")]
         public virtual string PaymRef { get; set; }
         public abstract class paymRef : PX.Data.BQL.BqlString.Field<paymRef> { }
-        #endregion
-
-        #region PersonalID
-        [PXDBString(10, IsUnicode = true, InputMask = "")]
-        [PXUIField(DisplayName = "Personal Tax ID")]
-        public virtual string PersonalID { get; set; }
-        public abstract class personalID : PX.Data.BQL.BqlString.Field<personalID> { }
         #endregion
 
         #region PropertyID
