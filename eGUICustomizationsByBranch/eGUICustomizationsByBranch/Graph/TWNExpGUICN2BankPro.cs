@@ -93,7 +93,7 @@ namespace eGUICustomizations.Graph
                     // Tax Rate
                     lines += TWNExpGUIInv2BankPro.GetTaxRate(gUITrans.VATType) + verticalBar;
                     // Tax Amount
-                    lines += TWNExpGUIInv2BankPro.GetTaxAmt(gUITrans) + verticalBar;
+                    lines += /*TWNExpGUIInv2BankPro.GetTaxAmt(gUITrans)*/ gUITrans.TaxAmount + verticalBar;
                     // Total Amount
                     lines += (gUITrans.NetAmount + gUITrans.TaxAmount).Value + verticalBar;
                     // Health Tax
