@@ -23,8 +23,8 @@ namespace eGUICustomizations.Graph
         [PXCustomizeBaseAttribute(typeof(PXDBStringAttribute), nameof(PXDBStringAttribute.IsKey), false)]
         protected virtual void _(Events.CacheAttached<TWNWHTTran.refNbr> e) { }
 
-        [PXCustomizeBaseAttribute(typeof(PXDBStringAttribute), nameof(PXDBStringAttribute.IsKey), true)]
-        protected virtual void _(Events.CacheAttached<TWNWHTTran.batchNbr> e) { }
+        //[PXCustomizeBaseAttribute(typeof(PXDBStringAttribute), nameof(PXDBStringAttribute.IsKey), true)]
+        //protected virtual void _(Events.CacheAttached<TWNWHTTran.batchNbr> e) { }
         #endregion
 
         #region Event Handlers
@@ -33,7 +33,7 @@ namespace eGUICustomizations.Graph
             PXUIFieldAttribute.SetEnabled<TWNWHTTran.docType>(e.Cache, null, false);
             PXUIFieldAttribute.SetEnabled<TWNWHTTran.refNbr>(e.Cache, null, false);
 
-            PXUIFieldAttribute.SetRequired<TWNWHTTran.batchNbr>(e.Cache, true);
+            //PXUIFieldAttribute.SetRequired<TWNWHTTran.batchNbr>(e.Cache, true);
             PXUIFieldAttribute.SetRequired<TWNWHTTran.branchID>(e.Cache, true);
             PXUIFieldAttribute.SetRequired<TWNWHTTran.tranDate>(e.Cache, true);
             PXUIFieldAttribute.SetRequired<TWNWHTTran.paymDate>(e.Cache, true);
