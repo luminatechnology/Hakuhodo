@@ -12,15 +12,15 @@
 		<Levels>
 			<px:PXGridLevel DataMember="WHTTran">
 			    <Columns>
-				<px:PXGridColumn DataField="BatchNbr" Width="140" CommitChanges="true" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="BranchID" Width="140" />
+				<px:PXGridColumn DataField="BatchNbr" Width="120" CommitChanges="true" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="BranchID" Width="100" />
 				<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PaymDate" Width="90" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="PersonalID" Width="120" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="DocType" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="RefNbr" Width="140" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PersonalID" Width="120" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PropertyID" Width="140" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="TypeOfIn" Width="120" DisplayMode="Hint" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="TypeOfIn" Width="160" DisplayMode="Hint" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="WHTFmtCode" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="WHTFmtSub" Width="120" DisplayMode="Hint" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PayeeName" Width="140" ></px:PXGridColumn>
