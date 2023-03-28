@@ -170,11 +170,12 @@ namespace PX.Objects.AP
 
             if (invoice == null || vendor == null || activateGUI == false) { return; }
 
-            TaxZone tZone = TaxZone.PK.Find(Base, invoice.TaxZoneID);
+            var tZoneExt = TaxZone.PK.Find(Base, invoice.TaxZoneID)?.GetExtension<TaxZoneExt>();
 
-            bool isNHITaxRelated = tZone?.GetExtension<TaxZoneExt>().UsrNHITaxRelated ?? false;
+            bool isWHTTaxRelated = tZoneExt?.UsrWHTTaxRelated ?? false;
+            bool isNHITaxRelated = tZoneExt?.UsrNHITaxRelated ?? false;
 
-            if (tZone?.GetExtension<TaxZoneExt>().UsrWHTTaxRelated == true || isNHITaxRelated == true)
+            if (isWHTTaxRelated == true || isNHITaxRelated == true)
             {
                 TWNGUIPreferences pref = GUISetup.Select();
 
@@ -183,7 +184,7 @@ namespace PX.Objects.AP
                     TWNWHT wNWHT = new TWNWHT()
                     {
                         DocType = invoice.DocType,
-                        RefNbr = invoice.RefNbr
+                        RefNbr  = invoice.RefNbr
                     };
 
                     wNWHT = WHTView.Insert(wNWHT);
@@ -194,6 +195,7 @@ namespace PX.Objects.AP
                         wNWHT = TWNWHT.PK.Find(Base, invoice.DocType, invoice.RefNbr) ?? WHTView.Cache.Inserted.RowCast<TWNWHT>().FirstOrDefault();
 
                         List<APTaxTran> trans = Base.Taxes.Cache.Inserted.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT")).ToList();
+
                         trans.AddRange(Base.Taxes.Cache.Updated.RowCast<APTaxTran>().Where(w => w.TaxID.Contains("WHT")));
 
                         wNWHT.WHTTaxPct = invoice.CuryTaxTotal > 0m ? System.Convert.ToInt32(trans.SingleOrDefault<APTaxTran>()?.TaxRate ?? 0).ToString() : 0.ToString();
@@ -217,13 +219,13 @@ namespace PX.Objects.AP
                                     wNWHT.TypeOfIn = answers.Value;
                                     break;
                                 case TWNWHT.WHTFmtCodeName:
-                                    wNWHT.WHTFmtCode = answers.Value;
+                                    wNWHT.WHTFmtCode = isWHTTaxRelated == true ? answers.Value : null;
                                     break;
                                 case TWNWHT.WHTFmtSubName:
-                                    wNWHT.WHTFmtSub = answers.Value;
+                                    wNWHT.WHTFmtSub = isWHTTaxRelated == true ? answers.Value : null;
                                     break;
                                 case TWNWHT.WHTTaxPctName:
-                                    wNWHT.WHTTaxPct = answers.Value;
+                                    wNWHT.WHTTaxPct = isWHTTaxRelated == true ?  answers.Value : null;
                                     break;
                                 case TWNWHT.SecNHICodeName:
                                     wNWHT.SecNHICode = isNHITaxRelated == true ? answers.Value : null;
@@ -231,10 +233,7 @@ namespace PX.Objects.AP
                             }
                         }
 
-                        if (isNHITaxRelated == true)
-                        {
-                            wNWHT.SecNHIPct = pref?.SecGenerationNHIPct;
-                        }
+                        wNWHT.SecNHIPct = isNHITaxRelated == true ? pref?.SecGenerationNHIPct : 0m;
 
                         WHTView.Cache.Update(wNWHT);
                     }
@@ -242,6 +241,7 @@ namespace PX.Objects.AP
             }
             else 
             {
+                // Prevent the user from manually filling in incorrectly and affecting the bill from being unable to save.
                 WHTView.Cache.Delete(WHTView.Current);
             }
         }
