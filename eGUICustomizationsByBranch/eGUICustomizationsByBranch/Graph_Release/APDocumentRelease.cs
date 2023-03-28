@@ -116,25 +116,25 @@ namespace PX.Objects.AP
                     {
                         TWNWHTTran wHTTran = new TWNWHTTran()
                         {
-                            DocType = doc.DocType,
-                            RefNbr = doc.RefNbr,
+                            DocType    = doc.DocType,
+                            RefNbr     = doc.RefNbr,
+                            BatchNbr   = doc.BatchNbr,
+                            PersonalID = tWNWHT.PersonalID
                         };
 
                         wHTTran = WHTTranView.Insert(wHTTran);
 
                         wHTTran.BranchID   = doc.BranchID;
-                        wHTTran.BatchNbr   = doc.BatchNbr;
                         wHTTran.TranDate   = doc.DocDate;
                         wHTTran.PaymDate   = Base.APInvoice_DocType_RefNbr.Current?.DueDate;
-                        wHTTran.PersonalID = tWNWHT.PersonalID;
                         wHTTran.PropertyID = tWNWHT.PropertyID;
                         wHTTran.TypeOfIn   = tWNWHT.TypeOfIn;
                         wHTTran.WHTFmtCode = tWNWHT.WHTFmtCode;
                         wHTTran.WHTFmtSub  = tWNWHT.WHTFmtSub;
                         wHTTran.PayeeName  = (string)PXSelectorAttribute.GetField(Base.APDocument.Cache, doc, nameof(doc.VendorID), doc.VendorID, nameof(Vendor.acctName));
-                        wHTTran.PayeeAddr  = SelectFrom<Address>.InnerJoin<Vendor>.On<Vendor.bAccountID.IsEqual<Address.bAccountID>
-                                                                                     .And<Vendor.defAddressID.IsEqual<Address.addressID>>>
-                                                               .Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
+                        wHTTran.PayeeAddr  = SelectFrom<Address>.InnerJoin<BAccountR>.On<BAccountR.bAccountID.IsEqual<Address.bAccountID>
+                                                                                         .And<BAccountR.defAddressID.IsEqual<Address.addressID>>>
+                                                                .Where<BAccountR.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
 
                         wHTTran.WHTTaxPct  = string.IsNullOrEmpty(tWNWHT.WHTTaxPct) ? 0m : System.Convert.ToDecimal(tWNWHT.WHTTaxPct);
                         wHTTran.WHTAmt     = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.WHTTaxPct).Value);
