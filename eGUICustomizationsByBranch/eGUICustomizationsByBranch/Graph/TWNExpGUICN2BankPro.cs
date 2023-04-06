@@ -147,8 +147,10 @@ namespace eGUICustomizations.Graph
                        
                         foreach (TWNGUIPrintedLineDet line in results)
                         {
-                            (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(false,
-                                                                                                                       isB2C,
+                            // B2B -> Original unit price
+                            // B2C -> Divide 1.05 to unit price
+                            (decimal UnitPrice, decimal ExtPrice) = CreateInstance<TWNExpOnlineStrGUIInv>().CalcTaxAmt(true,
+                                                                                                                       isB2C == true,
                                                                                                                        line.UnitPrice.Value,
                                                                                                                        line.Amount.Value);
 
