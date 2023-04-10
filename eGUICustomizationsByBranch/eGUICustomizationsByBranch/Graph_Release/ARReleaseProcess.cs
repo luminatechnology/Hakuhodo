@@ -213,6 +213,7 @@ namespace PX.Objects.AR
                                         list.Add(ValueTuple.Create(docExt.UsrGUINbr, lineNbr++, tran.TranDesc, tran.Qty, tran.CuryUnitPrice, tran.CuryTranAmt, $"{docExt.UsrVATOutCode}-{doc.RefNbr}-{string.Empty}"));
                                     }
                                 }
+                                else
                                 {
                                     list.Add(ValueTuple.Create(docExt.UsrGUINbr, lineNbr, attrValue, 1, (doc as ARInvoice).CuryLineTotal, (doc as ARInvoice).CuryLineTotal, $"{docExt.UsrVATOutCode}-{doc.RefNbr}-{string.Empty}"));
                                 }
