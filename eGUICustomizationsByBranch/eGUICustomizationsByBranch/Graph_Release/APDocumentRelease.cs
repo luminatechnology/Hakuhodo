@@ -131,10 +131,10 @@ namespace PX.Objects.AP
                         wHTTran.TypeOfIn   = tWNWHT.TypeOfIn;
                         wHTTran.WHTFmtCode = tWNWHT.WHTFmtCode;
                         wHTTran.WHTFmtSub  = tWNWHT.WHTFmtSub;
-                        wHTTran.PayeeName  = (string)PXSelectorAttribute.GetField(Base.APDocument.Cache, doc, nameof(doc.VendorID), doc.VendorID, nameof(Vendor.acctName));
-                        wHTTran.PayeeAddr  = SelectFrom<Address>.InnerJoin<BAccountR>.On<BAccountR.bAccountID.IsEqual<Address.bAccountID>
-                                                                                         .And<BAccountR.defAddressID.IsEqual<Address.addressID>>>
-                                                                .Where<BAccountR.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
+                        wHTTran.PayeeName  = SelectFrom<Contact>.InnerJoin<BAccount>.On<BAccount.defContactID.IsEqual<Contact.contactID>>
+                                                                .Where<BAccount.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.FirstName;
+                        wHTTran.PayeeAddr  = SelectFrom<Address>.InnerJoin<BAccount>.On<BAccount.defAddressID.IsEqual<Address.addressID>>
+                                                                .Where<BAccount.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
 
                         wHTTran.WHTTaxPct  = string.IsNullOrEmpty(tWNWHT.WHTTaxPct) ? 0m : System.Convert.ToDecimal(tWNWHT.WHTTaxPct);
                         wHTTran.WHTAmt     = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.WHTTaxPct).Value);
