@@ -50,7 +50,7 @@ namespace PX.Objects.EP
         {
             InvokeBaseHandler?.Invoke(e.Cache, e.Args);
 
-            manGUIExpense.Cache.AllowSelect = TWNGUIValidation.ActivateTWGUI(Base);
+            //manGUIExpense.Cache.AllowSelect = TWNGUIValidation.ActivateTWGUI(Base);
             manGUIExpense.Cache.AllowDelete = manGUIExpense.Cache.AllowInsert = manGUIExpense.Cache.AllowUpdate = !e.Row.Status.Equals(EPExpenseClaimStatus.ReleasedStatus);
         }
 
