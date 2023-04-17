@@ -150,14 +150,14 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region WHTAmt
-        [Descriptor.TWNetAmount(0)]
+        [TWNetAmount(0)]
         [PXUIField(DisplayName = "WHT Amount")]
         public virtual decimal? WHTAmt { get; set; }
         public abstract class wHTAmt : PX.Data.BQL.BqlDecimal.Field<wHTAmt> { }
         #endregion
 
         #region NetAmt
-        [Descriptor.TWNetAmount(0)]
+        [TWNetAmount(0)]
         [PXUIField(DisplayName = "Net Amount")]
         public virtual decimal? NetAmt { get; set; }
         public abstract class netAmt : PX.Data.BQL.BqlDecimal.Field<netAmt> { }
