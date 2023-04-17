@@ -147,7 +147,7 @@ namespace eGUICustomizations.Graph
         protected string PadAmt2FixedStrLength(decimal amount)
         {
             mediaGraph.fixedLen  = 10;
-            mediaGraph.combinStr = amount.ToString();
+            mediaGraph.combinStr = Convert.ToInt32(amount).ToString();
             
             return mediaGraph.combinStr.PadLeft(mediaGraph.fixedLen, mediaGraph.zero);
         }
