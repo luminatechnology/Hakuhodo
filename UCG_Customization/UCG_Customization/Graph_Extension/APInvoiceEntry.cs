@@ -59,6 +59,7 @@ namespace PX.Objects.AP
         protected void _(Events.FieldUpdated<APRegister, APRegister.projectID> e, PXFieldUpdated baseMethod)
         {
             var row = e.Row;
+            baseMethod?.Invoke(e.Cache, e.Args);
             if (row == null) return;
             bool isNonProject = ProjectDefaultAttribute.IsNonProject(row.ProjectID);
             if (!isNonProject)
