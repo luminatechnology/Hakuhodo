@@ -26,7 +26,7 @@
         <data>
             <SiteMap>
                 <row Title="GUI Invoice/Credit" Url="~/Frames/ReportLauncher.aspx?ID=TW641001.rpx" ScreenID="TW641001" NodeID="caf3d11a-18ad-426b-b08f-1e032641ef66" ParentID="00000000-0000-0000-0000-000000000000">
-                    <MUIScreen IsPortal="0" WorkspaceID="d5cbc4c3-5f8b-40da-80c9-49897f1f74b8" Order="90" SubcategoryID="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" />
+                    <MUIScreen IsPortal="0" WorkspaceID="d5cbc4c3-5f8b-40da-80c9-49897f1f74b8" Order="90" SubcategoryID="b731b346-4d68-4796-b797-3e035ef3497c" />
                 </row>
             </SiteMap>
             <MUIWorkspace>
@@ -34,6 +34,9 @@
                     <MUIFavoriteWorkspace IsPortal="0" Username="" IsFavorite="1" />
                 </row>
             </MUIWorkspace>
+            <MUISubcategory>
+                <row IsPortal="0" SubcategoryID="b731b346-4d68-4796-b797-3e035ef3497c" Order="960" Name="Printed Forms" Icon="" IsSystem="0" />
+            </MUISubcategory>
             <MUIArea>
                 <row IsPortal="0" AreaID="338edf81-5456-4735-8601-b213458e93fe" Order="10" Name="Financials" />
             </MUIArea>
