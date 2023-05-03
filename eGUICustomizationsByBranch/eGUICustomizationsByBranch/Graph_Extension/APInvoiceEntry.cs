@@ -75,8 +75,8 @@ namespace PX.Objects.AP
             baseHandler?.Invoke(e.Cache, e.Args);
 
             var row = e.Row as APInvoice;
-
-            if (row != null && row.DocType.IsIn(APDocType.Invoice, APDocType.DebitAdj) && string.IsNullOrEmpty(row.OrigRefNbr))
+             
+            if (row != null && row.DocType.IsIn(APDocType.Invoice, APDocType.DebitAdj) && string.IsNullOrEmpty(row.OrigRefNbr) && row.Released == false)
             {
                 if (ManualAPBill.Select().Count == 0 && Base.Taxes.Select().Count > 0)
                 {
