@@ -136,7 +136,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region SecNHIAmt
-        [Descriptor.TWNetAmount(0)]
+        [TWNetAmount(0)]
         [PXUIField(DisplayName = "2GNHI Amount")]
         public virtual decimal? SecNHIAmt { get; set; }
         public abstract class secNHIAmt : PX.Data.BQL.BqlDecimal.Field<secNHIAmt> { }
@@ -167,6 +167,14 @@ namespace eGUICustomizations.DAC
         [Branch()]
         public virtual int? BranchID { get; set; }
         public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
+        #endregion
+
+        #region CountryID
+        [PXDBString(2, IsUnicode = true)]
+        [PX.Objects.CR.Country()]
+        [PXUIField(DisplayName = "Country")]
+        public virtual string CountryID { get; set; }
+        public abstract class countryID : PX.Data.BQL.BqlString.Field<countryID> { }
         #endregion
 
         #region CreatedByID

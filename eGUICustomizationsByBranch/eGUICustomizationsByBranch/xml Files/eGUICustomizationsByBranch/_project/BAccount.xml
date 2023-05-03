@@ -6,4 +6,6 @@
     <Column TableName="BAccount" ColumnName="UsrAddressLine" ColumnType="string" AllowNull="True" MaxLength="50" DecimalPrecision="2" DecimalLength="50" IsNewColumn="True" IsUnicode="True" />
     <Column TableName="BAccount" ColumnName="UsrAESKey" ColumnType="string" AllowNull="True" MaxLength="32" DecimalPrecision="2" DecimalLength="32" IsNewColumn="True" IsUnicode="True" />
     <Column TableName="BAccount" ColumnName="UsrWHTTaxAuthority" ColumnType="string" AllowNull="True" MaxLength="3" DecimalPrecision="2" DecimalLength="3" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrPersonInCharge" ColumnType="string" AllowNull="True" MaxLength="255" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="BAccount" ColumnName="UsrCompanyPhone" ColumnType="string" AllowNull="True" MaxLength="50" DecimalPrecision="0" DecimalLength="0" IsNewColumn="True" IsUnicode="True" />
 </Table>

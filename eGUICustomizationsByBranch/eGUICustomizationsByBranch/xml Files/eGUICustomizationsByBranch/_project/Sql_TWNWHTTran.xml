@@ -21,6 +21,7 @@
   <col name="WHTAmt" type="Decimal(19,4)" nullable="true" />
   <col name="NetAmt" type="Decimal(19,4)" nullable="true" />
   <col name="BranchID" type="Int" nullable="true" />
+  <col name="CountryID" type="NVarChar(2)" nullable="true" />
   <col name="CreatedByID" type="UniqueIdentifier" />
   <col name="CreatedByScreenID" type="Char(8)" />
   <col name="CreatedDateTime" type="DateTime" />

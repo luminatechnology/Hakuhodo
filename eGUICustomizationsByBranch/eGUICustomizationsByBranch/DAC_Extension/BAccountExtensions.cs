@@ -57,6 +57,20 @@ namespace PX.Objects.CR
         public abstract class usrWHTTaxAuthority : PX.Data.BQL.BqlString.Field<usrWHTTaxAuthority> { }
         #endregion
 
+        #region UsrPersonInCharge
+        [PXDBString(255, IsUnicode = true)]
+        [PXUIField(DisplayName = "Person In Charge")]
+        public virtual string UsrPersonInCharge { get; set; }
+        public abstract class usrPersonInCharge : PX.Data.BQL.BqlString.Field<usrPersonInCharge> { }
+        #endregion
+
+        #region UsrCompanyPhone
+        [PXDBString(50, IsUnicode = true)]
+        [PXUIField(DisplayName = "Company Phone")]
+        public virtual string UsrCompanyPhone { get; set; }
+        public abstract class usrCompanyPhone : PX.Data.BQL.BqlString.Field<usrCompanyPhone> { }
+        #endregion
+
         #region Static Methods
         public static string GetOurTaxNbByBranch(PXCache cache, int? branchID)
         {
