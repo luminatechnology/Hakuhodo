@@ -2,10 +2,8 @@
 <%@ MasterType VirtualPath="~/MasterPages/FormDetail.master" %>
 
 <asp:Content ID="cont1" ContentPlaceHolderID="phDS" Runat="Server">
-	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%"
-        TypeName="eGUICustomizations.Graph.TWNGenWHTFile" PrimaryView="Filter">
+	<px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="eGUICustomizations.Graph.TWNGenWHTFile" PrimaryView="Filter">
 		<CallbackCommands>
-
 		</CallbackCommands>
 	</px:PXDataSource>
 </asp:Content>

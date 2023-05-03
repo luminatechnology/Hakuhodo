@@ -25,6 +25,7 @@
 				<px:PXGridColumn DataField="WHTFmtSub" Width="120" DisplayMode="Hint" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PayeeName" Width="140" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="PayeeAddr" Width="220" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="CountryID" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="SecNHIPct" Width="100" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="SecNHICode" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="SecNHIAmt" Width="100" ></px:PXGridColumn>
@@ -35,7 +36,9 @@
 				<RowTemplate>
 					<px:PXSelector runat="server" ID="CstPXSelector1" DataField="RefNbr" AllowEdit="True" ></px:PXSelector>
 					<px:PXSelector runat="server" ID="CstPXSelector2" DataField="BatchNbr" AllowEdit="True" ></px:PXSelector>
-					<px:PXSegmentMask runat="server" ID="CstPXSegmentMask2" DataField="BranchID" AllowEdit="True" /></RowTemplate></px:PXGridLevel>
+					<px:PXSegmentMask runat="server" ID="CstPXSegmentMask2" DataField="BranchID" AllowEdit="True" />
+					<px:PXSelector runat="server" ID="CstPXSelector3" DataField="CountryID" AllowEdit="True" ></px:PXSelector>
+				</RowTemplate></px:PXGridLevel>
 		</Levels>
 		<AutoSize Container="Window" Enabled="True" MinHeight="150" ></AutoSize>
 		<ActionBar >
