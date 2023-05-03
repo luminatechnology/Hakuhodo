@@ -35,6 +35,7 @@ namespace eGUICustomizations.Graph
             WHTTranProc.SetProcessCaption(ActionsMessages.Export);
             WHTTranProc.SetProcessAllCaption(TWMessages.ExportAll);
             ///<remarks> Because the file is downloaded using the throw exception, an error message may be displayed even if there is no error.///</remarks>
+            // Acuminator disable once PX1008 LongOperationDelegateSynchronousExecution [Justification]
             WHTTranProc.SetProcessDelegate(Export);
         }
         #endregion
@@ -49,7 +50,7 @@ namespace eGUICustomizations.Graph
         #region Methods
         TWNGenGUIMediaFile mediaGraph = PXGraph.CreateInstance<TWNGenGUIMediaFile>();
 
-        public void Export(List<TWNWHTTran> wHTTranList)
+        public virtual void Export(List<TWNWHTTran> wHTTranList)
         {
             try
             {
@@ -153,7 +154,7 @@ namespace eGUICustomizations.Graph
         }
 
         /// <summary>
-        /// If TWN_WhtTrans.FormatCode ='9A', then TWN_WhtTrans.FormatSubCode else(TWN_WhtTrans.PropertyID if TWN_WhtTrans.PropertyID is not blank)
+        /// If TWN_WhtTrans.FormatCode ='9A', then TWN_WhtTrans.FormatSubCode else(TWN_WhtTrans.PersonalID if TWN_WhtTrans.PersonalID is not blank)
         /// </summary>
         protected string GetFormatNbr(TWNWHTTran wHTTran)
         {
@@ -163,13 +164,13 @@ namespace eGUICustomizations.Graph
             }
             else
             {
-                return string.IsNullOrEmpty(wHTTran.PropertyID) ? new string(mediaGraph.space, 12) : wHTTran.PropertyID;
+                return string.IsNullOrEmpty(wHTTran.PersonalID) ? new string(mediaGraph.space, 12) : wHTTran.PersonalID;
             }
         }
 
         protected string GetVendCountryID(string docType, string refNbr)
         {
-            Address address= SelectFrom<Address>.LeftJoin<BAccount>.On<BAccount.bAccountID.IsEqual<Address.bAccountID>
+            Address address = SelectFrom<Address>.LeftJoin<BAccount>.On<BAccount.bAccountID.IsEqual<Address.bAccountID>
                                                                        .And<BAccount.defAddressID.IsEqual<Address.addressID>>>
                                                 .LeftJoin<APRegister>.On<APRegister.vendorID.IsEqual<BAccount.bAccountID>>
                                                 .Where<APRegister.docType.IsEqual<@P.AsString>
