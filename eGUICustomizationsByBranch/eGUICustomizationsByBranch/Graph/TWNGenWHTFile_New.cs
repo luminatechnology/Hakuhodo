@@ -152,7 +152,7 @@ namespace eGUICustomizations.Graph
                         // 憑單填發方式
                         lines += new string(Convert.ToChar(verticalBar), 7);
                         // 是否滿183天
-                        lines += "Y";
+                        lines += "Y" + verticalBar;
                         // Country
                         lines += row.CountryID + verticalBar;
                         // 租稅協定代碼
