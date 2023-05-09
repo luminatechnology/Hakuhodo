@@ -31,10 +31,15 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PX.Archiver, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Bin\PX.Archiver.dll</HintPath>
+    </Reference>
     <Reference Include="PX.Common">
       <HintPath>..\..\..\..\Bin\PX.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PX.Common.Std">
+    <Reference Include="PX.Common.Std, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\PX.Common.Std.dll</HintPath>
     </Reference>
     <Reference Include="PX.CS.Contracts">
@@ -46,6 +51,7 @@
     <Reference Include="PX.Data.BQL.Fluent">
       <HintPath>..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
     </Reference>
+    <Reference Include="PX.DbServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e" />
     <Reference Include="PX.Objects">
       <HintPath>..\..\..\..\Bin\PX.Objects.DLL</HintPath>
     </Reference>
@@ -94,6 +100,7 @@
     <Compile Include="Graph\TWNExportTiktTypesMaint.cs" />
     <Compile Include="Graph\TWNGenGUIMediaFile.cs" />
     <Compile Include="Graph\TWNGenWHTFile.cs" />
+    <Compile Include="Graph\TWNGenWHTFile_New.cs" />
     <Compile Include="Graph\TWNGenZeroTaxRateMedFile.cs" />
     <Compile Include="Graph\TWNGUIPrefMaint.cs" />
     <Compile Include="Graph\TWNManGUIAPMaint.cs" />

@@ -204,7 +204,7 @@ namespace eGUICustomizations.Graph
                     invCredit.GUINetAmt  = row.NetAmount;
                     invCredit.GUITaxAmt  = row.TaxAmount;
                     invCredit.CNNetAmt   = invCredit.CNTaxAmt = 0;
-                    invCredit.NewGUINbr  = ARGUINbrAutoNumAttribute.GetNextNumber(Document.Cache, invCredit, Preferences.Current.GUI3CopiesNumbering, Document.Current.NewGUIDate);
+                    invCredit.NewGUINbr  = GUINbrAutoNumberAttribute.GetNextNumber(Document.Cache, invCredit, Preferences.Current.GUI3CopiesNumbering, Document.Current.NewGUIDate);
 
                     gUITran = row;
                 }

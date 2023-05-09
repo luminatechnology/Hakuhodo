@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
@@ -30,38 +32,424 @@ namespace eGUICustomizations.Descriptor
     }
     #endregion
 
-    #region ARGUINbrAutoNumAttribute
-    public class ARGUINbrAutoNumAttribute : PX.Objects.CS.AutoNumberAttribute
+    #region GUINbrAutoNumAttribute
+    public class GUINbrAutoNumberAttribute : AutoNumberAttribute
     {
-        public ARGUINbrAutoNumAttribute(Type doctypeField, Type dateField) : base(doctypeField, dateField) { }
+        private Type _vATOutCodeField;
+        private string[] _vATOutCodeValues;
+        private Type[] _setupFields;
+        private string[] _setupValues;
 
-        public ARGUINbrAutoNumAttribute(Type doctypeField, Type dateField, string[] doctypeValues, Type[] setupFields) : base(doctypeField, dateField, doctypeValues, setupFields) { }
+        private string _dateField;
+        private Type _dateType;
+
+        private string _numberingID;
+        private DateTime? _dateTime;
+
+        private string _emptyDateMessage;
+
+        public GUINbrAutoNumberAttribute(Type doctypeField, Type dateField) : base(doctypeField, dateField) { }
+
+        public GUINbrAutoNumberAttribute(Type vATOutCodeField, Type dateField, string[] vATOutCodeValues, Type[] setupFields) : base(vATOutCodeField, dateField, vATOutCodeValues, setupFields)
+        {
+            _dateField = dateField.Name;
+            _dateType = BqlCommand.GetItemType(dateField);
+
+            _vATOutCodeField = vATOutCodeField;
+            _vATOutCodeValues = vATOutCodeValues;
+            _setupFields = setupFields;
+        }
 
         public override void RowPersisting(PXCache sender, PXRowPersistingEventArgs e)
         {
-            if (e.Operation == PXDBOperation.Delete) { return; }
+            if (!(e.Operation & PXDBOperation.Command).IsIn(PXDBOperation.Insert, PXDBOperation.Update)) { return; }
 
-            string vATOutCode = string.Empty;
+            getfields(sender, e.Row);
 
+            //fix for manual non key numbering, broken when we started returning null instead of "" from getnewnumber
+            if ((NotSetNumber = GetNewNumberSymbol()) == null && NullString == String.Empty) { return; }
+
+            if ((NotSetNumber = GetNewNumberSymbol(_numberingID)) == NullString)
+            {
+                object keyValue = sender.GetValue(e.Row, _FieldName);
+
+                Numberings items = PXDatabase.GetSlot<Numberings>(typeof(Numberings).Name, typeof(Numbering));
+
+                if (items != null && keyValue != null)
+                {
+                    foreach (KeyValuePair<string, string> item in items.GetNumberings())
+                    {
+                        if (item.Value == (string)keyValue || GetNewNumberSymbol(item.Key) == (string)keyValue)
+                            throw new PXException(PX.Objects.CS.Messages.DocumentNbrEqualNewSymbol, (string)keyValue);
+                    }
+                }
+                return;
+            }
+
+            if (_dateTime == null)
+            {
+                Exception ex;
+
+                if (!string.IsNullOrEmpty(_emptyDateMessage))
+                {
+                    ex = new AutoNumberException(_emptyDateMessage);
+                }
+                else
+                {
+                    ex = new AutoNumberException(PX.Objects.Common.Messages.MustHaveValue, (sender.GetStateExt(e.Row, _dateField) as PXFieldState)?.DisplayName ?? _dateField);
+                }
+
+                sender.RaiseExceptionHandling(_dateField, e.Row, null, ex);
+
+                throw ex;
+            }
+
+            if (_numberingID != null && _dateTime != null)
+            {
+                NewNumber = GetNextNumber(sender, e.Row, _numberingID, _dateTime, NewNumber, out LastNbr, out WarnNbr, out NumberingSEQ);
+
+                if (NewNumber.CompareTo(WarnNbr) >= 0)
+                {
+                    PXUIFieldAttribute.SetWarning(sender, e.Row, _FieldName, PX.Objects.CS.Messages.WarningNumReached);
+                }
+
+                _KeyToAbort = sender.GetValue(e.Row, _FieldName);
+
+                sender.SetValue(e.Row, _FieldName, NewNumber);
+            }
+            else if (string.IsNullOrEmpty(NewNumber = (string)sender.GetValue(e.Row, _FieldName)) || string.Equals(NewNumber, NotSetNumber))
+            {
+                throw new AutoNumberException(PX.Objects.CS.Messages.CantAutoNumberSpecific, _numberingID);
+            }
+
+            /*string vATOutCode = string.Empty;
             if (this.BqlTable.Name == nameof(DAC.TWNManualGUIAR))
             {
                 var row = (TWNManualGUIAR)e.Row;
-
                 vATOutCode = row.VatOutCode;
             }
             else
             {
                 var row = (ARRegister)e.Row;
-
                 vATOutCode = PXCache<ARRegister>.GetExtension<ARRegisterExt>(row).UsrVATOutCode;
             }
-
             if (vATOutCode != TWGUIFormatCode.vATOutCode33 && vATOutCode != TWGUIFormatCode.vATOutCode34 && vATOutCode != null)
             {
                 base.RowPersisting(sender, e);
             }
+            sender.SetValue(e.Row, _FieldName, (string)sender.GetValue(e.Row, _FieldName));*/
+        }
 
-            sender.SetValue(e.Row, _FieldName, (string)sender.GetValue(e.Row, _FieldName));
+        public override void CacheAttached(PXCache sender)
+        {
+            base.CacheAttached(sender);
+
+            _UserNumbering = new ObjectRef<bool?>();
+            _NewSymbol = new ObjectRef<string>();
+            _setupValues = new string[_setupFields.Length];
+
+            sender.SetAutoNumber(_FieldName);
+
+            bool IsKey;
+            if (!(IsKey = sender.Keys.IndexOf(_FieldName) > 0))
+            {
+                foreach (PXEventSubscriberAttribute attr in sender.GetAttributesReadonly(_FieldName))
+                {
+                    if (attr is PXDBFieldAttribute && (IsKey = ((PXDBFieldAttribute)attr).IsKey)) { break; }
+                }
+            }
+
+            if (!IsKey)
+            {
+                NullString = string.Empty;
+                NullMode = NullNumberingMode.UserNumbering;
+            }
+            else
+            {
+                sender.Graph.RowSelected.AddHandler(sender.GetItemType(), Parameter_RowSelected);
+                sender.Graph.CommandPreparing.AddHandler(sender.GetItemType(), _FieldName, Parameter_CommandPreparing);
+            }
+        }
+
+        private void getfields(PXCache sender, object row)
+        {
+            PXCache cache;
+            Type _setupType = null;
+            string _setupField = null;
+            BqlCommand _Select = null;
+
+            _numberingID = null;
+
+            if (_vATOutCodeField != null)
+            {
+                string doctypeValue = (string)sender.GetValue(row, _vATOutCodeField.Name);
+
+                int i;
+                if ((i = Array.IndexOf(_vATOutCodeValues, doctypeValue)) >= 0 && _setupValues[i] != null)
+                {
+                    _numberingID = _setupValues[i];
+                }
+                else if (i >= 0 && _setupFields[i] != null)
+                {
+                    if (typeof(IBqlSearch).IsAssignableFrom(_setupFields[i]))
+                    {
+                        _Select = BqlCommand.CreateInstance(_setupFields[i]);
+                        _setupType = BqlCommand.GetItemType(((IBqlSearch)_Select).GetField());
+                        _setupField = ((IBqlSearch)_Select).GetField().Name;
+                    }
+                    else if (_setupFields[i].IsNested && typeof(IBqlField).IsAssignableFrom(_setupFields[i]))
+                    {
+                        _setupField = _setupFields[i].Name;
+                        _setupType = BqlCommand.GetItemType(_setupFields[i]);
+                    }
+                }
+            }
+            else if ((_numberingID = _setupValues[0]) != null)
+            {
+            }
+            else if (typeof(IBqlSearch).IsAssignableFrom(_setupFields[0]))
+            {
+                _Select = BqlCommand.CreateInstance(_setupFields[0]);
+                _setupType = BqlCommand.GetItemType(((IBqlSearch)_Select).GetField());
+                _setupField = ((IBqlSearch)_Select).GetField().Name;
+            }
+            else if (_setupFields[0].IsNested && typeof(IBqlField).IsAssignableFrom(_setupFields[0]))
+            {
+                _setupField = _setupFields[0].Name;
+                _setupType = BqlCommand.GetItemType(_setupFields[0]);
+            }
+
+            if (_Select != null)
+            {
+                PXView view = sender.Graph.TypedViews.GetView(_Select, false);
+                int startRow = -1;
+                int totalRows = 0;
+                List<object> source = view.Select(new object[] { row }, null, null, null, null, null,
+                                                  ref startRow, 1, ref totalRows);
+
+                if (source != null && source.Count > 0)
+                {
+                    object item = source[source.Count - 1];
+                    if (item != null && item is PXResult)
+                    {
+                        item = ((PXResult)item)[_setupType];
+                    }
+                    _numberingID = (string)sender.Graph.Caches[_setupType].GetValue(item, _setupField);
+                }
+            }
+            else if (_setupType != null)
+            {
+                cache = sender.Graph.Caches[_setupType];
+                if (cache.Current != null && _numberingID == null)
+                {
+                    _numberingID = (string)cache.GetValue(cache.Current, _setupField);
+                }
+            }
+
+            cache = sender.Graph.Caches[_dateType];
+            if (sender.GetItemType() == _dateType)
+            {
+                _dateTime = (DateTime?)cache.GetValue(row, _dateField);
+            }
+            else if (cache.Current != null)
+            {
+                _dateTime = (DateTime?)cache.GetValue(cache.Current, _dateField);
+            }
+        }
+
+        public static new void SetNumberingId<Field>(PXCache cache, string value) where Field : IBqlField
+        {
+            foreach (PXEventSubscriberAttribute attr in cache.GetAttributesReadonly<Field>())
+            {
+                if (attr is GUINbrAutoNumberAttribute && attr.AttributeLevel == PXAttributeLevel.Cache && ((GUINbrAutoNumberAttribute)attr)._vATOutCodeValues.Length == 0)
+                {
+                    ((GUINbrAutoNumberAttribute)attr)._setupValues[0] = value;
+                }
+            }
+        }
+
+        protected static new string GetNextNumber(PXCache sender, object data, string numberingID, DateTime? dateTime)
+        {
+            string LastNbr, WarnNbr;
+            int? NumberingSEQ;
+
+            return GetNextNumber(sender, data, numberingID, dateTime, null, out LastNbr, out WarnNbr, out NumberingSEQ);
+        }
+
+        protected static new string GetNextNumber(PXCache sender, object data, string numberingID, DateTime? dateTime, string lastAssigned, out string LastNbr, out string WarnNbr, out int? NumberingSEQ)
+        {
+            if (IS_SEPARATE_SCOPE)
+            {
+                using (new PXConnectionScope())
+                {
+                    using (PXTransactionScope ts = new PXTransactionScope())
+                    {
+                        PXTransactionScope.SetSuppressWorkflow(true);
+                        string NewNumber = GetNextNumberInt(sender, data, numberingID, dateTime, lastAssigned, out LastNbr, out WarnNbr, out NumberingSEQ);
+                        ts.Complete();
+                        return NewNumber;
+                    }
+                }
+            }
+            else
+            {
+                return GetNextNumberInt(sender, data, numberingID, dateTime, lastAssigned, out LastNbr, out WarnNbr, out NumberingSEQ);
+            }
+        }
+
+        protected static new string GetNextNumberInt(PXCache sender, object data, string numberingID, DateTime? dateTime, string lastAssigned, out string LastNbr, out string WarnNbr, out int? NumberingSEQ)
+        {
+            if (numberingID != null && dateTime != null)
+            {
+                int? branchID = sender.Graph.Accessinfo.BranchID;
+
+                if (data != null && sender.Fields.Contains(PX.Objects.CM.CurrencyInfoAttribute.DefaultBranchIDFieldName))
+                {
+                    object state = sender.GetStateExt(data, PX.Objects.CM.CurrencyInfoAttribute.DefaultBranchIDFieldName);
+
+                    if (state is PXFieldState && ((PXFieldState)state).Required == true)
+                    {
+                        branchID = (int?)sender.GetValue(data, PX.Objects.CM.CurrencyInfoAttribute.DefaultBranchIDFieldName);
+                    }
+                }
+
+                NumberingSequence sequence = GetNumberingSequence(numberingID, branchID, dateTime);
+
+                if (sequence == null) { throw new AutoNumberException(PX.Objects.CS.Messages.CantAutoNumberSpecific, numberingID); }
+
+                LastNbr = sequence.LastNbr;
+                WarnNbr = sequence.WarnNbr;
+                NumberingSEQ = sequence.NumberingSEQ;
+
+                string newNumber = NextNumber(LastNbr, sequence.NbrStep ?? 0);
+
+                if (string.Equals(lastAssigned, newNumber, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    newNumber = NextNumber(newNumber, sequence.NbrStep ?? 0);
+                }
+                // According to Kevin's request, the problem that the ending number cannot be obtained has been fixed.
+                if (newNumber.CompareTo(sequence.EndNbr) > 0)//>= 0)
+                {
+                    throw new PXException(PX.Objects.CS.Messages.EndOfNumberingReached, numberingID);
+                }
+
+                try
+                {
+                    if (LastNbr != sequence.StartNbr)
+                    {
+                        if (!PXDatabase.Update<NumberingSequence>(new PXDataFieldAssign<NumberingSequence.lastNbr>(newNumber),
+                                                                  new PXDataFieldRestrict<NumberingSequence.numberingID>(numberingID),
+                                                                  new PXDataFieldRestrict<NumberingSequence.numberingSEQ>(NumberingSEQ),
+                                                                  new PXDataFieldRestrict<NumberingSequence.lastNbr>(LastNbr),
+                                                                  PXDataFieldRestrict.OperationSwitchAllowed))
+                        {
+                            PXDatabase.Update<NumberingSequence>(new PXDataFieldAssign<NumberingSequence.nbrStep>(sequence.NbrStep),
+                                                                 new PXDataFieldRestrict<NumberingSequence.numberingID>(numberingID),
+                                                                 new PXDataFieldRestrict<NumberingSequence.numberingSEQ>(NumberingSEQ));
+
+                            using (PXDataRecord record = PXDatabase.SelectSingle<NumberingSequence>(new PXDataField<NumberingSequence.lastNbr>(),
+                                                                                                    new PXDataFieldValue<NumberingSequence.numberingID>(numberingID),
+                                                                                                    new PXDataFieldValue<NumberingSequence.numberingSEQ>(NumberingSEQ)))
+                            {
+                                if (record != null)
+                                {
+                                    LastNbr = record.GetString(0);
+                                    newNumber = NextNumber(LastNbr, sequence.NbrStep ?? 0);
+                                    // According to Kevin's request, the problem that the ending number cannot be obtained has been fixed.
+                                    if (newNumber.CompareTo(sequence.EndNbr) > 0)//>= 0)
+                                    {
+                                        throw new PXException(PX.Objects.CS.Messages.EndOfNumberingReached, numberingID);
+                                    }
+                                }
+                            }
+                            PXDatabase.Update<NumberingSequence>(new PXDataFieldAssign<NumberingSequence.lastNbr>(newNumber),
+                                                                 new PXDataFieldRestrict<NumberingSequence.numberingID>(numberingID),
+                                                                 new PXDataFieldRestrict<NumberingSequence.numberingSEQ>(NumberingSEQ));
+                        }
+                    }
+                    else
+                    {
+                        PXDatabase.Update<NumberingSequence>(new PXDataFieldAssign<NumberingSequence.lastNbr>(newNumber),
+                                                             new PXDataFieldRestrict<NumberingSequence.numberingID>(numberingID),
+                                                             new PXDataFieldRestrict<NumberingSequence.numberingSEQ>(NumberingSEQ),
+                                                             PXDataFieldRestrict.OperationSwitchAllowed);
+                    }
+                }
+                catch (PXDbOperationSwitchRequiredException)
+                {
+                    PXDatabase.Insert<NumberingSequence>(new PXDataFieldAssign<NumberingSequence.endNbr>(PXDbType.VarChar, 15, sequence.EndNbr),
+                                                         new PXDataFieldAssign<NumberingSequence.lastNbr>(PXDbType.VarChar, 15, newNumber),
+                                                         new PXDataFieldAssign<NumberingSequence.warnNbr>(PXDbType.VarChar, 15, sequence.WarnNbr),
+                                                         new PXDataFieldAssign<NumberingSequence.nbrStep>(PXDbType.Int, 4, sequence.NbrStep ?? 0),
+                                                         new PXDataFieldAssign<NumberingSequence.startNbr>(PXDbType.VarChar, 15, sequence.StartNbr),
+                                                         new PXDataFieldAssign<NumberingSequence.startDate>(PXDbType.DateTime, sequence.StartDate),
+                                                         new PXDataFieldAssign<NumberingSequence.createdByID>(PXDbType.UniqueIdentifier, 16, sequence.CreatedByID),
+                                                         new PXDataFieldAssign<NumberingSequence.createdByScreenID>(PXDbType.Char, 8, sequence.CreatedByScreenID),
+                                                         new PXDataFieldAssign<NumberingSequence.createdDateTime>(PXDbType.DateTime, 8, sequence.CreatedDateTime),
+                                                         new PXDataFieldAssign<NumberingSequence.lastModifiedByID>(PXDbType.UniqueIdentifier, 16, sequence.LastModifiedByID),
+                                                         new PXDataFieldAssign<NumberingSequence.lastModifiedByScreenID>(PXDbType.Char, 8, sequence.LastModifiedByScreenID),
+                                                         new PXDataFieldAssign<NumberingSequence.lastModifiedDateTime>(PXDbType.DateTime, 8, sequence.LastModifiedDateTime),
+                                                         new PXDataFieldAssign<NumberingSequence.numberingID>(PXDbType.VarChar, 10, numberingID),
+                                                         new PXDataFieldAssign<NumberingSequence.nBranchID>(PXDbType.Int, 4, sequence.NBranchID));
+                }
+
+                return newNumber;
+            }
+
+            LastNbr = WarnNbr = null;
+            NumberingSEQ = null;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Specialized for ARRegister version of the <see cref="GUINbrAutoNumberAttribute"/><br/>
+        /// It defines how the new numbers are generated for the GUI number. <br/>
+        /// References ARRegisterExt.usrVATOutCode and ARRegisterExt.usrGUIDate fields of the document,<br/>
+        /// and also define a link between numbering ID's defined in GUI steup and ARInvoice types:<br/>
+        /// namely TWNGUIPreferences.gUI3CopiesManNumbering - for 31, 
+        /// TWNGUIPreferences.gUI2CopiesNumbering - for 32<br/>        
+        /// TWNGUIPreferences.gUI3CopiesNumbering - for 35 <br/>      
+        /// </summary>
+        public partial class NumberingAttribute : GUINbrAutoNumberAttribute
+        {
+            private static string[] _VATOutCodes
+            {
+                get
+                {
+                    return new string[] { TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATOutCode35 };
+                }
+            }
+
+            private static Type[] _SetupFields
+            {
+                get
+                {
+                    return new Type[]
+                    {
+                    typeof(TWNGUIPreferences.gUI3CopiesManNumbering),
+                    typeof(TWNGUIPreferences.gUI2CopiesNumbering),
+                    typeof(TWNGUIPreferences.gUI3CopiesNumbering)
+                    };
+                }
+            }
+
+            public static Type GetNumberingIDField(string vATOutCode)
+            {
+                foreach (var pair in _VATOutCodes.Zip(_SetupFields))
+                {
+                    if (pair.Item1 == vATOutCode)
+                    {
+                        return pair.Item2;
+                    }
+                }
+
+                return null;
+            }
+
+            public NumberingAttribute() : base(typeof(ARRegisterExt.usrVATOutCode), typeof(ARRegisterExt.usrGUIDate), _VATOutCodes, _SetupFields) { }
+
+            protected NumberingAttribute(Type doctypeField, Type dateField, string[] doctypeValues, Type[] setupFields) : base(doctypeField, dateField, doctypeValues, setupFields) { }
         }
     }
     #endregion

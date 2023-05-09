@@ -156,7 +156,7 @@ namespace PX.Objects.AR
                 {
                     TWNGUIPreferences pref = SelectFrom<TWNGUIPreferences>.View.Select(Base);
 
-                    regisExt.UsrGUINbr = ARGUINbrAutoNumAttribute.GetNextNumber(e.Cache, e.Row, regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering : pref.GUI3CopiesNumbering, regisExt.UsrGUIDate);
+                    regisExt.UsrGUINbr = GUINbrAutoNumberAttribute.GetNextNumber(e.Cache, e.Row, regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering : pref.GUI3CopiesNumbering, regisExt.UsrGUIDate);
 
                     new TWNGUIValidation().CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
                 }

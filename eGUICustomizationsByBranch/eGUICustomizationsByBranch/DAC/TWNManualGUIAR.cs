@@ -53,7 +53,7 @@ namespace eGUICustomizations.DAC
         [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr.", Required = true)]
         [PXDefault()]
-        [ARGUINbrAutoNum(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(gUIDate))]
+        [GUINbrAutoNumber(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(gUIDate))]
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr,
                                   Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                         And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,

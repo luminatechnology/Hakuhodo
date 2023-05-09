@@ -68,8 +68,9 @@ namespace PX.Objects.AR
         }
 
         //[GUINumber(1000, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCC")]
+        [GUINbrAutoNumberAttribute.Numbering()]
         [PXDBString(10000, IsUnicode = true)]
-        [PXUIField(DisplayName = "GUI Nbr.")]
+        [PXUIField(DisplayName = "GUI Nbr.", Visibility = PXUIVisibility.SelectorVisible)]
         [PXSelector(typeof(Search2<TWNGUITrans.gUINbr, InnerJoin<BAccount, On<BAccount.acctCD, Equal<TWNGUITrans.custVend>>>,
                                                        Where<BAccount.bAccountID, Equal<Current<ARRegister.customerID>>,
                                                            And<TWNGUITrans.gUIStatus,Equal<TWNStringList.TWNGUIStatus.used>,
@@ -86,7 +87,7 @@ namespace PX.Objects.AR
                     ValidateValue = false,
                     Filterable = true)]
         public virtual string UsrGUINbr { get; set; }
-        public abstract class usrGUINbr : IBqlField { }
+        public abstract class usrGUINbr : PX.Data.BQL.BqlString.Field<usrGUINbr> { }
         #endregion
 
         #region UsrGUIDate

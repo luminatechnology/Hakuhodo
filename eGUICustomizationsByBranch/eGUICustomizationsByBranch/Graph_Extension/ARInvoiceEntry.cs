@@ -187,16 +187,16 @@ namespace PX.Objects.AR
             {
                 ARRegisterExt regisExt = e.Row.GetExtension<ARRegisterExt>();
 
-                if (string.IsNullOrEmpty(regisExt.UsrGUINbr) && regisExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATOutCode35) )
+                if (string.IsNullOrEmpty(regisExt.UsrGUINbr) && regisExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATOutCode35) && regisExt.UsrGUIDate != null)
                 {
                     TWNGUIPreferences pref = SelectFrom<TWNGUIPreferences>.View.Select(Base);
 
-                    regisExt.UsrGUINbr = ARGUINbrAutoNumAttribute.GetNextNumber(e.Cache, 
-                                                                                e.Row, 
-                                                                                regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering :
-                                                                                                                                         regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode31 ? pref.GUI3CopiesManNumbering :
-                                                                                                                                                                                                  pref.GUI3CopiesNumbering, 
-                                                                                regisExt.UsrGUIDate);
+                    Base.Caches<TWNGUIPreferences>().Current = pref;
+
+                    GUINbrAutoNumberAttribute.SetNumberingId<ARRegisterExt.usrGUINbr>(Base.Caches<TWNGUIPreferences>(),
+                                                                                      regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering :
+                                                                                      regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode31 ? pref.GUI3CopiesManNumbering :
+                                                                                                                                               pref.GUI3CopiesNumbering);
 
                     new TWNGUIValidation().CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
                 }
