@@ -16,7 +16,7 @@ namespace eGUICustomizations.Graph
         #region Override Methods
         public override void Persist()
         {
-            TWNSiteMapControlHandler.UpdateMenuItem(new string[] { "TW402000", "TW505000" }, !(GUIPreferences.Current?.EnableWHT ?? false));
+            TWNSiteMapControlHandler.UpdateMenuItem(new string[] { "TW402000", "TW505001" }, !(GUIPreferences.Current?.EnableWHT ?? false));
 
             base.Persist();
 
