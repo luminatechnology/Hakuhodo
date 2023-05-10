@@ -46,9 +46,9 @@ namespace eGUICustomizations.Descriptor
         private string _numberingID;
         private DateTime? _dateTime;
 
-        private string _emptyDateMessage;
+        //private string _emptyDateMessage;
 
-        public GUINbrAutoNumberAttribute(Type doctypeField, Type dateField) : base(doctypeField, dateField) { }
+        public GUINbrAutoNumberAttribute(Type vATOutCodeField, Type dateField) : base(vATOutCodeField, dateField) { }
 
         public GUINbrAutoNumberAttribute(Type vATOutCodeField, Type dateField, string[] vATOutCodeValues, Type[] setupFields) : base(vATOutCodeField, dateField, vATOutCodeValues, setupFields)
         {
@@ -62,12 +62,13 @@ namespace eGUICustomizations.Descriptor
 
         public override void RowPersisting(PXCache sender, PXRowPersistingEventArgs e)
         {
-            if (!(e.Operation & PXDBOperation.Command).IsIn(PXDBOperation.Insert, PXDBOperation.Update)) { return; }
+            if ((e.Operation & PXDBOperation.Command) != PXDBOperation.Insert && 
+                ((e.Operation & PXDBOperation.Command) == PXDBOperation.Update && string.IsNullOrEmpty((string)sender.GetValue(e.Row, _FieldName))) == false) { return; }
 
             getfields(sender, e.Row);
 
             //fix for manual non key numbering, broken when we started returning null instead of "" from getnewnumber
-            if ((NotSetNumber = GetNewNumberSymbol()) == null && NullString == String.Empty) { return; }
+            if ((NotSetNumber = GetNewNumberSymbol()) == null && NullString == string.Empty) { return; }
 
             if ((NotSetNumber = GetNewNumberSymbol(_numberingID)) == NullString)
             {
@@ -80,29 +81,32 @@ namespace eGUICustomizations.Descriptor
                     foreach (KeyValuePair<string, string> item in items.GetNumberings())
                     {
                         if (item.Value == (string)keyValue || GetNewNumberSymbol(item.Key) == (string)keyValue)
+                        {
                             throw new PXException(PX.Objects.CS.Messages.DocumentNbrEqualNewSymbol, (string)keyValue);
+                        }
                     }
                 }
                 return;
             }
 
-            if (_dateTime == null)
-            {
-                Exception ex;
+            ///<remarks> Since the GUI date is used to control the number generation of the GUI nbr, comment out the date validation. </remarks>
+            //if (_dateTime == null)
+            //{
+            //    Exception ex;
 
-                if (!string.IsNullOrEmpty(_emptyDateMessage))
-                {
-                    ex = new AutoNumberException(_emptyDateMessage);
-                }
-                else
-                {
-                    ex = new AutoNumberException(PX.Objects.Common.Messages.MustHaveValue, (sender.GetStateExt(e.Row, _dateField) as PXFieldState)?.DisplayName ?? _dateField);
-                }
+            //    if (!string.IsNullOrEmpty(_emptyDateMessage))
+            //    {
+            //        ex = new AutoNumberException(_emptyDateMessage);
+            //    }
+            //    else
+            //    {
+            //        ex = new AutoNumberException(PX.Objects.Common.Messages.MustHaveValue, (sender.GetStateExt(e.Row, _dateField) as PXFieldState)?.DisplayName ?? _dateField);
+            //    }
 
-                sender.RaiseExceptionHandling(_dateField, e.Row, null, ex);
+            //    sender.RaiseExceptionHandling(_dateField, e.Row, null, ex);
 
-                throw ex;
-            }
+            //    throw ex;
+            //}
 
             if (_numberingID != null && _dateTime != null)
             {
@@ -121,23 +125,6 @@ namespace eGUICustomizations.Descriptor
             {
                 throw new AutoNumberException(PX.Objects.CS.Messages.CantAutoNumberSpecific, _numberingID);
             }
-
-            /*string vATOutCode = string.Empty;
-            if (this.BqlTable.Name == nameof(DAC.TWNManualGUIAR))
-            {
-                var row = (TWNManualGUIAR)e.Row;
-                vATOutCode = row.VatOutCode;
-            }
-            else
-            {
-                var row = (ARRegister)e.Row;
-                vATOutCode = PXCache<ARRegister>.GetExtension<ARRegisterExt>(row).UsrVATOutCode;
-            }
-            if (vATOutCode != TWGUIFormatCode.vATOutCode33 && vATOutCode != TWGUIFormatCode.vATOutCode34 && vATOutCode != null)
-            {
-                base.RowPersisting(sender, e);
-            }
-            sender.SetValue(e.Row, _FieldName, (string)sender.GetValue(e.Row, _FieldName));*/
         }
 
         public override void CacheAttached(PXCache sender)

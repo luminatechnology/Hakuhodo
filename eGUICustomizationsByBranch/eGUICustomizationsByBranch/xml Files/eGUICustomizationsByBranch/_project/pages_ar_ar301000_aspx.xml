@@ -36,6 +36,7 @@
                                             <Prop Key="Virtual:ApplyStylesheetSkin" />
                                             <Prop Key="ID" Value="CstPXSelector1" />
                                             <Prop Key="DataField" Value="UsrGUINbr" />
+                                            <Prop Key="NullText" Value="&lt;NEW&gt;" />
                                         </PXSelector>
                                     </AddItem>
                                     <AddItem>
