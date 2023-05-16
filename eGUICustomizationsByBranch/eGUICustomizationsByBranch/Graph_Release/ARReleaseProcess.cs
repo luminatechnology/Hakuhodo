@@ -158,7 +158,9 @@ namespace PX.Objects.AR
                                 NPONbr        = docExt.UsrB2CType == TWNStringList.TWNB2CType.NPO ? tuple.Item3 : null,
                                 B2CPrinted    = docExt.UsrB2CType == TWNStringList.TWNB2CType.DEF && string.IsNullOrEmpty(docExt.UsrTaxNbr),
                                 TranDate      = doc.DocDate,
-                                AddressLine   = ARAddress.PK.Find(Base, (doc as ARInvoice).BillAddressID)?.AddressLine1
+                                AddressLine   = ARAddress.PK.Find(Base, (doc as ARInvoice).BillAddressID)?.AddressLine1,
+                                GUIDecPeriod  = doc.DocDate,
+                                CRMDate       = doc.DocDate
                             });
 
                             #region Prepayment Adjust
