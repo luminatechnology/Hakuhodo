@@ -26,6 +26,7 @@
 				<px:PXGridColumn DataField="GUIFormatcode" Width="70" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUINbr" Width="140" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUIDate" Width="90" ></px:PXGridColumn>
+				<px:PXGridColumn DataField="CRMDate" Width="90" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="OurTaxNbr" Width="96" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="TaxNbr" Width="96" ></px:PXGridColumn>
 				<px:PXGridColumn DataField="GUITitle" Width="220" ></px:PXGridColumn>
