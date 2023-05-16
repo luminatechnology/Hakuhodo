@@ -91,7 +91,7 @@ namespace eGUICustomizations.Graph
                             // Sequence Number
                             lines += AutoNumberAttribute.GetNextNumber(GUITransList.Cache, gUITrans, gUIPreferences.MediaFileNumbering, Accessinfo.BusinessDate);
                             // GUI LegalYM
-                            lines += GetTWNDate(gUITrans.GUIDate.Value);
+                            lines += GetTWNDate(gUITrans.GUIDecPeriod.Value);//gUITrans.GUIDate.Value);
                             // Tax ID (Buyer)
                             lines += GetBuyerTaxID(gUITrans);
                             // Tax ID (Seller)

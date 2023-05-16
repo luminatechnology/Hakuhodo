@@ -71,7 +71,7 @@ namespace eGUICustomizations.Graph
                     // Invoice Date Time
                     lines += verticalBar;
                     // Allowance Date
-                    lines += gUITrans.GUIDate.Value.ToString("yyyyMMdd") + verticalBar;
+                    lines += /*gUITrans.GUIDate*/gUITrans.CRMDate.Value.ToString("yyyyMMdd") + verticalBar;
                     // Cancel Date
                     lines += TWNExpGUIInv2BankPro.GetCancelDate(gUITrans) + verticalBar;
                     // Bill Attribute
