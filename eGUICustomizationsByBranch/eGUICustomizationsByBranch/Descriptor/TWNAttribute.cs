@@ -32,7 +32,7 @@ namespace eGUICustomizations.Descriptor
     }
     #endregion
 
-    #region GUINbrAutoNumAttribute
+    #region GUINbrAutoNumberAttribute
     public class GUINbrAutoNumberAttribute : AutoNumberAttribute
     {
         private Type _vATOutCodeField;
@@ -40,9 +40,9 @@ namespace eGUICustomizations.Descriptor
         private Type[] _setupFields;
         private string[] _setupValues;
 
-        private string _dateField;
         private Type _dateType;
-
+        private string _dateField;
+        
         private string _numberingID;
         private DateTime? _dateTime;
 
@@ -63,6 +63,7 @@ namespace eGUICustomizations.Descriptor
         public override void RowPersisting(PXCache sender, PXRowPersistingEventArgs e)
         {
             if ((e.Operation & PXDBOperation.Command) != PXDBOperation.Insert && 
+                // Add the following condition to get GUI number without first fetching the number when inserting.
                 ((e.Operation & PXDBOperation.Command) == PXDBOperation.Update && string.IsNullOrEmpty((string)sender.GetValue(e.Row, _FieldName))) == false) { return; }
 
             getfields(sender, e.Row);
@@ -148,7 +149,8 @@ namespace eGUICustomizations.Descriptor
 
             if (!IsKey)
             {
-                NullString = string.Empty;
+                ///<remarks> Since the parent event (FieldVerifying) will overwrite the new value based on certain conditions which affect the credit memo with the GUI number being updated to null when releasing. </remarks>
+                NullString = null;// string.Empty;
                 NullMode = NullNumberingMode.UserNumbering;
             }
             else
@@ -395,8 +397,8 @@ namespace eGUICustomizations.Descriptor
         /// References ARRegisterExt.usrVATOutCode and ARRegisterExt.usrGUIDate fields of the document,<br/>
         /// and also define a link between numbering ID's defined in GUI steup and ARInvoice types:<br/>
         /// namely TWNGUIPreferences.gUI3CopiesManNumbering - for 31, 
-        /// TWNGUIPreferences.gUI2CopiesNumbering - for 32<br/>        
-        /// TWNGUIPreferences.gUI3CopiesNumbering - for 35 <br/>      
+        ///        TWNGUIPreferences.gUI2CopiesNumbering - for 32<br/>        
+        ///        TWNGUIPreferences.gUI3CopiesNumbering - for 35 <br/>      
         /// </summary>
         public partial class NumberingAttribute : GUINbrAutoNumberAttribute
         {
@@ -436,7 +438,7 @@ namespace eGUICustomizations.Descriptor
 
             public NumberingAttribute() : base(typeof(ARRegisterExt.usrVATOutCode), typeof(ARRegisterExt.usrGUIDate), _VATOutCodes, _SetupFields) { }
 
-            protected NumberingAttribute(Type doctypeField, Type dateField, string[] doctypeValues, Type[] setupFields) : base(doctypeField, dateField, doctypeValues, setupFields) { }
+            protected NumberingAttribute(Type vATOutCodeField, Type dateField, string[] vATOutCodeValues, Type[] setupFields) : base(vATOutCodeField, dateField, vATOutCodeValues, setupFields) { }
         }
     }
     #endregion
@@ -450,8 +452,6 @@ namespace eGUICustomizations.Descriptor
         /// After trying for two hours, still can't get the current row record after entering the GUI number. It will be null. 
         /// Guess the GUI number is one of the PK then forced to change event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         //public virtual void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
         //{
         //    if (string.IsNullOrEmpty((string)e.NewValue) || TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }

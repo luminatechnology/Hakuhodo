@@ -22,7 +22,7 @@ namespace PX.Objects.AR
                     DescriptionField = typeof(CSAttributeDetail.description), 
                     ValidateValue = false)]
         public virtual string UsrVATOutCode { get; set; }
-        public abstract class usrVATOutCode : IBqlField { }
+        public abstract class usrVATOutCode : PX.Data.BQL.BqlString.Field<usrVATOutCode> { }
         #endregion
 
         #region UsrTaxNbr
@@ -40,7 +40,7 @@ namespace PX.Objects.AR
                    PersistingCheck = PXPersistingCheck.Nothing)]
         [PXFormula(typeof(Default<ARInvoice.customerID>))]
         public virtual string UsrTaxNbr { get; set; }
-        public abstract class usrTaxNbr : IBqlField { }
+        public abstract class usrTaxNbr : PX.Data.BQL.BqlString.Field<usrTaxNbr> { }
         #endregion
 
         #region UsrOurTaxNbr
@@ -53,7 +53,7 @@ namespace PX.Objects.AR
         [TaxNbrVerify(8, IsUnicode = true)]
         [PXUIField(DisplayName = "Our Tax Nbr.")]
         public virtual string UsrOurTaxNbr { get; set; }
-        public abstract class usrOurTaxNbr : IBqlField { }
+        public abstract class usrOurTaxNbr : PX.Data.BQL.BqlString.Field<usrOurTaxNbr> { }
         #endregion
 
         #region UsrGUINbr
@@ -70,10 +70,10 @@ namespace PX.Objects.AR
         //[GUINumber(1000, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCC")]
         [GUINbrAutoNumberAttribute.Numbering()]
         [PXDBString(10000, IsUnicode = true)]
-        [PXUIField(DisplayName = "GUI Nbr.", Visibility = PXUIVisibility.SelectorVisible)]
+        [PXUIField(DisplayName = "GUI Nbr.")]
         [PXSelector(typeof(Search2<TWNGUITrans.gUINbr, InnerJoin<BAccount, On<BAccount.acctCD, Equal<TWNGUITrans.custVend>>>,
                                                        Where<BAccount.bAccountID, Equal<Current<ARRegister.customerID>>,
-                                                           And<TWNGUITrans.gUIStatus,Equal<TWNStringList.TWNGUIStatus.used>,
+                                                           And<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                                                And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
                                                                    And<TWNGUITrans.netAmtRemain, Greater<decimal0>,
                                                                        And2<Where<TWNGUITrans.gUIFormatCode, NotEqual<VATOut33Att>,
@@ -93,9 +93,10 @@ namespace PX.Objects.AR
         #region UsrGUIDate
         [PXDBDate]
         [PXUIField(DisplayName = "GUI Date")]
+        ///<remarks> Comment out it as user doesn't wanna get GUI nbr. on first save. </remarks>
         //[PXDefault(typeof(AccessInfo.businessDate),  PersistingCheck = PXPersistingCheck.Nothing)]        
         public virtual DateTime? UsrGUIDate { get; set; }
-        public abstract class usrGUIDate : IBqlField { }
+        public abstract class usrGUIDate : PX.Data.BQL.BqlDateTime.Field<usrGUIDate> { }
         #endregion
 
         #region UsrB2CType
@@ -169,6 +170,9 @@ namespace PX.Objects.AR
         #endregion
 
         #region UsrShowTWGUITab
+        /// <summary>
+        /// This field was created only to control visibility of TW GUI tab item on Payments and Applications(AR302000).
+        /// </summary>
         [PXBool()]
         [PXUIField(Visible = false)]
         [PXFormula(typeof(Switch<Case<Where<ARRegister.docType, Equal<ARDocType.prepayment>, Or<ARRegister.docType, Equal<ARDocType.voidPayment>>>, True>, False>))]
