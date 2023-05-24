@@ -50,10 +50,15 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region GUINbr
-        [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
+        [GUINumber(15, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCCC")]
         [PXUIField(DisplayName = "GUI Nbr.", Required = true)]
         [PXDefault()]
-        [GUINbrAutoNumber(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(gUIDate))]
+        //[AutoNumber(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(gUIDate))]
+        [GUINbrAutoNumberAttribute.Numbering(typeof(vatOutCode), typeof(gUIDate),
+                                             new string[] { TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATOutCode35 },
+                                             new Type[] { typeof(TWNGUIPreferences.gUI3CopiesManNumbering),
+                                                          typeof(TWNGUIPreferences.gUI2CopiesNumbering),
+                                                          typeof(TWNGUIPreferences.gUI3CopiesNumbering) })]
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr,
                                   Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                         And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,

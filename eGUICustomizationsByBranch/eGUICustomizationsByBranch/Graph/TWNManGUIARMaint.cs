@@ -17,7 +17,7 @@ namespace eGUICustomizations.Graph
 {
     public class TWNManGUIAREntry : PXGraph<TWNManGUIAREntry>
     {
-        public TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
+        public TWNReleaseProcess rp = CreateInstance<TWNReleaseProcess>();
 
         #region Selects & Setup
         public PXSave<TWNGUIManualFilter> Save;
@@ -29,8 +29,6 @@ namespace eGUICustomizations.Graph
         [PXImport(typeof(TWNManualGUIAR))]
         [PXFilterable()]
         public SelectFrom<TWNManualGUIAR>.Where<TWNManualGUIAR.status.IsEqual<TWNGUIManualFilter.status.FromCurrent>>.View ManualGUIAR;
-
-        //public SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAR.gUINbr.FromCurrent>>.View ViewGUITrans;
 
         public PXSetup<TWNGUIPreferences> GUIPreferences;
         #endregion
@@ -68,32 +66,34 @@ namespace eGUICustomizations.Graph
             }
             else
             {
-                PXLongOperation.StartOperation(this, () =>
-                {
-                    using (PXTransactionScope ts = new PXTransactionScope())
-                    {
-                        TWNGUITrans tWNGUITrans = rp.InitAndCheckOnAR(manualGUIAR.GUINbr, manualGUIAR.VatOutCode);
+                PXToggleAsyncDelegate method = delegate ()
+                                   {
+                                       using (PXTransactionScope ts = new PXTransactionScope())
+                                       {
+                                           TWNGUITrans tWNGUITrans = rp.InitAndCheckOnAR(manualGUIAR.GUINbr, manualGUIAR.VatOutCode);
 
-                        InsertGUITran(manualGUIAR, BAccount.PK.Find(this, manualGUIAR.CustomerID), false);
+                                           InsertGUITran(manualGUIAR, BAccount.PK.Find(this, manualGUIAR.CustomerID), false);
 
-                        manualGUIAR.Status = TWNStringList.TWNGUIManualStatus.Released;
-                        ManualGUIAR.Cache.MarkUpdated(manualGUIAR);
+                                           manualGUIAR.Status = TWNStringList.TWNGUIManualStatus.Released;
+                                           ManualGUIAR.Cache.MarkUpdated(manualGUIAR);
 
-                        Actions.PressSave();
+                                           Actions.PressSave();
 
-                        if (tWNGUITrans != null)
-                        {
-                            rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= manualGUIAR.NetAmt));
-                            rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= manualGUIAR.TaxAmt));
-                            rp.ViewGUITrans.Update(tWNGUITrans);
+                                           if (tWNGUITrans != null)
+                                           {
+                                               rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= manualGUIAR.NetAmt));
+                                               rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= manualGUIAR.TaxAmt));
+                                               rp.ViewGUITrans.Update(tWNGUITrans);
 
-                            rp.ViewGUITrans.Cache.Persist(PXDBOperation.Update);
-                            rp.ViewGUITrans.Cache.Persisted(false);
-                        }
+                                               rp.ViewGUITrans.Cache.Persist(PXDBOperation.Update);
+                                               rp.ViewGUITrans.Cache.Persisted(false);
+                                           }
 
-                        ts.Complete();
-                    }
-                });
+                                           ts.Complete();
+                                       }
+                                   };
+
+                PXLongOperation.StartOperation(this, method);
             }
 
             return adapter.Get();
@@ -137,9 +137,10 @@ namespace eGUICustomizations.Graph
         {
             var gUIPref = GUIPreferences.Current;
 
-            AutoNumberAttribute.SetNumberingId<TWNManualGUIAR.gUINbr>(e.Cache, e.Row.VatOutCode == TWGUIFormatCode.vATOutCode31 ? gUIPref.GUI3CopiesManNumbering :
-                                                                                                                                  e.Row.VatOutCode == TWGUIFormatCode.vATOutCode32 ? gUIPref.GUI2CopiesNumbering : 
-                                                                                                                                                                                     gUIPref.GUI3CopiesNumbering);
+            GUINbrAutoNumberAttribute.SetNumberingId<TWNManualGUIAR.gUINbr>(GUIPreferences.Cache, 
+                                                                            e.Row.VatOutCode == TWGUIFormatCode.vATOutCode31 ? gUIPref.GUI3CopiesManNumbering :
+                                                                                                                               e.Row.VatOutCode == TWGUIFormatCode.vATOutCode32 ? gUIPref.GUI2CopiesNumbering : 
+                                                                                                                                                                                  gUIPref.GUI3CopiesNumbering);
         }
 
         protected virtual void _(Events.FieldUpdated<TWNManualGUIAR.customerID> e)

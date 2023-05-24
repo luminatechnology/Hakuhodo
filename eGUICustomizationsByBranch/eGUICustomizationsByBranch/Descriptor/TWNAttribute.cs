@@ -94,7 +94,6 @@ namespace eGUICustomizations.Descriptor
             //if (_dateTime == null)
             //{
             //    Exception ex;
-
             //    if (!string.IsNullOrEmpty(_emptyDateMessage))
             //    {
             //        ex = new AutoNumberException(_emptyDateMessage);
@@ -103,9 +102,7 @@ namespace eGUICustomizations.Descriptor
             //    {
             //        ex = new AutoNumberException(PX.Objects.Common.Messages.MustHaveValue, (sender.GetStateExt(e.Row, _dateField) as PXFieldState)?.DisplayName ?? _dateField);
             //    }
-
             //    sender.RaiseExceptionHandling(_dateField, e.Row, null, ex);
-
             //    throw ex;
             //}
 
@@ -416,9 +413,9 @@ namespace eGUICustomizations.Descriptor
                 {
                     return new Type[]
                     {
-                    typeof(TWNGUIPreferences.gUI3CopiesManNumbering),
-                    typeof(TWNGUIPreferences.gUI2CopiesNumbering),
-                    typeof(TWNGUIPreferences.gUI3CopiesNumbering)
+                        typeof(TWNGUIPreferences.gUI3CopiesManNumbering),
+                        typeof(TWNGUIPreferences.gUI2CopiesNumbering),
+                        typeof(TWNGUIPreferences.gUI3CopiesNumbering)
                     };
                 }
             }
@@ -438,7 +435,7 @@ namespace eGUICustomizations.Descriptor
 
             public NumberingAttribute() : base(typeof(ARRegisterExt.usrVATOutCode), typeof(ARRegisterExt.usrGUIDate), _VATOutCodes, _SetupFields) { }
 
-            protected NumberingAttribute(Type vATOutCodeField, Type dateField, string[] vATOutCodeValues, Type[] setupFields) : base(vATOutCodeField, dateField, vATOutCodeValues, setupFields) { }
+            public NumberingAttribute(Type vATOutCodeField, Type dateField, string[] vATOutCodeValues, Type[] setupFields) : base(vATOutCodeField, dateField, vATOutCodeValues, setupFields) { }
         }
     }
     #endregion
@@ -446,6 +443,8 @@ namespace eGUICustomizations.Descriptor
     #region GUINumberAttribute
     public class GUINumberAttribute : PXDBStringAttribute/*, IPXFieldVerifyingSubscriber*/, IPXRowUpdatedSubscriber
     {
+        public GUINumberAttribute() { }
+
         public GUINumberAttribute(int length) : base(length) { }
 
         /// <summary>
@@ -504,11 +503,12 @@ namespace eGUICustomizations.Descriptor
         //}
         public virtual void RowUpdated(PXCache sender, PXRowUpdatedEventArgs e)
         {
-            string newGUINbr = (string)sender.GetValue(e.Row, "GUINbr");
-            string oldGUINbr = (string)sender.GetValue(e.OldRow, "GUINbr");
+            string newGUINbr = (string)sender.GetValue(e.Row,    nameof(TWNGUITrans.GUINbr));
+            string oldGUINbr = (string)sender.GetValue(e.OldRow, nameof(TWNGUITrans.GUINbr));
 
             if (string.IsNullOrEmpty(newGUINbr) || 
-                TWNGUIValidation.ActivateTWGUI(new PXGraph()) == false) { return; }
+                newGUINbr.Contains("NEW") ||
+                TWNGUIValidation.ActivateTWGUI(PXGraph.CreateInstance<PXGraph>()) == false) { return; }
 
             bool   reverse = false;
             string vATCode = null, erroMsg = null;
