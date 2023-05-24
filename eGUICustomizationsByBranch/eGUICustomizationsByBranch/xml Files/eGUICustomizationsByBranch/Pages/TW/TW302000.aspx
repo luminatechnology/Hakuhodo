@@ -22,18 +22,18 @@
 			<px:PXGridLevel DataMember="ManualGUIAR">
 			    <Columns>
 			      <px:PXGridColumn DataField="Status" Width="70" ></px:PXGridColumn>
-                  <px:PXGridColumn CommitChanges="True" DataField="BranchID" Width="140" ></px:PXGridColumn>
-                  <px:PXGridColumn CommitChanges="True" DataField="CustomerID" Width="140" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="BranchID" Width="140" CommitChanges="true" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="CustomerID" Width="140" CommitChanges="true" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="VatOutCode" Width="70" ></px:PXGridColumn>
-                  <px:PXGridColumn DataField="GUINbr" Width="140" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUINbr" Width="140" CommitChanges="true" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="GUIDate" Width="90" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxZoneID" Width="120" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxCategoryID" Width="120" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxID" Width="140" ></px:PXGridColumn>
-                  <px:PXGridColumn CommitChanges="True" DataField="TaxNbr" Width="96" ></px:PXGridColumn>
-                  <px:PXGridColumn CommitChanges="True" DataField="OurTaxNbr" Width="96" ></px:PXGridColumn>
-                  <px:PXGridColumn CommitChanges="True" DataField="NetAmt" Width="100" ></px:PXGridColumn>
-                  <px:PXGridColumn CommitChanges="True" DataField="TaxAmt" Width="100" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="TaxNbr" Width="96" CommitChanges="true"></px:PXGridColumn>
+                  <px:PXGridColumn DataField="OurTaxNbr" Width="96" CommitChanges="true"></px:PXGridColumn>
+                  <px:PXGridColumn DataField="NetAmt" Width="100" CommitChanges="true"></px:PXGridColumn>
+                  <px:PXGridColumn DataField="TaxAmt" Width="100" CommitChanges="true"></px:PXGridColumn>
                   <px:PXGridColumn DataField="GUITitle" Width="140" ></px:PXGridColumn>
 				  <px:PXGridColumn DataField="AddressLine" Width="180" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="CustomType" Width="140" ></px:PXGridColumn>
