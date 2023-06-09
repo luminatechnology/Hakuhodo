@@ -4694,6 +4694,7 @@
                         <Value>=[GLTran.BranchID]</Value>
                     </TextBox>
                     <TextBox Name="textBox61">
+                        <CanGrow>True</CanGrow>
                         <Excel>
                             <column>7</column>
                         </Excel>
@@ -4759,8 +4760,9 @@
                         <VisibleExpr>=[APSetup.RequireSingleProjectPerDocument]=True</VisibleExpr>
                         <Items>
                             <TextBox Name="textBox31">
+                                <CanGrow>True</CanGrow>
                                 <Location>124px, 4px</Location>
-                                <Size>256px, 16px</Size>
+                                <Size>892px, 16px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[APRegister.ProjectID_description]</Value>
                             </TextBox>
@@ -5440,6 +5442,7 @@
                                 <Value>=[SuppliedByVendor.AcctCD]</Value>
                             </TextBox>
                             <TextBox Name="textBox28">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>9</column>
                                 </Excel>
@@ -5559,6 +5562,7 @@
                                 <Value>=[APRegister.RefNbr]</Value>
                             </TextBox>
                             <TextBox Name="textBox54">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>8</column>
                                 </Excel>
@@ -5686,6 +5690,7 @@
                                 <Value>=[APRegister.PrintDocType]</Value>
                             </TextBox>
                             <TextBox Name="textBox109">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>9</column>
                                 </Excel>
@@ -5707,6 +5712,7 @@
                                 <Value>=[APRegister.Status]</Value>
                             </TextBox>
                             <TextBox Name="textBox99">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>8</column>
                                 </Excel>
