@@ -240,7 +240,7 @@
                 <ParentName>GLTran</ParentName>
             </ReportRelation>
         </Relations>
-        <SchemaUrl>http://10.112.0.4/PRD/</SchemaUrl>
+        <SchemaUrl>http://localhost/AcumaticaUCG</SchemaUrl>
         <Sorting>
             <SortExp>
                 <DataField>GLTran.LineNbr</DataField>
@@ -1758,6 +1758,7 @@
                     </TextBox>
                     <TextBox Name="textBox42">
                         <CanGrow>True</CanGrow>
+                        <CanSplit>True</CanSplit>
                         <Excel>
                             <column>6</column>
                         </Excel>

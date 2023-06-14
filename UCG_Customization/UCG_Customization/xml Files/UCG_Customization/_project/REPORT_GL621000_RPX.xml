@@ -1764,6 +1764,7 @@
                     </TextBox>
                     <TextBox Name="textBox42">
                         <CanGrow>True</CanGrow>
+                        <CanSplit>True</CanSplit>
                         <Excel>
                             <column>6</column>
                         </Excel>
@@ -2393,6 +2394,7 @@
                             </TextBox>
                             <TextBox Name="textBox22">
                                 <CanGrow>True</CanGrow>
+                                <CanSplit>True</CanSplit>
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
