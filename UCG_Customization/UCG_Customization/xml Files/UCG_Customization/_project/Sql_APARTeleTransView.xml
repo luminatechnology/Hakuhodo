@@ -219,7 +219,7 @@ SELECT
         WHERE
             CompanyID = l.CompanyID
             AND RecordID = l.NoteID
-            AND FieldName = 'AttributeBKACCTNAME'
+            AND FieldName = 'AttributeBKBRCODE'
     ) AS BankBranch
 FROM
     ARPayment p
