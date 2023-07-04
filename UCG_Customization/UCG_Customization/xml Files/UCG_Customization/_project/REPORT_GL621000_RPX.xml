@@ -1764,7 +1764,6 @@
                     </TextBox>
                     <TextBox Name="textBox42">
                         <CanGrow>True</CanGrow>
-                        <CanSplit>True</CanSplit>
                         <Excel>
                             <column>6</column>
                         </Excel>
@@ -2394,7 +2393,6 @@
                             </TextBox>
                             <TextBox Name="textBox22">
                                 <CanGrow>True</CanGrow>
-                                <CanSplit>True</CanSplit>
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
@@ -2681,7 +2679,7 @@
                         <Items>
                             <TextBox Name="textBox65">
                                 <Location>116px, 4px</Location>
-                                <Size>248px, 14px</Size>
+                                <Size>612px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Description</Value>
                             </TextBox>
@@ -2699,8 +2697,9 @@
                         <VisibleExpr>=[FeaturesSet.ProjectModule]=1</VisibleExpr>
                         <Items>
                             <TextBox Name="textBox67">
+                                <CanGrow>True</CanGrow>
                                 <Location>116px, 0px</Location>
-                                <Size>248px, 14px</Size>
+                                <Size>612px, 14px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[GLTran.ProjectID_description]</Value>
                             </TextBox>
