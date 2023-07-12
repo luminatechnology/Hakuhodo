@@ -269,6 +269,7 @@ namespace PX.Objects.AP
             cache.SetValueExt<APInvoice.branchID>(invoice, inv.BranchID);
             //    專案 = X
             cache.SetValueExt<APInvoice.projectID>(invoice, ProjectDefaultAttribute.NonProject());
+            cache.SetValueExt<APInvoice.dueDate>(invoice, inv.DueDate);
             //    說明 = 原AP(#77)“– 暫借款沖銷”
             cache.SetValueExt<APInvoice.docDesc>(invoice, inv.RefNbr + " – 暫借款沖銷");
             //    UserDefinedField - 折讓 / 退傭單號 = ‘NA’

@@ -6,6 +6,7 @@ using UCG_Customization.Descriptor;
 using PX.Objects.EP;
 using PX.Objects.PM;
 using static PX.Objects.AP.APRegisterUCGExt;
+using System;
 
 namespace PX.Objects.AP
 {
@@ -93,6 +94,10 @@ namespace PX.Objects.AP
         [PXRemoveBaseAttribute(typeof(APDocStatus.ListAttribute))]
         [APDocStatusExt.List]
         protected virtual void _(Events.CacheAttached<APInvoice.status> e) { }
+
+        [PXMergeAttributes(Method = MergeMethod.Append)]
+        [PXRestrictor(typeof(Where<PMProject.status, Equal<ProjectStatus.active>>), "Project/Contract '{0}' is inactive", new Type[] { typeof(PMProject.contractCD) })]
+        protected virtual void _(Events.CacheAttached<APInvoice.projectID> e) { }
         #endregion
 
         #region Method
