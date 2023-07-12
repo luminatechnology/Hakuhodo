@@ -667,7 +667,7 @@ namespace eGUICustomizations.Descriptor
             foreach (TaxRev taxRev in SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
                                                                .And<TaxRev.taxType.IsEqual<@P.AsString>>>.View.Select(sender.Graph, taxID, "P")) // P = Group type (Input)
             {
-                decimal taxAmt = Math.Round(netAmt * (taxRev.TaxRate.Value / taxRev.NonDeductibleTaxRate.Value), 0);
+                decimal taxAmt = Math.Round(netAmt * (taxRev.TaxRate.Value / taxRev.NonDeductibleTaxRate.Value), 0, MidpointRounding.AwayFromZero);
 
                 sender.SetValue(e.Row, _TaxAmt.Name, taxAmt);
             }
