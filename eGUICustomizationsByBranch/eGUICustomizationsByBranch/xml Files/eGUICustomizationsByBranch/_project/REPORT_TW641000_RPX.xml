@@ -3499,7 +3499,6 @@ F3ORVxDI/lqUX6HdJRFAAAEEEDhDIBeNM1NNQWAPgeyvRXkPV6cggAACCCCAwL8J5KIBCgI3Ecj+WpRv
                     </TextBox>
                     <TextBox Name="textBox36">
                         <CanGrow>True</CanGrow>
-                        <CanSplit>True</CanSplit>
                         <Location>5.55in, 0cm</Location>
                         <Size>1.85in, 1.25cm</Size>
                         <Style>

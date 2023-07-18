@@ -46,9 +46,8 @@
     <Reference Include="PX.Data">
       <HintPath>..\..\..\..\Bin\PX.Data.dll</HintPath>
     </Reference>
-    <Reference Include="PX.Data.BQL.Fluent, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Acumatica ERP\AcumaticaWaldom\Bin\PX.Data.BQL.Fluent.dll</HintPath>
+    <Reference Include="PX.Data.BQL.Fluent">
+      <HintPath>..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
     </Reference>
     <Reference Include="PX.Objects">
       <HintPath>..\..\..\..\Bin\PX.Objects.DLL</HintPath>

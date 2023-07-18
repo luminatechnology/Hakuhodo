@@ -221,7 +221,8 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Batch Nbr.")]
         [PXSelector(typeof(Search<Batch.batchNbr, Where<Batch.module, Equal<BatchModule.moduleAP>,
                                                         Or<Batch.module, Equal<BatchModule.moduleAR>>>>),
-                    DescriptionField = typeof(Batch.description))]
+                    DescriptionField = typeof(Batch.description),
+                    ValidateValue = false)]
         public virtual string BatchNbr { get; set; }
         public abstract class batchNbr : PX.Data.BQL.BqlString.Field<batchNbr> { }
         #endregion
