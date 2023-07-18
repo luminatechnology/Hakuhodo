@@ -210,9 +210,7 @@ namespace eGUICustomizations.Graph
                 eGUIExcluded  = data.VatOutCode == TWGUIFormatCode.vATOutCode32,
                 Remark        = isDeleted == false ? data.Remark : string.Format(TWMessages.DeleteInfo, this.Accessinfo.UserName),
                 OrderNbr      = data.GUINbr,
-                AddressLine   = data.AddressLine,
-                B2CPrinted    = string.IsNullOrEmpty(data.TaxNbr),
-                BatchNbr      = data.GUINbr
+                AddressLine   = data.AddressLine
             });
 
             #region InsertPrintedLine

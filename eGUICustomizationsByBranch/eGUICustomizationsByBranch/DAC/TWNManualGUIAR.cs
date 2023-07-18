@@ -206,14 +206,6 @@ namespace eGUICustomizations.DAC
         public abstract class addressLine : PX.Data.BQL.BqlString.Field<addressLine> { }
         #endregion
 
-        #region B2CPrinted
-        [PXDBBool()]
-        [PXUIField(DisplayName = "B2C Printed")]
-        [PXDefault(true, PersistingCheck = PXPersistingCheck.Nothing)]
-        public virtual bool? B2CPrinted { get; set; }
-        public abstract class b2CPrinted : PX.Data.BQL.BqlBool.Field<b2CPrinted> { }
-        #endregion
-
         #region CreatedByID
         [PXDBCreatedByID]
         public virtual Guid? CreatedByID { get; set; }
