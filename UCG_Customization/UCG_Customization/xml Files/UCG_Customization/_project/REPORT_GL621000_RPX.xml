@@ -1749,7 +1749,7 @@
                             <column>3</column>
                         </Excel>
                         <Location>204px, 0px</Location>
-                        <Size>144px, 14px</Size>
+                        <Size>72px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.SubID]</Value>
                     </TextBox>
@@ -1757,8 +1757,8 @@
                         <Excel>
                             <column>5</column>
                         </Excel>
-                        <Location>348px, 0px</Location>
-                        <Size>104px, 14px</Size>
+                        <Location>276px, 0px</Location>
+                        <Size>72px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.RefNbr]</Value>
                     </TextBox>
@@ -1767,8 +1767,8 @@
                         <Excel>
                             <column>6</column>
                         </Excel>
-                        <Location>452px, 0px</Location>
-                        <Size>284px, 14px</Size>
+                        <Location>348px, 0px</Location>
+                        <Size>388px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
@@ -1937,7 +1937,7 @@
                             <column>6</column>
                         </Excel>
                         <Location>348px, 4px</Location>
-                        <Size>300px, 14px</Size>
+                        <Size>316px, 14px</Size>
                         <StyleName>Heading 1</StyleName>
                         <Value>Description</Value>
                     </TextBox>
@@ -1945,8 +1945,8 @@
                         <Excel>
                             <column>7</column>
                         </Excel>
-                        <Location>648px, 4px</Location>
-                        <Size>100px, 14px</Size>
+                        <Location>664px, 4px</Location>
+                        <Size>92px, 14px</Size>
                         <StyleName>Heading 1</StyleName>
                         <Value>Created By</Value>
                     </TextBox>
@@ -1966,8 +1966,8 @@
                         <Excel>
                             <column>8</column>
                         </Excel>
-                        <Location>748px, 4px</Location>
-                        <Size>100px, 14px</Size>
+                        <Location>756px, 4px</Location>
+                        <Size>92px, 14px</Size>
                         <StyleName>Heading 1</StyleName>
                         <Value>Last Modified By</Value>
                     </TextBox>
@@ -2360,8 +2360,7 @@
                 <Headers>
                     <Header Name="groupHeaderSection1">
                         <GridSize>8px, 8px</GridSize>
-                        <Height>24px</Height>
-                        <PrintEmpty>False</PrintEmpty>
+                        <Height>48px</Height>
                         <StyleName>GroupHighlight</StyleName>
                         <Items>
                             <TextBox Name="textBox19">
@@ -2397,7 +2396,12 @@
                                     <column>6</column>
                                 </Excel>
                                 <Location>348px, 4px</Location>
-                                <Size>300px, 14px</Size>
+                                <Size>316px, 44px</Size>
+                                <Style>
+                                    <Font>
+                                        <Style>Bold</Style>
+                                    </Font>
+                                </Style>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>=[Batch.Description]</Value>
                             </TextBox>
@@ -2436,8 +2440,8 @@
                                 <Excel>
                                     <column>7</column>
                                 </Excel>
-                                <Location>648px, 4px</Location>
-                                <Size>100px, 14px</Size>
+                                <Location>664px, 4px</Location>
+                                <Size>92px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>=[Batch.CreatedByID]</Value>
                             </TextBox>
@@ -2445,8 +2449,8 @@
                                 <Excel>
                                     <column>8</column>
                                 </Excel>
-                                <Location>748px, 4px</Location>
-                                <Size>100px, 14px</Size>
+                                <Location>756px, 4px</Location>
+                                <Size>92px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>=[Batch.LastModifiedByID]</Value>
                             </TextBox>
@@ -2480,7 +2484,7 @@
                                     <column>3</column>
                                 </Excel>
                                 <Location>204px, 4px</Location>
-                                <Size>144px, 14px</Size>
+                                <Size>72px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Subaccount</Value>
                             </TextBox>
@@ -2488,8 +2492,8 @@
                                 <Excel>
                                     <column>5</column>
                                 </Excel>
-                                <Location>348px, 4px</Location>
-                                <Size>104px, 14px</Size>
+                                <Location>276px, 4px</Location>
+                                <Size>72px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Ref. Number</Value>
                             </TextBox>
@@ -2545,8 +2549,8 @@
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
-                                <Location>452px, 4px</Location>
-                                <Size>284px, 14px</Size>
+                                <Location>348px, 4px</Location>
+                                <Size>388px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Description</Value>
                             </TextBox>
