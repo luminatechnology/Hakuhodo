@@ -2390,7 +2390,8 @@
                                 <Value>=[Batch.Status]</Value>
                             </TextBox>
                             <TextBox Name="textBox22">
-                                <CanGrow>True</CanGrow>
+                                <CanSplit>True</CanSplit>
+                                <ConvertHtmlToText>True</ConvertHtmlToText>
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
