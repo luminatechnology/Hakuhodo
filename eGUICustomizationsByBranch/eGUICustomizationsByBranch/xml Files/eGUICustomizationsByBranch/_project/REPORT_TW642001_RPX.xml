@@ -1343,7 +1343,7 @@
                             <TextAlign>Right</TextAlign>
                         </Style>
                         <StyleName>Normal</StyleName>
-                        <Value>=IIf(([TWNGUIPrintedLineDet.Amount] * 0.05) &gt; 0, [TWNGUIPrintedLineDet.Amount] * 0.05, [TWNGUITrans.TaxAmount])</Value>
+                        <Value>=[TWNGUITrans.TaxAmount]#010;/*IIf(([TWNGUIPrintedLineDet.Amount] * 0.05) &gt; 0, [TWNGUIPrintedLineDet.Amount] * 0.05, [TWNGUITrans.TaxAmount])*/</Value>
                     </TextBox>
                     <TextBox Name="textBox50">
                         <Location>344px, 0px</Location>
