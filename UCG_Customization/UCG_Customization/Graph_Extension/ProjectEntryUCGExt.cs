@@ -1,17 +1,51 @@
-﻿using PX.Data;
+﻿using PX.Common;
+using PX.Data;
+using PX.Objects.CT;
 using PX.Objects.EP;
 using UCG_Customization.DAC;
 
 namespace PX.Objects.PM
 {
-    public class ProjectEntryUCGExt:PXGraphExtension<ProjectEntry>
+    public class ProjectEntryUCGExt : PXGraphExtension<PX.Objects.CN.ProjectAccounting.PM.GraphExtensions.ProjectEntryExt, ProjectEntry>
     {
-        public static bool IsActive() {
+        #region DisplayName
+        [PXLocalizable]
+        public class LockProjectBtnName
+        {
+            public const string LockProject = "Lock Project";
+            public const string UnLockProject = "UnLock Project";
+        }
+        #endregion
+
+        public static bool IsActive()
+        {
             return true;
         }
 
+        #region View
         [PXViewName("PM Summary By BIV")]
-        public PXSelect<PMSummaryByBIV,Where<PMSummaryByBIV.contractID,Equal<Current<PMProject.contractID>>>> BISummary;
+        public PXSelect<PMSummaryByBIV, Where<PMSummaryByBIV.contractID, Equal<Current<PMProject.contractID>>>> BISummary;
+        #endregion
+
+        #region Action
+        public PXAction<PMProject> LockBtn;
+        [PXButton(CommitChanges = true)]
+        [PXUIField(DisplayName = LockProjectBtnName.LockProject)]
+        public void lockBtn()
+        {
+            var current = Base.Project.Current;
+            SetLockProject(current, true);
+        }
+
+        public PXAction<PMProject> UnLockBtn;
+        [PXButton(CommitChanges = true)]
+        [PXUIField(DisplayName = LockProjectBtnName.UnLockProject)]
+        public void unLockBtn()
+        {
+            var current = Base.Project.Current;
+            SetLockProject(current, false);
+        }
+        #endregion
 
         #region Override
         public delegate void PersistDelegate();
@@ -26,6 +60,39 @@ namespace PX.Objects.PM
             {
                 throw new PXRedirectRequiredException(PXGraph.CreateInstance<EPApprovalProcess>(), "EPApprovalProcess");
             }
+        }
+        #endregion
+
+        #region Events
+        public virtual void _(Events.RowSelected<PMProject> e)
+        {
+            if (e.Row == null) return;
+            bool isLocked = e.Row.GetExtension<ContractUCGExt>()?.UsrProjectisLocked ?? false;
+            //Lock & UnLock
+            LockBtn.SetEnabled(e.Row.Status == Contract.status.Completed);
+            UnLockBtn.SetEnabled(e.Row.Status == Contract.status.Completed);
+            LockBtn.SetVisible(!isLocked);
+            UnLockBtn.SetVisible(isLocked);
+            if (e.Row.Status == Contract.status.Completed)
+            {
+                //Activate Project
+                Base.activate.SetEnabled(!isLocked);
+                //Run Project Billing
+                Base.bill.SetEnabled(!isLocked);
+                //Run Allocation
+                Base.runAllocation.SetEnabled(!isLocked);
+                //Cost Projection
+                Base1.costProjection.SetEnabled(!isLocked);
+            }
+        }
+        #endregion
+
+        #region Method
+        public virtual void SetLockProject(PMProject row, bool isLock)
+        {
+            Base.Project.SetValueExt<ContractUCGExt.usrProjectisLocked>(row, isLock);
+            Base.Project.Update(row);
+            Base.Persist();
         }
         #endregion
     }

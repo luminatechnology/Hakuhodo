@@ -1,5 +1,5 @@
 ﻿<Report Name="gl621000.rpx">
-    <Report version="20211215" Name="report1">
+    <Report Name="report1" version="20211215">
         <CommonSettings>
             <ViewPdf>True</ViewPdf>
         </CommonSettings>
@@ -1648,7 +1648,6 @@
                 <FullName>PX.Objects.PM.PMProject</FullName>
             </ReportTable>
         </Tables>
-        <Version>20211215</Version>
         <ViewerFields>
             <ViewerField Name="Batch.BatchNbr">
             </ViewerField>
@@ -2369,7 +2368,7 @@
                                 </Excel>
                                 <Location>64px, 4px</Location>
                                 <Size>48px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.Module]</Value>
                             </TextBox>
                             <TextBox Name="textBox20">
@@ -2378,7 +2377,7 @@
                                 </Excel>
                                 <Location>204px, 4px</Location>
                                 <Size>72px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.DateEntered]</Value>
                             </TextBox>
                             <TextBox Name="textBox21">
@@ -2387,28 +2386,24 @@
                                 </Excel>
                                 <Location>276px, 4px</Location>
                                 <Size>72px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.Status]</Value>
                             </TextBox>
                             <TextBox Name="textBox22">
-                                <CanGrow>True</CanGrow>
+                                <CanSplit>True</CanSplit>
+                                <ConvertHtmlToText>True</ConvertHtmlToText>
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
                                 <Location>348px, 4px</Location>
                                 <Size>316px, 44px</Size>
-                                <Style>
-                                    <Font>
-                                        <Style>Bold</Style>
-                                    </Font>
-                                </Style>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.Description]</Value>
                             </TextBox>
                             <TextBox Name="textBox40">
                                 <Location>4px, 4px</Location>
                                 <Size>60px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.FinPeriodID]</Value>
                             </TextBox>
                             <TextBox Name="textBox45_468">
@@ -2421,7 +2416,7 @@
                                 <Style>
                                     <TextAlign>Right</TextAlign>
                                 </Style>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.ControlTotal]</Value>
                             </TextBox>
                             <TextBox Name="textBox54">
@@ -2433,7 +2428,7 @@
                                 <Style>
                                     <TextAlign>Right</TextAlign>
                                 </Style>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.CuryID]</Value>
                             </TextBox>
                             <TextBox Name="textBox55">
@@ -2442,7 +2437,7 @@
                                 </Excel>
                                 <Location>664px, 4px</Location>
                                 <Size>92px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.CreatedByID]</Value>
                             </TextBox>
                             <TextBox Name="textBox56">
@@ -2451,7 +2446,7 @@
                                 </Excel>
                                 <Location>756px, 4px</Location>
                                 <Size>92px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.LastModifiedByID]</Value>
                             </TextBox>
                             <TextBox Name="textBox57">
@@ -2461,7 +2456,7 @@
                                 <Location>116px, 4px</Location>
                                 <NavigateMethod>Server</NavigateMethod>
                                 <Size>88px, 14px</Size>
-                                <StyleName>Heading 1</StyleName>
+                                <StyleName>Normal</StyleName>
                                 <Value>=[Batch.BatchNbr]</Value>
                             </TextBox>
                         </Items>

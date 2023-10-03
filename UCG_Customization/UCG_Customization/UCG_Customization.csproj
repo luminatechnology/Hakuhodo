@@ -68,6 +68,7 @@
     <Compile Include="DAC_Extension\ARPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\APPaymentTTExt.cs" />
     <Compile Include="DAC_Extension\ARSetupUCGExt.cs" />
+    <Compile Include="DAC_Extension\ContractUCGExt.cs" />
     <Compile Include="DAC_Extension\CROpportunityUCGExt.cs" />
     <Compile Include="DAC_Extension\EPExpenseClaim.cs" />
     <Compile Include="DAC_Extension\EPDepartment.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Descriptor\Type.cs" />
     <Compile Include="Descriptor\ProcedureAttribute.cs" />
     <Compile Include="Descriptor\UserDefinedFieldAttribute.cs" />
+    <Compile Include="Graph_Extension\APInvoiceEntryExt\PreaymentsUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry_ReleaseExt.cs" />
     <Compile Include="Graph_Extension\APPaymentEntryUCGExt.cs" />

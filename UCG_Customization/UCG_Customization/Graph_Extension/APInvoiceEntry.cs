@@ -13,7 +13,7 @@ namespace PX.Objects.AP
 
         #region const
         /**User Defined */
-        const string UD_PROJECT = "AttributePROJECT";
+        public const string UD_PROJECT = "AttributePROJECT";
         #endregion
 
         #region Event
