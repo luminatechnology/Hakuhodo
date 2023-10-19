@@ -1,0 +1,1 @@
+"C:\Program Files\Acumatica ERP\Hakuhodo\App_Data\Projects\UCGLedgerSettlement\UCGLedgerSettlement.sln"
