@@ -1,5 +1,5 @@
 ﻿<Report Name="gl610500.rpx">
-    <Report Name="report1" version="20211215">
+    <Report version="20211215" Name="report1">
         <CommonSettings>
             <ViewPdf>True</ViewPdf>
         </CommonSettings>
@@ -240,7 +240,7 @@
                 <ParentName>GLTran</ParentName>
             </ReportRelation>
         </Relations>
-        <SchemaUrl>http://10.112.0.4/PRD/</SchemaUrl>
+        <SchemaUrl>http://localhost/Hakuhodo</SchemaUrl>
         <Sorting>
             <SortExp>
                 <DataField>GLTran.LineNbr</DataField>
@@ -1634,6 +1634,7 @@
                 <FullName>PX.Objects.PM.PMProject</FullName>
             </ReportTable>
         </Tables>
+        <Version>20211215</Version>
         <ViewerFields>
             <ViewerField Name="Batch.BatchNbr">
             </ViewerField>
@@ -1732,17 +1733,17 @@
                         <Excel>
                             <column>2</column>
                         </Excel>
-                        <Location>72px, 0px</Location>
+                        <Location>64px, 0px</Location>
                         <Size>64px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.AccountID]</Value>
                     </TextBox>
                     <TextBox Name="textBox39">
                         <Excel>
-                            <column>3</column>
+                            <column>4</column>
                         </Excel>
-                        <Location>136px, 0px</Location>
-                        <Size>152px, 14px</Size>
+                        <Location>248px, 0px</Location>
+                        <Size>120px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.SubID]</Value>
                     </TextBox>
@@ -1750,7 +1751,7 @@
                         <Excel>
                             <column>5</column>
                         </Excel>
-                        <Location>288px, 0px</Location>
+                        <Location>368px, 0px</Location>
                         <Size>80px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.RefNbr]</Value>
@@ -1760,8 +1761,8 @@
                         <Excel>
                             <column>6</column>
                         </Excel>
-                        <Location>368px, 0px</Location>
-                        <Size>380px, 14px</Size>
+                        <Location>448px, 0px</Location>
+                        <Size>300px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
@@ -1770,6 +1771,16 @@
                         <Size>60px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.BranchID]</Value>
+                    </TextBox>
+                    <TextBox Name="textBox95">
+                        <CanGrow>True</CanGrow>
+                        <Excel>
+                            <column>3</column>
+                        </Excel>
+                        <Location>128px, 0px</Location>
+                        <Size>120px, 14px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[GLTran.AccountID_description]</Value>
                     </TextBox>
                 </Items>
             </Detail>
@@ -2476,7 +2487,7 @@
                                 <Excel>
                                     <column>2</column>
                                 </Excel>
-                                <Location>72px, 4px</Location>
+                                <Location>64px, 4px</Location>
                                 <Size>64px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Account</Value>
@@ -2515,17 +2526,17 @@
                                 <Excel>
                                     <column>5</column>
                                 </Excel>
-                                <Location>288px, 4px</Location>
+                                <Location>368px, 4px</Location>
                                 <Size>80px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Ref. Number</Value>
                             </TextBox>
                             <TextBox Name="textBox52">
                                 <Excel>
-                                    <column>3</column>
+                                    <column>4</column>
                                 </Excel>
-                                <Location>136px, 4px</Location>
-                                <Size>152px, 14px</Size>
+                                <Location>248px, 4px</Location>
+                                <Size>120px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Subaccount</Value>
                             </TextBox>
@@ -2533,10 +2544,19 @@
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
-                                <Location>368px, 4px</Location>
-                                <Size>380px, 14px</Size>
+                                <Location>448px, 4px</Location>
+                                <Size>300px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Description</Value>
+                            </TextBox>
+                            <TextBox Name="textBox94">
+                                <Excel>
+                                    <column>3</column>
+                                </Excel>
+                                <Location>128px, 4px</Location>
+                                <Size>120px, 14px</Size>
+                                <StyleName>Heading 1</StyleName>
+                                <Value>Account Desc</Value>
                             </TextBox>
                         </Items>
                     </Header>
@@ -2678,14 +2698,14 @@
                                 <Excel>
                                     <column>5</column>
                                 </Excel>
-                                <Location>112px, 4px</Location>
+                                <Location>128px, 4px</Location>
                                 <Size>288px, 14px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Description</Value>
                             </TextBox>
                             <TextBox Name="textBox72">
                                 <Excel>
-                                    <column>5</column>
+                                    <column>3</column>
                                 </Excel>
                                 <Location>8px, 4px</Location>
                                 <Size>104px, 14px</Size>
@@ -2701,9 +2721,9 @@
                         <Items>
                             <TextBox Name="textBox81">
                                 <Excel>
-                                    <column>3</column>
+                                    <column>5</column>
                                 </Excel>
-                                <Location>112px, 3px</Location>
+                                <Location>128px, 3px</Location>
                                 <Size>288px, 14px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[GLTran.ProjectID_description]</Value>
