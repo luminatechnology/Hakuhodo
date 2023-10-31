@@ -10,24 +10,22 @@
   </px:PXDataSource>
 </asp:Content>
 <asp:Content ID="cont2" ContentPlaceHolderID="phF" Runat="Server">
-  <px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="55px" AllowAutoHide="false">
+  <px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="70px" AllowAutoHide="false">
     <Template>
 		<px:PXLayoutRule runat="server" StartRow="True" ID="PXLayoutRule2"></px:PXLayoutRule>
-		<%--<px:PXLayoutRule runat="server" ID="CstPXLayoutRule1" StartColumn="True" ></px:PXLayoutRule>--%>
-		<%--<px:PXSegmentMask runat="server" ID="CstPXSegmentMask4" DataField="BranchID" ></px:PXSegmentMask>--%>
-		<px:PXLayoutRule runat="server" ID="CstPXLayoutRule2" StartColumn="True" ></px:PXLayoutRule>
-		<%--<px:PXLayoutRule runat="server" ID="CstPXLayoutRule7" Merge="True" ></px:PXLayoutRule>--%>
-		<px:PXSegmentMask CommitChanges="True" runat="server" ID="CstPXSegmentMask1" DataField="StlmtAcctID"></px:PXSegmentMask>
-		<%--<px:PXLayoutRule runat="server" ID="CstLayoutRule6" ></px:PXLayoutRule>--%>
 		<px:PXLayoutRule runat="server" ID="CstPXLayoutRule1" StartColumn="True" ></px:PXLayoutRule>
-		<px:PXTextEdit runat="server" ID="CstPXTextEdit9" DataField="StlmtAcctID_description" Size="L" ></px:PXTextEdit>
+		<px:PXSegmentMask runat="server" ID="CstPXSegmentMask1" DataField="BranchID" CommitChanges="True"></px:PXSegmentMask>
+		<px:PXSegmentMask runat="server" ID="CstPXSegmentMask3" DataField="ProjectID" CommitChanges="True"></px:PXSegmentMask>
+		<px:PXLayoutRule runat="server" ID="CstPXLayoutRule2" StartColumn="True" ></px:PXLayoutRule>
+		<px:PXSegmentMask runat="server" ID="CstPXSegmentMask2" DataField="StlmtAcctID" CommitChanges="True"></px:PXSegmentMask>
+		<px:PXSelector runat="server" ID="CstPXSelector1" DataField="ReferenceID" CommitChanges="True"></px:PXSelector>
 		<px:PXLayoutRule runat="server" ID="CstPXLayoutRule3" StartColumn="True" ></px:PXLayoutRule>
-		<px:PXNumberEdit runat="server" ID="CstPXNumberEdit8" DataField="BalanceAmt" ></px:PXNumberEdit>
+		<px:PXNumberEdit runat="server" ID="CstPXNumberEdit1" DataField="BalanceAmt" ></px:PXNumberEdit>
     </Template>
   </px:PXFormView>
 </asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">
-	<px:PXSplitContainer runat="server" Orientation="Horizontal" SplitterPosition="380" ID="splitConditions">
+	<px:PXSplitContainer runat="server" Orientation="Horizontal" SplitterPosition="340" ID="splitConditions">
 		<AutoSize Enabled="true" Container="Window" />
 		<Template1>
 			<px:PXGrid AutoSize="true" AllowPaging="true" Caption="Ledger Source" CaptionVisible="True" runat="server" SyncPosition="True" SkinID="Details"  Width="100%" ID="grdScanMaster" DataSourceID="ds" AdjustPageSize="Auto" NoteIndicator="false" FilesIndicator="false">
@@ -36,12 +34,12 @@
 					<px:PXGridLevel DataMember="GLTranDebit">
 						<Columns >
 							<px:PXGridColumn DataField="Selected" TextAlign="Center" CommitChanges="True" Type="CheckBox" AllowCheckAll="True" Width="40" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="BatchNbr" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="BatchNbr" Width="120" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="LineNbr" Width="70" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="BranchID" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="BranchID" Width="120" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="SubID" Width="140" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="RefNbr" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="ReferenceID" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="ProjectID" Width="70" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="CuryDebitAmt" Width="100" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="CuryCreditAmt" Width="100" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="DebitAmt" Width="100" ></px:PXGridColumn>
@@ -51,9 +49,9 @@
 							<px:PXGridColumn DataField="UsrSetldDebitAmt" Width="100" CommitChanges="True" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="UsrSetldCreditAmt" Width="100" CommitChanges="True" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="TranDesc" Width="280" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="RefNbr" Width="120" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="InventoryID" Width="70" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="ReferenceID" Width="140" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="ProjectID" Width="70" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="SubID" Width="140" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="TaskID" Width="70" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="CostCodeID" Width="70" ></px:PXGridColumn></Columns></px:PXGridLevel></Levels>
 				<Mode AllowAddNew="False" ></Mode>
@@ -76,12 +74,12 @@
 					<px:PXGridLevel DataMember="GLTranCredit">
 						<Columns >
 							<px:PXGridColumn DataField="Selected" TextAlign="Center" CommitChanges="True" Type="CheckBox" AllowCheckAll="True" Width="40" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="BatchNbr" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="BatchNbr" Width="120" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="LineNbr" Width="70" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="BranchID" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="BranchID" Width="120" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="SubID" Width="140" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="RefNbr" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="ReferenceID" Width="140" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="ProjectID" Width="70" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="CuryDebitAmt" Width="100" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="CuryCreditAmt" Width="100" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="DebitAmt" Width="100" ></px:PXGridColumn>
@@ -91,9 +89,9 @@
 							<px:PXGridColumn DataField="UsrSetldDebitAmt" Width="100" CommitChanges="True" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="UsrSetldCreditAmt" Width="100" CommitChanges="True" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="TranDesc" Width="280" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="RefNbr" Width="120" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="InventoryID" Width="70" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="ReferenceID" Width="140" ></px:PXGridColumn>
-							<px:PXGridColumn DataField="ProjectID" Width="70" ></px:PXGridColumn>
+							<px:PXGridColumn DataField="SubID" Width="140" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="TaskID" Width="70" ></px:PXGridColumn>
 							<px:PXGridColumn DataField="CostCodeID" Width="70" ></px:PXGridColumn></Columns></px:PXGridLevel></Levels>
 				<Mode AllowAddNew="False" ></Mode>
