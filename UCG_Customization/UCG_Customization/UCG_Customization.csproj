@@ -96,6 +96,7 @@
     <Compile Include="Graph\LMTeleTransProcess.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimMaintUCGExt.cs" />
+    <Compile Include="Graph_Extension\JournalEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\PMBillEngineUCGExt.cs" />
     <Compile Include="Graph_Extension\POOrderEntryUCGExt.cs" />
     <Compile Include="Graph_Extension\ProformaEntryUCGExt.cs" />
