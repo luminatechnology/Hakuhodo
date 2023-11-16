@@ -1767,6 +1767,7 @@
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
                     <TextBox Name="textBox59">
+                        <CanGrow>True</CanGrow>
                         <Location>4px, 0px</Location>
                         <Size>60px, 14px</Size>
                         <StyleName>Normal</StyleName>
@@ -2729,6 +2730,7 @@
                                 <Value>=[GLTran.ProjectID_description]</Value>
                             </TextBox>
                             <TextBox Name="textBox89">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>3</column>
                                 </Excel>
