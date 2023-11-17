@@ -1773,6 +1773,7 @@
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
                     <TextBox Name="textBox59">
+                        <CanGrow>True</CanGrow>
                         <Location>4px, 0px</Location>
                         <Size>60px, 14px</Size>
                         <StyleName>Normal</StyleName>
@@ -2370,7 +2371,7 @@
                 <Headers>
                     <Header Name="groupHeaderSection1">
                         <GridSize>8px, 8px</GridSize>
-                        <Height>48px</Height>
+                        <Height>24px</Height>
                         <StyleName>GroupHighlight</StyleName>
                         <Items>
                             <TextBox Name="textBox19">
@@ -2401,13 +2402,14 @@
                                 <Value>=[Batch.Status]</Value>
                             </TextBox>
                             <TextBox Name="textBox22">
+                                <CanGrow>True</CanGrow>
                                 <CanSplit>True</CanSplit>
                                 <ConvertHtmlToText>True</ConvertHtmlToText>
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
                                 <Location>348px, 4px</Location>
-                                <Size>316px, 44px</Size>
+                                <Size>316px, 14px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[Batch.Description]</Value>
                             </TextBox>
