@@ -1950,7 +1950,7 @@
                         <Location>348px, 4px</Location>
                         <Size>316px, 14px</Size>
                         <StyleName>Heading 1</StyleName>
-                        <Value>Description</Value>
+                        <Value>Description1</Value>
                     </TextBox>
                     <TextBox Name="textBox17">
                         <Excel>
@@ -2375,6 +2375,7 @@
                         <StyleName>GroupHighlight</StyleName>
                         <Items>
                             <TextBox Name="textBox19">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>2</column>
                                 </Excel>
@@ -2403,6 +2404,7 @@
                             </TextBox>
                             <TextBox Name="textBox22">
                                 <CanGrow>True</CanGrow>
+                                <CanSplit>True</CanSplit>
                                 <ConvertHtmlToText>True</ConvertHtmlToText>
                                 <Excel>
                                     <column>6</column>
