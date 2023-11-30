@@ -3,7 +3,7 @@ using System.Linq;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
-using HSNFinance.DAC;
+using UCGLedgerSettlement.DAC;
 
 namespace ReportUDF
 {

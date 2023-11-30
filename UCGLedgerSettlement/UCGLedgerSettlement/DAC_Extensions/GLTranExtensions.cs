@@ -1,8 +1,7 @@
-﻿using HSNFinance.DAC;
+﻿using UCGLedgerSettlement.DAC;
 using PX.Data;
 using PX.Data.BQL.Fluent;
 using PX.Objects.CS;
-using System;
 
 namespace PX.Objects.GL
 {

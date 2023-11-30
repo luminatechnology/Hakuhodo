@@ -13,9 +13,9 @@ using PX.Objects.IN;
 using PX.Objects.PM;
 using PX.Objects.CR;
 using PX.Objects.GL.Attributes;
-using HSNFinance.DAC;
+using UCGLedgerSettlement.DAC;
 
-namespace HSNFinance
+namespace UCGLedgerSettlement.Graph
 {
     public class LSLedgerStlmtEntry : PXGraph<LSLedgerStlmtEntry>
     {

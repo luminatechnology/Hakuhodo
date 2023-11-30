@@ -2,7 +2,7 @@
 <%@ MasterType VirtualPath="~/MasterPages/FormTab.master" %>
 
 <asp:Content ID="cont1" ContentPlaceHolderID="phDS" Runat="Server">
-  <px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="HSNFinance.LSLedgerStlmtEntry" PrimaryView="Filter">
+  <px:PXDataSource ID="ds" runat="server" Visible="True" Width="100%" TypeName="UCGLedgerSettlement.Graph.LSLedgerStlmtEntry" PrimaryView="Filter">
     <CallbackCommands>
 		<px:PXDSCallbackCommand Name="toogleSource" Visible="False" />
 		<px:PXDSCallbackCommand Name="toogleSettlement" Visible="False" />

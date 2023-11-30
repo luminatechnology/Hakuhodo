@@ -2,7 +2,7 @@
 using PX.Data;
 using PX.Objects.GL;
 
-namespace HSNFinance.DAC
+namespace UCGLedgerSettlement.DAC
 {
     [Serializable]
     //[PXTable]

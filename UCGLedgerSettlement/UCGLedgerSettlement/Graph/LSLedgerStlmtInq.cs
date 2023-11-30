@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PX.Common;
 using PX.Data;
-using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.GL;
-using HSNFinance.DAC;
-using PX.Common;
+using UCGLedgerSettlement.DAC;
 
-namespace HSNFinance
+namespace UCGLedgerSettlement.Graph
 {
     public class LSLedgerStlmtInq : PXGraph<LSLedgerStlmtInq>
     {
