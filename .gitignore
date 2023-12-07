@@ -360,4 +360,10 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
-FodyWeavers.xsdeGUICustomizationsByBranch/eGUICustomizationsByBranch.sln
+FodyWeavers.xsd
+eGUICustomizationsByBranch/eGUICustomizationsByBranch.sln
+eGUICustomizationsByBranch/binding.txt
+eGUICustomizationsByBranch/Solution.bat
+MoveControl
+*.txt
+eGUICustomizationsByBranch/Solution.bat
