@@ -276,6 +276,9 @@ namespace PX.Objects.AP
             cache.SetValueExt(invoice, DJNBR, "NA");
             //    經辦人 = ADMIN(emp = 24)
             cache.SetValueExt<APInvoice.employeeID>(invoice, 24);
+            //2023-12-07 員工暫借 稅額預設為TAXABLE
+            var taxZone = TX.TaxZone.PK.Find(Base, "TAXABLE");
+            if (taxZone != null) cache.SetValueExt<APInvoice.taxZoneID>(invoice, taxZone.TaxZoneID);
             invoice = graph.Document.Update(invoice);
 
             //    明細tab插入一筆 執行項目 = EPLENT  數量1、金額 = 上面寫的沖銷金額
