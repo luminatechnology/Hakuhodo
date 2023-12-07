@@ -1,0 +1,4 @@
+﻿<Table TableName="GLSetup">
+    <Column TableName="GLSetup" ColumnName="UsrChkReferenceOnMatch" ColumnType="bool" AllowNull="True" MaxLength="25" DecimalPrecision="2" IsNewColumn="True" IsUnicode="True" />
+    <Column TableName="GLSetup" ColumnName="UsrChkProjectOnMatch" ColumnType="bool" AllowNull="True" MaxLength="25" DecimalPrecision="2" IsNewColumn="True" IsUnicode="True" />
+</Table>

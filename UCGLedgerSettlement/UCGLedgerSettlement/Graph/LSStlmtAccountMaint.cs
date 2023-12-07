@@ -1,8 +1,8 @@
 using PX.Data;
 using PX.Data.BQL.Fluent;
-using HSNFinance.DAC;
+using UCGLedgerSettlement.DAC;
 
-namespace HSNFinance
+namespace UCGLedgerSettlement.Graph
 {
     public class LSStlmtAccountMaint : PXGraph<LSStlmtAccountMaint>
     {

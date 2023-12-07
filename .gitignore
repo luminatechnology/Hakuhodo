@@ -361,6 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/MoveControl
+/UCGLedgerSettlement/UCGLedgerSettlement/Properties
+*.txt
+*.lnk
+/.gitignore
 eGUICustomizationsByBranch/eGUICustomizationsByBranch.sln
 eGUICustomizationsByBranch/binding.txt
 eGUICustomizationsByBranch/Solution.bat

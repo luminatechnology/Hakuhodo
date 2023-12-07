@@ -1,15 +1,21 @@
 using System;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
+using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
+using PX.Data.ReferentialIntegrity.Attributes;
+using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.IN;
-using HSNFinance.DAC;
-using PX.Objects.CS;
+using PX.Objects.PM;
+using PX.Objects.CR;
+using PX.Objects.GL.Attributes;
+using UCGLedgerSettlement.DAC;
 
-namespace HSNFinance
+namespace UCGLedgerSettlement.Graph
 {
     public class LSLedgerStlmtEntry : PXGraph<LSLedgerStlmtEntry>
     {
@@ -34,7 +40,6 @@ namespace HSNFinance
         public PXCancel<LedgerTranFilter> Cancel;  
         public PXFilter<LedgerTranFilter> Filter;
         public SelectFrom<LSLedgerSettlement>.View LedgerStlmt;
-
         //public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
         //                                               .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
         //                         .Where<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>
@@ -71,7 +76,12 @@ namespace HSNFinance
                                         .And<GLTran.curyDebitAmt.IsGreater<decimal0>
                                              .And<GLTran.posted.IsEqual<True>
                                                   .And<Where<GLTran.uOM.IsNotEqual<ZZUOM>
-                                                             .Or<GLTran.uOM.IsNull>>>>>>.View GLTranDebit;
+                                                             .Or<GLTran.uOM.IsNull>>>
+                                                       .And<GLTran.branchID.IsEqual<LedgerTranFilter.branchID.FromCurrent>>
+                                                            .And<Where<GLTran.referenceID.IsEqual<LedgerTranFilter.referenceID.FromCurrent>
+                                                                       .Or<LedgerTranFilter.referenceID.FromCurrent.IsNull>>>
+                                                                .And<Where<GLTran.projectID.IsEqual<LedgerTranFilter.projectID.FromCurrent>
+                                                                       .Or<LedgerTranFilter.projectID.FromCurrent.IsNull>>>>>>.View GLTranDebit;
 
         public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
                                                        .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
@@ -79,7 +89,12 @@ namespace HSNFinance
                                         .And<GLTran.curyCreditAmt.IsGreater<decimal0>
                                              .And<GLTran.posted.IsEqual<True>
                                                   .And<Where<GLTran.uOM.IsNotEqual<ZZUOM>
-                                                             .Or<GLTran.uOM.IsNull>>>>>>.View GLTranCredit;
+                                                             .Or<GLTran.uOM.IsNull>>>
+                                                       .And<GLTran.branchID.IsEqual<LedgerTranFilter.branchID.FromCurrent>>
+                                                            .And<Where<GLTran.referenceID.IsEqual<LedgerTranFilter.referenceID.FromCurrent>
+                                                                       .Or<LedgerTranFilter.referenceID.FromCurrent.IsNull>>>
+                                                                .And<Where<GLTran.projectID.IsEqual<LedgerTranFilter.projectID.FromCurrent>
+                                                                       .Or<LedgerTranFilter.projectID.FromCurrent.IsNull>>>>>>.View GLTranCredit;
         #endregion
 
         #region Actions
@@ -88,9 +103,13 @@ namespace HSNFinance
         [PXUIField(DisplayName = "Match", MapEnableRights = PXCacheRights.Select)]
         public IEnumerable match(PXAdapter adapter)
         {
-            PXLongOperation.StartOperation(this, delegate ()
+            VerifySelectedKeyField();
+
+            var list = GLTranDebit.Cache.Updated.OfType<GLTran>().Where(w => w.Selected == true).ToList();
+
+            PXLongOperation.StartOperation(this, delegate
             {
-                CreateLedgerSettlement();
+                CreateLedgerSettlement(list);
             });
 
             return adapter.Get();
@@ -291,24 +310,28 @@ namespace HSNFinance
 
         #endregion
 
-        #region Methods
-        public virtual void CreateLedgerSettlement()
+        #region Static Methods
+        public static void CreateLedgerSettlement(List<GLTran> trans)
         {
+            LSLedgerStlmtEntry graph = CreateInstance<LSLedgerStlmtEntry>();
+
             using (PXTransactionScope ts = new PXTransactionScope())
             {
                 string stlmtNbr = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
 
-                foreach (GLTran tran in SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
-                                                                                .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
-                                                          .Where<GLTran.selected.IsEqual<True>
-                                                                 .And<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>>
-                                                                           //.And<GLTran.branchID.IsEqual<LedgerTranFilter.branchID.FromCurrent>>
-                                                                           .And<GLTran.released.IsEqual<True>>
-                                                                                .And<GLTran.posted.IsEqual<True>>>.View.Select(this))
+                //foreach (GLTran tran in SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
+                //                                                                .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
+                //                                          .Where<GLTran.selected.IsEqual<True>
+                //                                                 .And<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>>
+                //                                                      .And<GLTran.branchID.IsEqual<LedgerTranFilter.branchID.FromCurrent>>
+                //                                                           .And<GLTran.released.IsEqual<True>>
+                //                                                                .And<GLTran.posted.IsEqual<True>>>.View.Select(graph))
+                for (int i = 0; i < trans.Count; i++)
                 {
+                    GLTran    tran    = trans[i];
                     GLTranExt tranExt = PXCacheEx.GetExtension<GLTranExt>(tran);
 
-                    LSLedgerSettlement row = LedgerStlmt.Cache.CreateInstance() as LSLedgerSettlement;
+                    LSLedgerSettlement row = graph.LedgerStlmt.Cache.CreateInstance() as LSLedgerSettlement;
 
                     row.SettlementNbr = stlmtNbr;
                     row.BranchID = tran.BranchID;
@@ -330,34 +353,76 @@ namespace HSNFinance
                     row.TaskID = tran.TaskID;
                     row.CostCodeID = tran.CostCodeID;
 
-                    row = (LSLedgerSettlement)LedgerStlmt.Insert(row);
+                    row = (LSLedgerSettlement)graph.LedgerStlmt.Insert(row);
 
-                    GLTranDebit.Current = tran;
+                    graph.GLTranDebit.Current = tran;
 
                     decimal debit = tranExt.UsrRmngDebitAmt ?? 0m;
                     decimal credit = tranExt.UsrRmngCreditAmt ?? 0m;
 
-                    UpdateGLTranUOM(GLTranDebit.Cache, (row.OrigCreditAmt + row.OrigDebitAmt == row.SettledCreditAmt + row.SettledDebitAmt || debit + credit == row.SettledCreditAmt + row.SettledDebitAmt) ? "ZZ" : "YY");
+                    UpdateGLTranUOM(graph.GLTranDebit.Cache,
+                                    (row.OrigCreditAmt + row.OrigDebitAmt == row.SettledCreditAmt + row.SettledDebitAmt || debit + credit == row.SettledCreditAmt + row.SettledDebitAmt) ? "ZZ" : "YY");
                 }
 
-                this.Actions.PressSave();
+                graph.Actions.PressSave();
 
                 ts.Complete();
             }
         }
-        #endregion
 
-        #region Static Methods
         /// <summary>
         /// Update GLTran UOM to filter report (LS601000) data source.
         /// </summary>
         /// <param name="cache"></param>
         /// <param name="uOM"></param>
         public static void UpdateGLTranUOM(PXCache cache, string uOM)
-        {        
+        {
             cache.SetValue<GLTran.uOM>(cache.Current, uOM);
 
             cache.Update(cache.Current);
+        }
+        #endregion
+
+        #region Methods
+        protected virtual void VerifySelectedKeyField()
+        {
+            string fieldLabel = null;
+
+            GLSetup    setup    = SelectFrom<GLSetup>.View.Select(this).FirstOrDefault();
+            GLSetupExt setupExt = setup.GetExtension<GLSetupExt>();
+
+            if (setupExt.UsrChkReferenceOnMatch == true)
+            {
+                var debitRefGrp  = GLTranDebit.Cache.Updated.RowCast<GLTran>().Where(w => w.CuryDebitAmt > 0 && w.Selected == true)
+                                                                              .GroupBy(g => g.ReferenceID).Select(s => s.Key).ToList();
+                var creditRefGrp = GLTranCredit.Cache.Updated.RowCast<GLTran>().Where(w => w.CuryCreditAmt > 0 && w.Selected == true)
+                                                                               .GroupBy(g => g.ReferenceID).Select(s => s.Key).ToList();
+
+                if (debitRefGrp.Count != creditRefGrp.Count || debitRefGrp.Except(creditRefGrp).Count() > 0)
+                {
+                    fieldLabel = PXUIFieldAttribute.GetDisplayName<GLTran.referenceID>(GLTranDebit.Cache);
+                }
+            }
+
+            if (setupExt.UsrChkProjectOnMatch == true)
+            {
+                var debitProjGrp  = GLTranDebit.Cache.Updated.OfType<GLTran>().Where(w => w.CuryDebitAmt > 0 && w.Selected == true)
+                                                                              .GroupBy(g => g.ProjectID).Select(s => s.Key).ToList();
+                var creditProjGrp = GLTranDebit.Cache.Updated.OfType<GLTran>().Where(w => w.CuryCreditAmt > 0 && w.Selected == true)
+                                                                              .GroupBy(g => g.ProjectID).Select(s => s.Key).ToList();
+
+                if (debitProjGrp.Count != creditProjGrp.Count || debitProjGrp.Except(creditProjGrp).Count() > 0)
+                {
+                    fieldLabel = PXUIFieldAttribute.GetDisplayName<GLTran.projectID>(GLTranDebit.Cache);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(fieldLabel))
+            {
+                string KeyFieldNoMatch = $"{fieldLabel} Does Not Match In The Transaction.";
+
+                throw new PXException(KeyFieldNoMatch);
+            }
         }
         #endregion
     }
@@ -368,7 +433,7 @@ namespace HSNFinance
     public partial class LedgerTranFilter : IBqlTable
     {
         #region BranchID
-        [Branch()]
+        [Branch(useDefaulting: false)]
         public virtual int? BranchID { get; set; }
         public abstract class branchID : PX.Data.BQL.BqlInt.Field<branchID> { }
         #endregion
@@ -398,6 +463,22 @@ namespace HSNFinance
         [PXUIField(DisplayName = "Balance", IsReadOnly = true)]
         public virtual decimal? BalanceAmt { get; set; }
         public abstract class balanceAmt : PX.Data.BQL.BqlDecimal.Field<balanceAmt> { }
+        #endregion
+
+        #region ReferenceID
+        [PXDBInt()]
+        [PXSelector(typeof(Search<BAccountR.bAccountID>), SubstituteKey = typeof(BAccountR.acctCD))]
+        [CustomerVendorRestrictor]
+        [PXUIField(DisplayName = "Customer/Vendor")]
+        public virtual int? ReferenceID { get; set; }
+        public abstract class referenceID : PX.Data.BQL.BqlInt.Field<referenceID> { }
+        #endregion
+
+        #region ProjectID
+        [ActiveProjectOrContractForGL(AccountFieldType = typeof(stlmtAcctID))]
+        [PXForeignReference(typeof(Field<projectID>.IsRelatedTo<PMProject.contractID>))]
+        public virtual int? ProjectID { get; set; }
+        public abstract class projectID : PX.Data.BQL.BqlInt.Field<projectID> { }
         #endregion
     }
     #endregion

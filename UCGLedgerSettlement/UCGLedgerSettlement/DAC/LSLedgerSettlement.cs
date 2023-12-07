@@ -6,7 +6,7 @@ using PX.Objects.GL;
 using PX.Objects.IN;
 using PX.Objects.PM;
 
-namespace HSNFinance.DAC
+namespace UCGLedgerSettlement.DAC
 {
     [Serializable]
     [PXCacheName("Ledger Settlement")]
