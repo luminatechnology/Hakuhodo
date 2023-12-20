@@ -28,7 +28,7 @@ namespace PX.Objects.EP
                     Sum<EPTimeCardSummary.sun>>>>>>>>>(Base);
             var total = query.SelectSingle();
 
-            e.ReturnValue = PXLocalizer.Localize(GetStatusText(total));
+            e.ReturnValue = PXLocalizer.Localize(GetStatusText(total ?? new EPTimeCardSummary()));
         }
         #endregion
 
