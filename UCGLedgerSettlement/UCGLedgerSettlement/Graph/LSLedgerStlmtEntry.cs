@@ -21,6 +21,7 @@ namespace UCGLedgerSettlement.Graph
     {
         #region Constant String Class & Property
         public const string steldAmtExceedRmngAmt = "Settle Amount Can't Be Greater Than Remaining Amount.";
+        public const string SettledPeriodMustSame = "The Settled Period Must To Be Same That Can't Span Multiple Months.";
 
         public const string ZZ_UOM = "ZZ";
         public const string YY_UOM = "YY";
@@ -40,36 +41,6 @@ namespace UCGLedgerSettlement.Graph
         public PXCancel<LedgerTranFilter> Cancel;  
         public PXFilter<LedgerTranFilter> Filter;
         public SelectFrom<LSLedgerSettlement>.View LedgerStlmt;
-        //public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
-        //                                               .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
-        //                         .Where<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>
-        //                                .And<GLTran.released.IsEqual<True>>
-        //                                    .And<GLTran.posted.IsEqual<True>
-        //                                         .And<Where<GLTran.uOM.IsNotEqual<ZZUOM>.Or<GLTran.uOM.IsNull>>>
-        //                                              .And<Where2<Where<Current<LedgerTranFilter.stlmtAcctType>, Equal<AccountType.asset>,
-        //                                                                And<GLTran.curyDebitAmt, Greater<PX.Objects.CS.decimal0>>>,
-        //                                                          Or<Current<LedgerTranFilter.stlmtAcctType>, Equal<AccountType.liability>,
-        //                                                             And<GLTran.curyCreditAmt, Greater<PX.Objects.CS.decimal0>>>>>>>.View GLTranDebit;
-        /// <remarks>
-        /// Since the standard copy/paste functionality includes GLTran.UOM, the special UOM value for settlement is also copied, affecting the filter incorrectly.
-        ///// </remarks> 
-        //public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
-        //                                               .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
-        //                         .Where<NotExists<Select4<LSLedgerSettlement,
-        //                                                  Where<LSLedgerSettlement.branchID.IsEqual<GLTran.branchID>
-        //                                                       .And<LSLedgerSettlement.lineNbr.IsEqual<GLTran.lineNbr>
-        //                                                            .And<LSLedgerSettlement.module.IsEqual<GLTran.module>
-        //                                                                 .And<LSLedgerSettlement.batchNbr.IsEqual<GLTran.batchNbr>>>>>,
-        //                                                  Aggregate<GroupBy<LSLedgerSettlement.branchID,
-        //                                                                    GroupBy<LSLedgerSettlement.module,
-        //                                                                            GroupBy<LSLedgerSettlement.batchNbr,
-        //                                                                                    GroupBy<LSLedgerSettlement.lineNbr,
-        //                                                                                            Sum<LSLedgerSettlement.settledDebitAmt>>>>>>>.>
-        //                                .And<GLTran.curyDebitAmt.IsGreater<PX.Objects.CS.decimal0>
-        //                                     .And<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>
-        //                                          .And<GLTran.released.IsEqual<True>
-        //                                               .And<GLTran.posted.IsEqual<True>>>>>>.View GLTranDebit;
-
         public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
                                                        .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
                                  .Where<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>
@@ -122,7 +93,9 @@ namespace UCGLedgerSettlement.Graph
         {
             bool hasSelected = !GLTranDebit.View.SelectMulti().ToList().RowCast<GLTran>().First().Selected.GetValueOrDefault();
 
-            foreach (GLTran tran in GLTranDebit.View.SelectMulti().RowCast<GLTran>())
+            int startRow = 0, totalRow = 0;
+            foreach (GLTran tran in GLTranDebit.View.Select(PXView.Currents, PXView.Parameters, PXView.Searches, PXView.SortColumns, PXView.Descendings,
+                                                            GLTranDebit.View.GetExternalFilters(), ref startRow, PXView.MaximumRows, ref totalRow).RowCast<GLTran>())
             {
                 tran.Selected = hasSelected;
 
@@ -139,8 +112,10 @@ namespace UCGLedgerSettlement.Graph
         {
             bool hasSelected = !GLTranCredit.View.SelectMulti().ToList().RowCast<GLTran>().First().Selected.GetValueOrDefault();//.Cache.Cached.RowCast<GLTran>().First().Selected.GetValueOrDefault();
 
-            foreach (GLTran tran in GLTranCredit.View.SelectMulti().RowCast<GLTran>())
-            {
+            int startRow = 0, totalRow = 0;
+            foreach (GLTran tran in GLTranCredit.View.Select(PXView.Currents, PXView.Parameters, PXView.Searches, PXView.SortColumns, PXView.Descendings,
+                                                             GLTranCredit.View.GetExternalFilters(), ref startRow, PXView.MaximumRows, ref totalRow).RowCast<GLTran>())
+            { 
                 tran.Selected = hasSelected;
 
                 GLTranCredit.Cache.Update(tran);
@@ -223,32 +198,44 @@ namespace UCGLedgerSettlement.Graph
             ToggleSettlement.SetEnabled(e.Row != null);
         }
 
-        protected virtual void _(Events.FieldUpdated<GLTran.selected> e)
+        protected virtual void _(Events.FieldUpdated<GLTran, GLTran.selected> e)
         {
-            var row = e.Row as GLTran;
-
-            if (row != null)
+            if (e.Row != null)
             {
-                GLTranExt tranExt = PXCacheEx.GetExtension<GLTranExt>(row);
+                GLTranExt tranExt = e.Row.GetExtension<GLTranExt>();
 
                 if ((bool)e.NewValue == true)
                 {
-                    LSLedgerSettlement settlement = SelectFrom<LSLedgerSettlement>.Where<LSLedgerSettlement.module.IsEqual<@P.AsString>
-                                                                                         .And<LSLedgerSettlement.batchNbr.IsEqual<@P.AsString>
-                                                                                              .And<LSLedgerSettlement.lineNbr.IsEqual<@P.AsInt>>>>
-                                                                                  .AggregateTo<Sum<LSLedgerSettlement.settledCreditAmt,
-                                                                                                   Sum<LSLedgerSettlement.settledDebitAmt>>>.View.Select(this, row.Module, row.BatchNbr, row.LineNbr);
+                    var debitByPeriod  = e.Cache.Updated.RowCast<GLTran>().Where(w => w.DebitAmt  > 0 && w.Selected == true).GroupBy(g => g.FinPeriodID).Select(s => s.Key);
+                    var creditByPeriod = e.Cache.Updated.RowCast<GLTran>().Where(w => w.CreditAmt > 0 && w.Selected == true).GroupBy(g => g.FinPeriodID).Select(s => s.Key);
 
-                    tranExt.UsrRmngDebitAmt   = row.DebitAmt - (settlement?.SettledDebitAmt ?? 0m);
-                    tranExt.UsrRmngCreditAmt  = row.CreditAmt - (settlement?.SettledCreditAmt ?? 0m);
-                    tranExt.UsrSetldDebitAmt  = tranExt.UsrRmngDebitAmt  == 0m ? row.DebitAmt : tranExt.UsrRmngDebitAmt;
-                    tranExt.UsrSetldCreditAmt = tranExt.UsrRmngCreditAmt == 0m ? row.CreditAmt : tranExt.UsrRmngCreditAmt;
+                    if (debitByPeriod.Count() > 1 || creditByPeriod.Count() > 1)
+                    {
+                        // Acuminator disable once PX1051 NonLocalizableString [Justification]
+                        // Cache updated due to FieldVerifying event always delay the current row timing.
+                        e.Cache.RaiseExceptionHandling<GLTran.selected>(e.Row, e.OldValue, new PXSetPropertyException(SettledPeriodMustSame, PXErrorLevel.RowError));
+                        e.Row.Selected = (bool?)e.OldValue;
+                    }
+                    else
+                    {
+                        LSLedgerSettlement settlement = SelectFrom<LSLedgerSettlement>.Where<LSLedgerSettlement.module.IsEqual<@P.AsString>
+                                                                                             .And<LSLedgerSettlement.batchNbr.IsEqual<@P.AsString>
+                                                                                                  .And<LSLedgerSettlement.lineNbr.IsEqual<@P.AsInt>>>>
+                                                                                      .AggregateTo<Sum<LSLedgerSettlement.settledCreditAmt,
+                                                                                                   Sum<LSLedgerSettlement.settledDebitAmt>>>
+                                                                                      .View.Select(this, e.Row.Module, e.Row.BatchNbr, e.Row.LineNbr);
 
-                    Filter.Current.BalanceAmt = (Filter.Current.BalanceAmt ?? 0m) + tranExt.UsrSetldDebitAmt - tranExt.UsrSetldCreditAmt;
+                        tranExt.UsrRmngDebitAmt   = e.Row.DebitAmt - (settlement?.SettledDebitAmt ?? 0m);
+                        tranExt.UsrRmngCreditAmt  = e.Row.CreditAmt - (settlement?.SettledCreditAmt ?? 0m);
+                        tranExt.UsrSetldDebitAmt  = tranExt.UsrRmngDebitAmt == 0m ? e.Row.DebitAmt : tranExt.UsrRmngDebitAmt;
+                        tranExt.UsrSetldCreditAmt = tranExt.UsrRmngCreditAmt == 0m ? e.Row.CreditAmt : tranExt.UsrRmngCreditAmt;
+
+                        Filter.Current.BalanceAmt = (Filter.Current.BalanceAmt ?? 0m) + tranExt.UsrSetldDebitAmt - tranExt.UsrSetldCreditAmt;
+                    }
                 }
-                else
+                else 
                 {
-                    Filter.Current.BalanceAmt = (Filter.Current.BalanceAmt ?? 0m) - tranExt.UsrSetldDebitAmt + tranExt.UsrSetldCreditAmt;
+                    Filter.Current.BalanceAmt = (Filter.Current.BalanceAmt ?? 0m) - (tranExt.UsrSetldDebitAmt ?? 0m) + (tranExt.UsrSetldCreditAmt ?? 0m);
 
                     tranExt.UsrRmngDebitAmt = tranExt.UsrRmngCreditAmt = tranExt.UsrSetldDebitAmt = tranExt.UsrSetldCreditAmt = 0m;
                 }
@@ -319,13 +306,9 @@ namespace UCGLedgerSettlement.Graph
             {
                 string stlmtNbr = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
 
-                //foreach (GLTran tran in SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
-                //                                                                .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
-                //                                          .Where<GLTran.selected.IsEqual<True>
-                //                                                 .And<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>>
-                //                                                      .And<GLTran.branchID.IsEqual<LedgerTranFilter.branchID.FromCurrent>>
-                //                                                           .And<GLTran.released.IsEqual<True>>
-                //                                                                .And<GLTran.posted.IsEqual<True>>>.View.Select(graph))
+                HashSet<GLTran> hash_Debit  = trans.Where(w => w.DebitAmt  > 0m).ToHashSet();
+                HashSet<GLTran> hash_Credit = trans.Where(w => w.CreditAmt > 0m).ToHashSet();
+
                 for (int i = 0; i < trans.Count; i++)
                 {
                     GLTran    tran    = trans[i];
@@ -333,35 +316,37 @@ namespace UCGLedgerSettlement.Graph
 
                     LSLedgerSettlement row = graph.LedgerStlmt.Cache.CreateInstance() as LSLedgerSettlement;
 
-                    row.SettlementNbr = stlmtNbr;
-                    row.BranchID = tran.BranchID;
-                    row.LineNbr = tran.LineNbr;
-                    row.Module = tran.Module;
-                    row.BatchNbr = tran.BatchNbr;
-                    row.LedgerID = tran.LedgerID;
-                    row.AccountID = tran.AccountID;
-                    row.SubID = tran.SubID;
-                    row.OrigCreditAmt = tran.CreditAmt;
-                    row.OrigDebitAmt = tran.DebitAmt;
+                    row.SettlementNbr    = stlmtNbr;
+                    row.BranchID         = tran.BranchID;
+                    row.LineNbr          = tran.LineNbr;
+                    row.Module           = tran.Module;
+                    row.BatchNbr         = tran.BatchNbr;
+                    row.LedgerID         = tran.LedgerID;
+                    row.AccountID        = tran.AccountID;
+                    row.SubID            = tran.SubID;
+                    row.OrigCreditAmt    = tran.CreditAmt;
+                    row.OrigDebitAmt     = tran.DebitAmt;
                     row.SettledCreditAmt = tranExt.UsrSetldCreditAmt;
-                    row.SettledDebitAmt = tranExt.UsrSetldDebitAmt;
-                    row.TranDesc = tran.TranDesc;
-                    row.TranDate = tran.TranDate;
-                    row.RefNbr = tran.RefNbr;
-                    row.InventoryID = tran.InventoryID;
-                    row.ProjectID = tran.ProjectID;
-                    row.TaskID = tran.TaskID;
-                    row.CostCodeID = tran.CostCodeID;
+                    row.SettledDebitAmt  = tranExt.UsrSetldDebitAmt;
+                    row.TranDesc         = tran.TranDesc;
+                    row.TranDate         = tran.TranDate;
+                    row.RefNbr           = tran.RefNbr;
+                    row.InventoryID      = tran.InventoryID;
+                    row.ProjectID        = tran.ProjectID;
+                    row.TaskID           = tran.TaskID;
+                    row.CostCodeID       = tran.CostCodeID;
+                    row.SettledPeriodID  = tran.DebitAmt > 0m ? hash_Credit.FirstOrDefault().FinPeriodID : hash_Debit.FirstOrDefault().FinPeriodID;
 
-                    row = (LSLedgerSettlement)graph.LedgerStlmt.Insert(row);
+                    row = graph.LedgerStlmt.Insert(row);
 
                     graph.GLTranDebit.Current = tran;
 
-                    decimal debit = tranExt.UsrRmngDebitAmt ?? 0m;
+                    decimal debit  = tranExt.UsrRmngDebitAmt ?? 0m;
                     decimal credit = tranExt.UsrRmngCreditAmt ?? 0m;
 
                     UpdateGLTranUOM(graph.GLTranDebit.Cache,
-                                    (row.OrigCreditAmt + row.OrigDebitAmt == row.SettledCreditAmt + row.SettledDebitAmt || debit + credit == row.SettledCreditAmt + row.SettledDebitAmt) ? "ZZ" : "YY");
+                                    (row.OrigCreditAmt + row.OrigDebitAmt == row.SettledCreditAmt + row.SettledDebitAmt || 
+                                     debit + credit == row.SettledCreditAmt + row.SettledDebitAmt) ? ZZ_UOM : YY_UOM);
                 }
 
                 graph.Actions.PressSave();
