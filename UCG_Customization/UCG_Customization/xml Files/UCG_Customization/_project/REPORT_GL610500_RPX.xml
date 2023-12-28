@@ -1679,7 +1679,7 @@
                 </Items>
             </PageHeader>
             <Detail Name="detailSection1">
-                <Height>0.37037cm</Height>
+                <Height>2.01058cm</Height>
                 <Variables>
                     <ReportVariable>
                         <Name>DebitTotal</Name>
@@ -1762,7 +1762,7 @@
                             <column>6</column>
                         </Excel>
                         <Location>448px, 0px</Location>
-                        <Size>300px, 14px</Size>
+                        <Size>300px, 74px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
@@ -2344,7 +2344,8 @@
                 </Items>
             </ReportHeader>
         </Sections>
-        <Items />
+        <Items>
+        </Items>
         <Groups>
             <Group Name="group1">
                 <Grouping>
@@ -2359,7 +2360,7 @@
                 <Headers>
                     <Header Name="groupHeaderSection1">
                         <GridSize>8px, 8px</GridSize>
-                        <Height>24px</Height>
+                        <Height>1.79894cm</Height>
                         <StyleName>GroupHighlight</StyleName>
                         <Items>
                             <TextBox Name="textBox23">
@@ -2404,7 +2405,7 @@
                                     <column>6</column>
                                 </Excel>
                                 <Location>368px, 4px</Location>
-                                <Size>304px, 14px</Size>
+                                <Size>304px, 64px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[Batch.Description]</Value>
                             </TextBox>
@@ -2730,7 +2731,6 @@
                                 <Value>=[GLTran.ProjectID_description]</Value>
                             </TextBox>
                             <TextBox Name="textBox89">
-                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>3</column>
                                 </Excel>
