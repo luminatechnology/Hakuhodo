@@ -73,7 +73,7 @@
     <Compile Include="DAC_Extension\EPExpenseClaim.cs" />
     <Compile Include="DAC_Extension\EPDepartment.cs" />
     <Compile Include="DAC_Extension\EPExpenseClaimDetailsUCGExt.cs" />
-    <Compile Include="DAC_Extension\EPTimeCardSummaryUCGExt.cs" />
+    <Compile Include="DAC_Extension\EPTimeCardUCGExt.cs" />
     <Compile Include="DAC_Extension\InventoryItemUCGExt.cs" />
     <Compile Include="DAC_Extension\PMProjectUCGExt.cs" />
     <Compile Include="DAC_Extension\POLineUCGExt.cs" />

@@ -1695,7 +1695,7 @@
                 </Items>
             </PageHeader>
             <Detail Name="detailSection1">
-                <Height>76px</Height>
+                <Height>14px</Height>
                 <PrintEmpty>False</PrintEmpty>
                 <Variables>
                     <ReportVariable>
@@ -1768,7 +1768,7 @@
                             <column>6</column>
                         </Excel>
                         <Location>436px, 0px</Location>
-                        <Size>300px, 74px</Size>
+                        <Size>300px, 14px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
@@ -1950,7 +1950,7 @@
                         <Location>348px, 4px</Location>
                         <Size>316px, 14px</Size>
                         <StyleName>Heading 1</StyleName>
-                        <Value>Description</Value>
+                        <Value>Description1</Value>
                     </TextBox>
                     <TextBox Name="textBox17">
                         <Excel>
@@ -2356,8 +2356,7 @@
                 </Items>
             </ReportHeader>
         </Sections>
-        <Items>
-        </Items>
+        <Items />
         <Groups>
             <Group Name="group1">
                 <Grouping>
@@ -2372,10 +2371,11 @@
                 <Headers>
                     <Header Name="groupHeaderSection1">
                         <GridSize>8px, 8px</GridSize>
-                        <Height>68px</Height>
+                        <Height>24px</Height>
                         <StyleName>GroupHighlight</StyleName>
                         <Items>
                             <TextBox Name="textBox19">
+                                <CanGrow>True</CanGrow>
                                 <Excel>
                                     <column>2</column>
                                 </Excel>
@@ -2404,12 +2404,13 @@
                             </TextBox>
                             <TextBox Name="textBox22">
                                 <CanGrow>True</CanGrow>
+                                <CanSplit>True</CanSplit>
                                 <ConvertHtmlToText>True</ConvertHtmlToText>
                                 <Excel>
                                     <column>6</column>
                                 </Excel>
                                 <Location>348px, 4px</Location>
-                                <Size>316px, 64px</Size>
+                                <Size>316px, 14px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[Batch.Description]</Value>
                             </TextBox>

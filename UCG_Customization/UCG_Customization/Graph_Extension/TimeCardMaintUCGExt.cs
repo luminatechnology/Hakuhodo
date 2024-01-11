@@ -11,45 +11,37 @@ namespace PX.Objects.EP
     public class TimeCardMaintUCGExt : PXGraphExtension<TimeCardMaint>
     {
         #region Event
-
-        public virtual void _(Events.FieldSelecting<EPTimeCardSummaryWithInfo, EPTimeCardSummaryUCGExt.statusText> e)
+        public virtual void _(Events.RowSelected<EPTimeCard> e)
         {
             if (e.Row == null) return;
-            var query =
-                new PXSelectGroupBy<EPTimeCardSummary,
-                Where<EPTimeCardSummary.timeCardCD, Equal<Current<EPTimeCard.timeCardCD>>>,
-                Aggregate<
-                    Sum<EPTimeCardSummary.mon,
-                    Sum<EPTimeCardSummary.tue,
-                    Sum<EPTimeCardSummary.wed,
-                    Sum<EPTimeCardSummary.thu,
-                    Sum<EPTimeCardSummary.fri,
-                    Sum<EPTimeCardSummary.sat,
-                    Sum<EPTimeCardSummary.sun>>>>>>>>>(Base);
-            var total = query.SelectSingle();
-
-            e.ReturnValue = PXLocalizer.Localize(GetStatusText(total ?? new EPTimeCardSummary()));
+            SetSummary();
         }
+
         #endregion
 
         #region Method
-        public virtual string GetStatusText(EPTimeCardSummary sum)
+        public virtual void SetSummary()
         {
-            string mon = IntToTimeStr(sum.Mon ?? 0);
-            string tue = IntToTimeStr(sum.Tue ?? 0);
-            string wed = IntToTimeStr(sum.Wed ?? 0);
-            string thu = IntToTimeStr(sum.Thu ?? 0);
-            string fri = IntToTimeStr(sum.Fri ?? 0);
-            string sat = IntToTimeStr(sum.Sat ?? 0);
-            string sun = IntToTimeStr(sum.Sun ?? 0);
-            return $"Daily time summary: Mon:{mon}, Tue:{tue}, Wed:{wed}, Thu:{thu}, Fri:{fri}, Sat:{sat}, Sun:{sun}";
-        }
-
-        public virtual string IntToTimeStr(int time)
-        {
-            int hh = time / 60;
-            int mm = time % 60;
-            return $"{hh.ToString().PadLeft(2, '0')}:{mm.ToString().PadLeft(2, '0')}";
+            var doc = Base.Document.Current;
+            var docExt = doc.GetExtension<EPTimeCardUCGExt>();
+            int? mon = 0, tue = 0, wed = 0, thu = 0, fri = 0, sat = 0, sun = 0;
+            foreach (EPTimeCardSummary sum in Base.Summary.Select())
+            {
+                mon += sum.Mon ?? 0;
+                tue += sum.Tue ?? 0;
+                wed += sum.Wed ?? 0;
+                thu += sum.Thu ?? 0;
+                fri += sum.Fri ?? 0;
+                sat += sum.Sat ?? 0;
+                sun += sum.Sun ?? 0;
+            }
+            docExt.Mon = mon;
+            docExt.Tue = tue;
+            docExt.Wed = wed;
+            docExt.Thu = thu;
+            docExt.Fri = fri;
+            docExt.Sat = sat;
+            docExt.Sun = sun;
         }
         #endregion
     }
