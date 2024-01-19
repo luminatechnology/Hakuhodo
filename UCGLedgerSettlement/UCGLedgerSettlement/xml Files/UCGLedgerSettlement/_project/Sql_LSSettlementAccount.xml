@@ -5,6 +5,8 @@
   <col name="AccountCD" type="NVarChar(10)" nullable="true" />
   <col name="Type" type="Char(1)" nullable="true" />
   <col name="Description" type="NVarChar(60)" nullable="true" />
+  <col name="ChkReferenceOnMatch" type="Bit" nullable="true" />
+  <col name="ChkProjectOnMatch" type="Bit" nullable="true" />
   <col name="CreatedByID" type="UniqueIdentifier" />
   <col name="CreatedByScreenID" type="Char(8)" />
   <col name="CreatedDateTime" type="DateTime" />
@@ -13,7 +15,6 @@
   <col name="LastModifiedDateTime" type="DateTime" />
   <col name="NoteID" type="UniqueIdentifier" nullable="true" />
   <col name="tstamp" type="Timestamp" />
-  <col name="Active" type="Bit" nullable="true" />
   <index name="LSSettlementAccount_NoteID" unique="true">
     <col name="NoteID" />
     <col name="CompanyID" />

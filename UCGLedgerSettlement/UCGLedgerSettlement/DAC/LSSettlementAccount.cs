@@ -1,5 +1,6 @@
 ﻿using System;
 using PX.Data;
+using PX.Data.ReferentialIntegrity.Attributes;
 using PX.Objects.GL;
 
 namespace UCGLedgerSettlement.DAC
@@ -10,6 +11,13 @@ namespace UCGLedgerSettlement.DAC
     [PXCacheName("Settlement Account")]
     public class LSSettlementAccount : PX.Data.IBqlTable //Account
     {
+        #region Keys
+        public class PK : PrimaryKeyOf<LSSettlementAccount>.By<accountID>
+        {
+            public static LSSettlementAccount Find(PXGraph graph, int? accountID) => FindBy(graph, accountID);
+        }
+        #endregion
+
         #region AccountID	
         //[Account(DisplayName = "Account", IsKey = true,
         //               Visibility = PXUIVisibility.Visible, 
@@ -46,6 +54,21 @@ namespace UCGLedgerSettlement.DAC
 		[PXFormula(typeof(Default<accountID>))]
 		public virtual string Description { get; set; }
 		public abstract class description : PX.Data.BQL.BqlString.Field<description> { }
+        #endregion
+
+        #region ChkReferenceOnMatch
+        [PXDBBool]
+        [PXUIField(DisplayName = "Check Reference")]
+        public virtual bool? ChkReferenceOnMatch { get; set; }
+        public abstract class chkReferenceOnMatch : PX.Data.BQL.BqlBool.Field<chkReferenceOnMatch> { }
+        #endregion
+
+        #region ChkProjectOnMatch
+        [PXDBBool]
+        [PXUIField(DisplayName = "Check Project")]
+        [PXDefault(true, PersistingCheck = PXPersistingCheck.Nothing)]
+        public virtual bool? ChkProjectOnMatch { get; set; }
+        public abstract class chkProjectOnMatch : PX.Data.BQL.BqlBool.Field<chkProjectOnMatch> { }
         #endregion
 
         #region CreatedByID
