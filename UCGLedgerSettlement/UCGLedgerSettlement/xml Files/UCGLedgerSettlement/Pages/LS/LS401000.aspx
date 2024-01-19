@@ -19,15 +19,16 @@
 					<px:PXGridColumn DataField="LineNbr" Width="70" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="Module" Width="70" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="LedgerID" Width="70" ></px:PXGridColumn>
-					<px:PXGridColumn DataField="AccountID" Width="120" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="AccountID" Width="100" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="AccountID_description" Width="180" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="SubID" Width="140" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="ReferenceID" Width="140" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="OrigDebitAmt" Width="100" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="OrigCreditAmt" Width="100" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="SettledDebitAmt" Width="100" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="SettledCreditAmt" Width="100" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="TranDesc" Width="280" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
-					<px:PXGridColumn DataField="RefNbr" Width="140" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="InventoryID" Width="70" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="ProjectID" Width="70" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="TaskID" Width="70" ></px:PXGridColumn>

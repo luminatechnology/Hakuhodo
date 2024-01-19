@@ -1,8 +1,11 @@
 using System;
 using PX.Data;
+using PX.Data.BQL.Fluent;
 using PX.Data.ReferentialIntegrity.Attributes;
 using PX.Objects.CM;
+using PX.Objects.CR;
 using PX.Objects.GL;
+using PX.Objects.GL.Attributes;
 using PX.Objects.IN;
 using PX.Objects.PM;
 
@@ -224,7 +227,25 @@ namespace UCGLedgerSettlement.DAC
         [PXDBTimestamp()]
         public virtual byte[] Tstamp { get; set; }
         public abstract class tstamp : PX.Data.BQL.BqlByteArray.Field<tstamp> { }
-        #endregion       
+        #endregion
+
+        #region ReferenceID
+        /// <summary>
+        /// Identifier of the <see cref="PX.Objects.AR.Customer">Customer</see> or <see cref="PX.Objects.AP.Vendor">Vendor</see>
+        /// associated with the transaction.
+        /// This field is populated when a document is released in Accounts Receivable or Accounts Payable module.
+        /// </summary>
+        [PXInt()]
+        [PXSelector(typeof(Search<BAccountR.bAccountID>), SubstituteKey = typeof(BAccountR.acctCD))]
+        //[CustomerVendorRestrictor]
+        [PXUIField(DisplayName = "Customer/Vendor", Enabled = false)]
+        [PXDBScalar(typeof(SelectFrom<GLTran>.Where<GLTran.module.IsEqual<module>
+                                                    .And<GLTran.batchNbr.IsEqual<batchNbr>
+                                                         .And<GLTran.lineNbr.IsEqual<lineNbr>>>>
+                                             .SearchFor<GLTran.referenceID>))]
+        public virtual int? ReferenceID { get; set; }
+        public abstract class referenceID : PX.Data.BQL.BqlInt.Field<referenceID> { }
+        #endregion
     }
 
     public struct LedgerStlmtKey
