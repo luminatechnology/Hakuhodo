@@ -60,7 +60,6 @@
   <ItemGroup>
     <Compile Include="DAC\LSLedgerSettlement.cs" />
     <Compile Include="DAC\LSSettlementAccount.cs" />
-    <Compile Include="DAC_Extensions\GLSetupExtensions.cs" />
     <Compile Include="DAC_Extensions\GLTranExtensions.cs" />
     <Compile Include="Descriptor\UtilFunctions.cs" />
     <Compile Include="Graph\LSLedgerStlmtEntry.cs" />

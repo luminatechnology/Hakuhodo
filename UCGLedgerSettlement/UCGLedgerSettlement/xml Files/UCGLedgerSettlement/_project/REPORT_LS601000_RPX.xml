@@ -11,9 +11,9 @@
             <item>12</item>
             <item>14</item>
             <item>17</item>
-            <item>41</item>
             <item>16</item>
-            <item>17</item>
+            <item>16</item>
+            <item>41</item>
             <item>16</item>
         </ExcelColumns>
         <ExcelMode>Manual</ExcelMode>
@@ -23,8 +23,20 @@
                 <Value>@LedgerID</Value>
             </FilterExp>
             <FilterExp>
+                <Condition>LessOrEqual</Condition>
+                <DataField>GLHistoryByPeriod.FinPeriodID</DataField>
+                <Value>@EndPeriod</Value>
+            </FilterExp>
+            <FilterExp>
                 <DataField>GLHistoryByPeriod.AccountID</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
                 <Value>@AccountCD</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@AccountCD</DataField>
             </FilterExp>
             <FilterExp>
                 <Condition>BelongsTo</Condition>
@@ -62,9 +74,15 @@
                 <DataField>@Module</DataField>
             </FilterExp>
             <FilterExp>
-                <Condition>LessOrEqual</Condition>
-                <DataField>GLHistoryByPeriod.FinPeriodID</DataField>
-                <Value>@EndPeriod</Value>
+                <DataField>GLTran.ProjectID</DataField>
+                <OpenBraces>1</OpenBraces>
+                <Operator>Or</Operator>
+                <Value>@ProjectCD</Value>
+            </FilterExp>
+            <FilterExp>
+                <CloseBraces>1</CloseBraces>
+                <Condition>IsNull</Condition>
+                <DataField>@ProjectCD</DataField>
             </FilterExp>
         </Filters>
         <GridSize>4px, 4px</GridSize>
@@ -113,9 +131,16 @@
             <ReportParameter>
                 <ColumnSpan>2</ColumnSpan>
                 <Name>AccountCD</Name>
+                <Nullable>True</Nullable>
                 <Prompt>Account</Prompt>
-                <Required>True</Required>
                 <ViewName>=Report.GetFieldSchema('LedgerTranFilter.StlmtAcctID')#010;/*Report.GetFieldSchema('GLTran.AccountID')*/</ViewName>
+            </ReportParameter>
+            <ReportParameter>
+                <ColumnSpan>2</ColumnSpan>
+                <Name>ProjectCD</Name>
+                <Nullable>True</Nullable>
+                <Prompt>Project</Prompt>
+                <ViewName>=Report.GetFieldSchema('PMTask.ProjectID')</ViewName>
             </ReportParameter>
             <ReportParameter>
                 <ColumnSpan>2</ColumnSpan>
@@ -230,6 +255,17 @@
                     <RelationRow>
                         <ChildField>LedgerID</ChildField>
                         <ParentField>LedgerID</ParentField>
+                    </RelationRow>
+                </Links>
+                <ParentName>GLHistoryByPeriod</ParentName>
+            </ReportRelation>
+            <ReportRelation>
+                <ChildName>LSSettlementAccount</ChildName>
+                <JoinType>Inner</JoinType>
+                <Links>
+                    <RelationRow>
+                        <ChildField>AccountID</ChildField>
+                        <ParentField>AccountID</ParentField>
                     </RelationRow>
                 </Links>
                 <ParentName>GLHistoryByPeriod</ParentName>
@@ -1890,9 +1926,85 @@
                 </Fields>
                 <FullName>UCGLedgerSettlement.DAC.LSLedgerSettlement</FullName>
             </ReportTable>
+            <ReportTable Name="LSSettlementAccount">
+                <Fields>
+                    <ReportField Name="AccountCD">
+                    </ReportField>
+                    <ReportField Name="AccountID">
+                    </ReportField>
+                    <ReportField Name="AccountID_Segment1">
+                    </ReportField>
+                    <ReportField Name="ChkProjectOnMatch">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="ChkReferenceOnMatch">
+                        <DataType>Boolean</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedByID">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_displayName">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_Creator_Username">
+                    </ReportField>
+                    <ReportField Name="CreatedByID_description">
+                    </ReportField>
+                    <ReportField Name="CreatedByScreenID">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="CreatedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="Description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_description">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_displayName">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByID_Modifier_Username">
+                    </ReportField>
+                    <ReportField Name="LastModifiedByScreenID">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime">
+                        <DataType>DateTime</DataType>
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Day">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Hour">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Month">
+                    </ReportField>
+                    <ReportField Name="LastModifiedDateTime_Quarter">
+                    </ReportField>
+                    <ReportField Name="NoteActivity">
+                    </ReportField>
+                    <ReportField Name="NoteFiles">
+                    </ReportField>
+                    <ReportField Name="NoteID">
+                        <DataType>Object</DataType>
+                    </ReportField>
+                    <ReportField Name="NoteImages">
+                    </ReportField>
+                    <ReportField Name="NoteText">
+                    </ReportField>
+                    <ReportField Name="Tstamp">
+                    </ReportField>
+                    <ReportField Name="Type">
+                    </ReportField>
+                </Fields>
+                <FullName>UCGLedgerSettlement.DAC.LSSettlementAccount</FullName>
+            </ReportTable>
         </Tables>
         <Version>20201103</Version>
-        <Width>1434.57996px</Width>
+        <Width>1520px</Width>
         <Sections>
             <PageHeader Name="pageHeaderSection1">
                 <ExcelMargin>
@@ -2221,10 +2333,10 @@
                     </TextBox>
                     <TextBox Name="textBox23">
                         <Excel>
-                            <column>14</column>
+                            <column>15</column>
                         </Excel>
                         <Format>=[GLTran.DebitAmt.Format]</Format>
-                        <Location>1220px, 0px</Location>
+                        <Location>1304px, 0px</Location>
                         <ProcessOrder>Always</ProcessOrder>
                         <Size>100px, 16px</Size>
                         <Style>
@@ -2246,10 +2358,10 @@
                     </TextBox>
                     <TextBox Name="textBox28">
                         <Excel>
-                            <column>12</column>
+                            <column>13</column>
                         </Excel>
                         <Format>=[GLTran.DebitAmt.Format]</Format>
-                        <Location>1036px, 0px</Location>
+                        <Location>1120px, 0px</Location>
                         <ProcessOrder>Always</ProcessOrder>
                         <Size>90px, 16px</Size>
                         <Style>
@@ -2284,19 +2396,19 @@
                     <TextBox Name="textBox35">
                         <CanGrow>True</CanGrow>
                         <Excel>
-                            <column>9</column>
+                            <column>10</column>
                         </Excel>
-                        <Location>632px, 0px</Location>
+                        <Location>716px, 0px</Location>
                         <Size>220px, 16px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[GLTran.TranDesc]</Value>
                     </TextBox>
                     <TextBox Name="textBox36">
                         <Excel>
-                            <column>10</column>
+                            <column>11</column>
                         </Excel>
                         <Format>=[GLTran.DebitAmt.Format]</Format>
-                        <Location>852px, 0px</Location>
+                        <Location>936px, 0px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2306,10 +2418,10 @@
                     </TextBox>
                     <TextBox Name="textBox37">
                         <Excel>
-                            <column>11</column>
+                            <column>12</column>
                         </Excel>
                         <Format>=[GLTran.CreditAmt.Format]</Format>
-                        <Location>944px, 0px</Location>
+                        <Location>1028px, 0px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2328,10 +2440,10 @@
                     </TextBox>
                     <TextBox Name="textBox64">
                         <Excel>
-                            <column>13</column>
+                            <column>14</column>
                         </Excel>
                         <Format>=[GLTran.CreditAmt.Format]</Format>
-                        <Location>1128px, 0px</Location>
+                        <Location>1212px, 0px</Location>
                         <ProcessOrder>Always</ProcessOrder>
                         <Size>90px, 16px</Size>
                         <Style>
@@ -2341,12 +2453,21 @@
                         <Value>=$SettledCredit</Value>
                         <Visible>False</Visible>
                     </TextBox>
+                    <TextBox Name="textBox68">
+                        <Excel>
+                            <column>9</column>
+                        </Excel>
+                        <Location>630px, 0px</Location>
+                        <Size>86px, 16px</Size>
+                        <StyleName>Normal</StyleName>
+                        <Value>=[GLTran.ProjectID]</Value>
+                    </TextBox>
                     <TextBox Name="textBox81">
                         <Excel>
-                            <column>15</column>
+                            <column>16</column>
                         </Excel>
                         <Format>=[GLTran.DebitAmt.Format]</Format>
-                        <Location>1324px, 0px</Location>
+                        <Location>1404px, 0px</Location>
                         <Size>100px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2358,7 +2479,7 @@
                         <Excel>
                             <column>15</column>
                         </Excel>
-                        <Location>1424px, 0px</Location>
+                        <Location>1504px, 0px</Location>
                         <Size>8px, 16px</Size>
                         <Style>
                             <Color>Red</Color>
@@ -2375,7 +2496,7 @@
                         <Location>4px, 0px</Location>
                         <Size>92px, 16px</Size>
                         <StyleName>Normal</StyleName>
-                        <Value>=RTrim(Report.ExtToUI('GLTran.AccountID', @AccountCD)) + ' - ' + Report.GetDescription( 'GLTran.AccountID', @AccountCD )</Value>
+                        <Value>=[GLTran.AccountID] + ' - ' + [GLTran.AccountID_Account_description]#010;/*RTrim(Report.ExtToUI('GLTran.AccountID', @AccountCD)) + ' - ' + Report.GetDescription( 'GLTran.AccountID', @AccountCD )*/</Value>
                     </TextBox>
                 </Items>
             </Detail>
@@ -2477,9 +2598,9 @@
                     </TextBox>
                     <TextBox Name="textBox43">
                         <Excel>
-                            <column>9</column>
+                            <column>10</column>
                         </Excel>
-                        <Location>632px, 4px</Location>
+                        <Location>716px, 4px</Location>
                         <Size>220px, 16px</Size>
                         <StyleName>Heading 1</StyleName>
                         <Value>Description</Value>
@@ -2495,9 +2616,9 @@
                     </TextBox>
                     <TextBox Name="textBox5">
                         <Excel>
-                            <column>10</column>
+                            <column>11</column>
                         </Excel>
-                        <Location>852px, 4px</Location>
+                        <Location>936px, 4px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2507,9 +2628,9 @@
                     </TextBox>
                     <TextBox Name="textBox6">
                         <Excel>
-                            <column>12</column>
+                            <column>13</column>
                         </Excel>
-                        <Location>1036px, 4px</Location>
+                        <Location>1120px, 4px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2519,9 +2640,9 @@
                     </TextBox>
                     <TextBox Name="textBox65">
                         <Excel>
-                            <column>11</column>
+                            <column>12</column>
                         </Excel>
-                        <Location>944px, 4px</Location>
+                        <Location>1028px, 4px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2531,9 +2652,9 @@
                     </TextBox>
                     <TextBox Name="textBox66">
                         <Excel>
-                            <column>13</column>
+                            <column>14</column>
                         </Excel>
-                        <Location>1128px, 4px</Location>
+                        <Location>1212px, 4px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2541,11 +2662,20 @@
                         <StyleName>Heading 1</StyleName>
                         <Value>Settled Credit</Value>
                     </TextBox>
+                    <TextBox Name="textBox67">
+                        <Excel>
+                            <column>9</column>
+                        </Excel>
+                        <Location>630px, 4px</Location>
+                        <Size>86px, 16px</Size>
+                        <StyleName>Heading 1</StyleName>
+                        <Value>Project</Value>
+                    </TextBox>
                     <TextBox Name="textBox7">
                         <Excel>
-                            <column>15</column>
+                            <column>16</column>
                         </Excel>
-                        <Location>1324px, 4px</Location>
+                        <Location>1404px, 4px</Location>
                         <Size>100px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2561,9 +2691,9 @@
                     </TextBox>
                     <TextBox Name="textBox85">
                         <Excel>
-                            <column>14</column>
+                            <column>15</column>
                         </Excel>
-                        <Location>1220px, 4px</Location>
+                        <Location>1304px, 4px</Location>
                         <Size>100px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2594,18 +2724,18 @@
                 <Items>
                     <TextBox Name="textBox25">
                         <Excel>
-                            <column>15</column>
+                            <column>16</column>
                         </Excel>
-                        <Location>1324px, 0px</Location>
+                        <Location>1404px, 0px</Location>
                         <Size>100px, 16px</Size>
                         <StyleName>Normal</StyleName>
                     </TextBox>
                     <TextBox Name="textBox44">
                         <Excel>
-                            <column>12</column>
+                            <column>13</column>
                         </Excel>
                         <Format>=[GLTran.DebitAmt.Format]</Format>
-                        <Location>1036px, 0px</Location>
+                        <Location>1120px, 0px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2637,10 +2767,10 @@
                     </TextBox>
                     <TextBox Name="textBox49">
                         <Excel>
-                            <column>13</column>
+                            <column>14</column>
                         </Excel>
                         <Format>=[GLTran.CreditAmt.Format]</Format>
-                        <Location>1128px, 0px</Location>
+                        <Location>1212px, 0px</Location>
                         <Size>90px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2671,7 +2801,7 @@
                         <Excel>
                             <column>8</column>
                         </Excel>
-                        <Location>672px, 0px</Location>
+                        <Location>720px, 0px</Location>
                         <Size>44px, 16px</Size>
                         <StyleName>Normal</StyleName>
                         <Value>=[Batch.CuryID]</Value>
@@ -2680,7 +2810,7 @@
                         <Excel>
                             <column>9</column>
                         </Excel>
-                        <Location>716px, 0px</Location>
+                        <Location>764px, 0px</Location>
                         <Size>100px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2692,7 +2822,7 @@
                         <Excel>
                             <column>10</column>
                         </Excel>
-                        <Location>816px, 0px</Location>
+                        <Location>864px, 0px</Location>
                         <Size>100px, 16px</Size>
                         <Style>
                             <TextAlign>Right</TextAlign>
@@ -2705,7 +2835,7 @@
                             <column>11</column>
                         </Excel>
                         <Format>=[GLTran.CuryDebitAmt.Format]</Format>
-                        <Location>916px, 0px</Location>
+                        <Location>964px, 0px</Location>
                         <ProcessOrder>WhilePrint</ProcessOrder>
                         <Size>100px, 16px</Size>
                         <Style>
@@ -2769,10 +2899,10 @@
                         <Items>
                             <TextBox Name="textBox34">
                                 <Excel>
-                                    <column>15</column>
+                                    <column>16</column>
                                 </Excel>
                                 <Format>=[GLTran.CuryDebitAmt.Format]</Format>
-                                <Location>1324px, 0px</Location>
+                                <Location>1404px, 0px</Location>
                                 <ProcessOrder>WhilePrint</ProcessOrder>
                                 <Size>100px, 16px</Size>
                                 <Style>
@@ -2783,9 +2913,9 @@
                             </TextBox>
                             <TextBox Name="textBox42">
                                 <Excel>
-                                    <column>9</column>
+                                    <column>10</column>
                                 </Excel>
-                                <Location>632px, 0px</Location>
+                                <Location>716px, 0px</Location>
                                 <Size>220px, 16px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>Beginning Balance:</Value>
@@ -2800,19 +2930,19 @@
                         <Items>
                             <TextBox Name="textBox50">
                                 <Excel>
-                                    <column>9</column>
+                                    <column>10</column>
                                 </Excel>
-                                <Location>688px, 0px</Location>
+                                <Location>888px, 0px</Location>
                                 <Size>44px, 16px</Size>
                                 <StyleName>Normal</StyleName>
                                 <Value>=[Account.CuryID]</Value>
                             </TextBox>
                             <TextBox Name="textBox53">
                                 <Excel>
-                                    <column>15</column>
+                                    <column>16</column>
                                 </Excel>
                                 <Format>=[GLTran.CuryDebitAmt.Format]</Format>
-                                <Location>1324px, 0px</Location>
+                                <Location>1404px, 0px</Location>
                                 <ProcessOrder>WhilePrint</ProcessOrder>
                                 <Size>100px, 16px</Size>
                                 <Style>
@@ -2833,17 +2963,17 @@
                         <Items>
                             <Line Name="line1">
                                 <Excel>
-                                    <column>9</column>
+                                    <column>10</column>
                                     <width>7</width>
                                 </Excel>
-                                <Location>632px, 0px</Location>
+                                <Location>720px, 0px</Location>
                                 <Size>794px, 1px</Size>
                             </Line>
                             <TextBox Name="textBox51">
                                 <Excel>
-                                    <column>9</column>
+                                    <column>10</column>
                                 </Excel>
-                                <Location>632px, 4px</Location>
+                                <Location>716px, 4px</Location>
                                 <Size>220px, 16px</Size>
                                 <StyleName>Heading 1</StyleName>
                                 <Value>= IIF( [@Module] = null, #010;IIF (Next([GLHistoryByPeriod.FinPeriodID.Raw]) = null, 'Account Total:', Left([GLHistoryByPeriod.FinPeriodID.Raw],4) + ' Total:')#010;, [GLHistoryByPeriod.FinPeriodID] + ' Total:')</Value>
@@ -2853,7 +2983,7 @@
                                     <column>15</column>
                                 </Excel>
                                 <Format>=[GLTran.DebitAmt.Format]</Format>
-                                <Location>1324px, 4px</Location>
+                                <Location>1404px, 4px</Location>
                                 <ProcessOrder>Always</ProcessOrder>
                                 <Size>100px, 16px</Size>
                                 <Style>
