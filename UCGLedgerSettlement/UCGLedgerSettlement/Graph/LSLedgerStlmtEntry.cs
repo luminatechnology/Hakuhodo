@@ -206,18 +206,21 @@ namespace UCGLedgerSettlement.Graph
 
                 if ((bool)e.NewValue == true)
                 {
-                    var debitByPeriod  = e.Cache.Updated.RowCast<GLTran>().Where(w => w.DebitAmt  > 0 && w.Selected == true).GroupBy(g => g.FinPeriodID).Select(s => s.Key);
-                    var creditByPeriod = e.Cache.Updated.RowCast<GLTran>().Where(w => w.CreditAmt > 0 && w.Selected == true).GroupBy(g => g.FinPeriodID).Select(s => s.Key);
+                    ///<remarks> 
+                    /// Since the user said there may have situations allowing settle multiple period of transaction. 
+                    ///</remarks>
+                    //var debitByPeriod  = e.Cache.Updated.RowCast<GLTran>().Where(w => w.DebitAmt  > 0 && w.Selected == true).GroupBy(g => g.FinPeriodID).Select(s => s.Key);
+                    //var creditByPeriod = e.Cache.Updated.RowCast<GLTran>().Where(w => w.CreditAmt > 0 && w.Selected == true).GroupBy(g => g.FinPeriodID).Select(s => s.Key);
 
-                    if (debitByPeriod.Count() > 1 || creditByPeriod.Count() > 1)
-                    {
-                        // Acuminator disable once PX1051 NonLocalizableString [Justification]
-                        // Cache updated due to FieldVerifying event always delay the current row timing.
-                        e.Cache.RaiseExceptionHandling<GLTran.selected>(e.Row, e.OldValue, new PXSetPropertyException(SettledPeriodMustSame, PXErrorLevel.RowError));
-                        e.Row.Selected = (bool?)e.OldValue;
-                    }
-                    else
-                    {
+                    //if (debitByPeriod.Count() > 1 || creditByPeriod.Count() > 1)
+                    //{
+                    //    // Acuminator disable once PX1051 NonLocalizableString [Justification]
+                    //    // Cache updated due to FieldVerifying event always delay the current row timing.
+                    //    e.Cache.RaiseExceptionHandling<GLTran.selected>(e.Row, e.OldValue, new PXSetPropertyException(SettledPeriodMustSame, PXErrorLevel.RowError));
+                    //    e.Row.Selected = (bool?)e.OldValue;
+                    //}
+                    //else
+                    //{
                         LSLedgerSettlement settlement = SelectFrom<LSLedgerSettlement>.Where<LSLedgerSettlement.module.IsEqual<@P.AsString>
                                                                                              .And<LSLedgerSettlement.batchNbr.IsEqual<@P.AsString>
                                                                                                   .And<LSLedgerSettlement.lineNbr.IsEqual<@P.AsInt>>>>
@@ -231,7 +234,7 @@ namespace UCGLedgerSettlement.Graph
                         tranExt.UsrSetldCreditAmt = tranExt.UsrRmngCreditAmt == 0m ? e.Row.CreditAmt : tranExt.UsrRmngCreditAmt;
 
                         Filter.Current.BalanceAmt = (Filter.Current.BalanceAmt ?? 0m) + tranExt.UsrSetldDebitAmt - tranExt.UsrSetldCreditAmt;
-                    }
+                    //}
                 }
                 else 
                 {
@@ -306,8 +309,8 @@ namespace UCGLedgerSettlement.Graph
             {
                 string stlmtNbr = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
 
-                HashSet<GLTran> hash_Debit  = trans.Where(w => w.DebitAmt  > 0m).ToHashSet();
-                HashSet<GLTran> hash_Credit = trans.Where(w => w.CreditAmt > 0m).ToHashSet();
+                HashSet<GLTran> hash_Debit  = trans.Where(w => w.DebitAmt  > 0m).OrderBy(o => o.FinPeriodID).ToHashSet();
+                HashSet<GLTran> hash_Credit = trans.Where(w => w.CreditAmt > 0m).OrderBy(o => o.FinPeriodID).ToHashSet();
 
                 for (int i = 0; i < trans.Count; i++)
                 {
@@ -326,8 +329,8 @@ namespace UCGLedgerSettlement.Graph
                     row.SubID            = tran.SubID;
                     row.OrigCreditAmt    = tran.CreditAmt;
                     row.OrigDebitAmt     = tran.DebitAmt;
-                    row.SettledCreditAmt = tranExt.UsrSetldCreditAmt;
-                    row.SettledDebitAmt  = tranExt.UsrSetldDebitAmt;
+                    row.SettledCreditAmt = tranExt.UsrSetldCreditAmt ?? 0m;
+                    row.SettledDebitAmt  = tranExt.UsrSetldDebitAmt ?? 0m;
                     row.TranDesc         = tran.TranDesc;
                     row.TranDate         = tran.TranDate;
                     row.RefNbr           = tran.RefNbr;
@@ -335,7 +338,7 @@ namespace UCGLedgerSettlement.Graph
                     row.ProjectID        = tran.ProjectID;
                     row.TaskID           = tran.TaskID;
                     row.CostCodeID       = tran.CostCodeID;
-                    row.SettledPeriodID  = tran.DebitAmt > 0m ? hash_Credit.FirstOrDefault().FinPeriodID : hash_Debit.FirstOrDefault().FinPeriodID;
+                    row.SettledPeriodID  = tran.DebitAmt > 0m ? hash_Credit.LastOrDefault().FinPeriodID : hash_Debit.LastOrDefault().FinPeriodID;
 
                     row = graph.LedgerStlmt.Insert(row);
 
@@ -373,10 +376,9 @@ namespace UCGLedgerSettlement.Graph
         {
             string fieldLabel = null;
 
-            GLSetup    setup    = SelectFrom<GLSetup>.View.Select(this).FirstOrDefault();
-            GLSetupExt setupExt = setup.GetExtension<GLSetupExt>();
+            LSSettlementAccount settlementAcct = LSSettlementAccount.PK.Find(this, Filter.Current?.StlmtAcctID);
 
-            if (setupExt.UsrChkReferenceOnMatch == true)
+            if (settlementAcct?.ChkReferenceOnMatch == true)
             {
                 var debitRefGrp  = GLTranDebit.Cache.Updated.RowCast<GLTran>().Where(w => w.CuryDebitAmt > 0 && w.Selected == true)
                                                                               .GroupBy(g => g.ReferenceID).Select(s => s.Key).ToList();
@@ -389,7 +391,7 @@ namespace UCGLedgerSettlement.Graph
                 }
             }
 
-            if (setupExt.UsrChkProjectOnMatch == true)
+            if (settlementAcct?.ChkProjectOnMatch == true)
             {
                 var debitProjGrp  = GLTranDebit.Cache.Updated.OfType<GLTran>().Where(w => w.CuryDebitAmt > 0 && w.Selected == true)
                                                                               .GroupBy(g => g.ProjectID).Select(s => s.Key).ToList();
