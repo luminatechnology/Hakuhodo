@@ -101,7 +101,11 @@
     <Compile Include="Graph\TWNExpOnlineStrGUIInv.cs" />
     <Compile Include="Graph\TWNExportMthsMaint.cs" />
     <Compile Include="Graph\TWNExportTiktTypesMaint.cs" />
+    <Compile Include="Graph\TWNGenerateNHIFileBase.cs" />
     <Compile Include="Graph\TWNGenGUIMediaFile.cs" />
+    <Compile Include="Graph\TWNGenNHIFile_68.cs" />
+    <Compile Include="Graph\TWNGenNHIFile_65.cs" />
+    <Compile Include="Graph\TWNGenNHIFile_63.cs" />
     <Compile Include="Graph\TWNGenWHTFile.cs" />
     <Compile Include="Graph\TWNGenWHTFile_New.cs" />
     <Compile Include="Graph\TWNGenZeroTaxRateMedFile.cs" />

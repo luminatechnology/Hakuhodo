@@ -128,7 +128,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region SecNHICode
-        [PXDBString(2, IsFixed = true, InputMask = "")]
+        [PXDBString(2, IsFixed = true)]
         [PXUIField(DisplayName = "2GNHI Code")]
         [SecNHICodeSelector]
         public virtual string SecNHICode { get; set; }
