@@ -78,9 +78,13 @@ namespace eGUICustomizationsByBranch.Graph
                         // 所得人姓名
                         lines += $"{tran.PayeeName}{Comma}";
                         // 單次給付金額
-                        lines += $"{Math.Round(tran.NetAmt.Value, 0, MidpointRounding.AwayFromZero)}{Comma}";
+                        decimal roundZero_NetAmt = Math.Round(tran.NetAmt.Value, 0, MidpointRounding.AwayFromZero);
+
+                        lines += $"{roundZero_NetAmt}{Comma}";
                         // 扣繳補充保險費金額
-                        lines += $"{Math.Round(tran.SecNHIAmt.Value, 0, MidpointRounding.AwayFromZero)}{Comma}";
+                        decimal roundZero_NHIAmt = Math.Round(tran.SecNHIAmt.Value, 0, MidpointRounding.AwayFromZero);
+
+                        lines += $"{roundZero_NHIAmt}{Comma}";
                         // 每一筆預設編列『1』，惟當同一所得人同一給付日同一所得類別有2筆以上者(不論所得金額有無相同)，則第2筆的申報編號編列『2』，第3筆的申報編號編列『3』，依此類推
                         if (conditionKey != $"{tran.PersonalID}-{tran.PaymDate.Value.Date}") { rowCount = 1; }
                         lines += $"{rowCount}{Comma}";
@@ -89,8 +93,8 @@ namespace eGUICustomizationsByBranch.Graph
 
                         rowCount++;
                         totalCount++;
-                        totalNetAmt += tran.NetAmt.Value;
-                        totalNHIAmt += tran.SecNHIAmt.Value;
+                        totalNetAmt += roundZero_NetAmt;
+                        totalNHIAmt += roundZero_NHIAmt;
 
                         conditionKey = $"{tran.PersonalID}-{tran.PaymDate.Value.Date}";
                     }
@@ -110,9 +114,9 @@ namespace eGUICustomizationsByBranch.Graph
                     // 申報總筆數
                     headerLine += $"{totalCount}{Comma}";
                     // 所得(收入)給付總額
-                    headerLine += $"{Math.Round(totalNetAmt, 0, MidpointRounding.AwayFromZero)}{Comma}";
+                    headerLine += $"{totalNetAmt}{Comma}";
                     // 扣繳補充保險費總額
-                    headerLine += $"{Math.Round(totalNHIAmt, 0, MidpointRounding.AwayFromZero)}{Comma}";
+                    headerLine += $"{totalNHIAmt}{Comma}";
                     // 扣費義務人
                     headerLine += $"{bAcctExt.UsrPersonInCharge}{Comma}";
                     // 聯絡電話
