@@ -20,6 +20,10 @@ namespace eGUICustomizationsByBranch.Graph
     {
         public const string Comma = ",";
 
+        protected string HeaderMsg;
+        protected string DetailMsg;
+        protected string NHIGenType;
+
         #region Features
         public PXCancel<TWNGenerateNHIFileFilter> Cancel;
         public PXFilter<TWNGenerateNHIFileFilter> Filter;
@@ -43,25 +47,25 @@ namespace eGUICustomizationsByBranch.Graph
         #region Methods
         protected virtual void Export(List<TWNWHTTran> trans) 
         {
-            string lines = string.Empty;
+            string lines = DetailMsg + "\r\n";
 
             var filter = Filter.Current;
             var graph  = CreateInstance<TWNGenGUIMediaFile>();
 
             using (MemoryStream stream = new MemoryStream())
             {
-                using (StreamWriter sw = new StreamWriter(stream, Encoding.Unicode))
+                using (StreamWriter sw = new StreamWriter(stream, Encoding.UTF8))
                 {
                     BAccountExt bAcctExt = BAccountExt.GetTWGUIByBranch(WHTTran.Cache, filter.BranchID);
 
-                    string fileName = $"DPR{bAcctExt.UsrOurTaxNbr}{graph.GetTWNDate(this.Accessinfo.BusinessDate.Value, true)}A{filter.SecNHIType}.csv";
+                    string fileName = $"DPR{bAcctExt.UsrOurTaxNbr}{graph.GetTWNDate(this.Accessinfo.BusinessDate.Value, true)}A{NHIGenType}.csv";
                     string conditionKey = null;
 
                     int totalCount = 0, rowCount = 1;
                     decimal totalNetAmt = 0m, totalNHIAmt = 0m;
 
                     // Lines
-                    foreach (TWNWHTTran tran in trans.OrderBy(o => o.PersonalID).ThenBy(t => t.PaymDate).ToList()) 
+                    foreach (TWNWHTTran tran in trans.OrderBy(o => o.PersonalID).ThenBy(t => t.PaymDate).ToList())
                     {
                         // 資料識別碼
                         lines += $"2{Comma}";
@@ -76,7 +80,7 @@ namespace eGUICustomizationsByBranch.Graph
                         // 單次給付金額
                         lines += $"{Math.Round(tran.NetAmt.Value, 0, MidpointRounding.AwayFromZero)}{Comma}";
                         // 扣繳補充保險費金額
-                        lines += $"{Math.Round(tran.SecNHIAmt.Value,0, MidpointRounding.AwayFromZero)}{Comma}";
+                        lines += $"{Math.Round(tran.SecNHIAmt.Value, 0, MidpointRounding.AwayFromZero)}{Comma}";
                         // 每一筆預設編列『1』，惟當同一所得人同一給付日同一所得類別有2筆以上者(不論所得金額有無相同)，則第2筆的申報編號編列『2』，第3筆的申報編號編列『3』，依此類推
                         if (conditionKey != $"{tran.PersonalID}-{tran.PaymDate.Value.Date}") { rowCount = 1; }
                         lines += $"{rowCount}{Comma}";
@@ -92,12 +96,13 @@ namespace eGUICustomizationsByBranch.Graph
                     }
 
                     // Header
+                    string headerLine = HeaderMsg + "\r\n";
                     // 資料識別碼
-                    string headerLine = $"1{Comma}";
+                    headerLine += $"1{Comma}";
                     // 統一編號
                     headerLine += $"{bAcctExt.UsrOurTaxNbr}{Comma}";
                     // 所得類別
-                    headerLine += $"{filter.SecNHIType}{Comma}";
+                    headerLine += $"{NHIGenType}{Comma}";
                     // 給付起始年月
                     headerLine += $"{graph.GetTWNDate(filter.FromDate.Value, false)}{Comma}";
                     // 給付結束年月
@@ -122,7 +127,11 @@ namespace eGUICustomizationsByBranch.Graph
 
                     lines = headerLine + lines;
 
-                    sw.Write(lines);
+                    StringBuilder sb = new StringBuilder();
+                    
+                    sb.AppendLine(lines);
+
+                    sw.Write(sb);
                     sw.Close();
 
                     DownloadCSVFile(fileName, stream);
@@ -181,13 +190,6 @@ namespace eGUICustomizationsByBranch.Graph
         [PXStringList(new string[] { "I", "R" }, new string[] { nameof(RecipientsBehaviorAttribute.Add), nameof(RecipientsBehaviorAttribute.Override) })]
         public virtual string ProcessingMethod { get; set; }
         public abstract class processingMethod : PX.Data.BQL.BqlString.Field<processingMethod> { }
-        #endregion
-
-        #region SecNHIType
-        [PXDBString(2, IsFixed = true)]
-        [PXUIField(DisplayName = "2GNHI Type", Enabled = false, Visible = false)]
-        public virtual string SecNHIType { get; set; }
-        public abstract class secNHIType : PX.Data.BQL.BqlString.Field<secNHIType> { }
         #endregion
     }
 }
