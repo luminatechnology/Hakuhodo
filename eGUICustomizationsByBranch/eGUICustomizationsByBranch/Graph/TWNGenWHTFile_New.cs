@@ -49,7 +49,7 @@ namespace eGUICustomizations.Graph
             #region HEAD
             using (MemoryStream stream = new MemoryStream())
             {
-                using (StreamWriter sw = new StreamWriter(stream, Encoding.Unicode))
+                using (StreamWriter sw = new StreamWriter(stream, new UTF8Encoding(false)))
                 {
                     headFileName = $"{branchExt.UsrOurTaxNbr}.{filter?.FromPaymDate.Value.Year - 1911}_HEAD.U8";
 
@@ -96,7 +96,7 @@ namespace eGUICustomizations.Graph
             #region BODY
             using (MemoryStream stream = new MemoryStream())
             {
-                using (StreamWriter sw = new StreamWriter(stream, Encoding.Unicode))
+                using (StreamWriter sw = new StreamWriter(stream, new UTF8Encoding(false)))
                 {
                     int count = 1;
 
