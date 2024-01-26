@@ -12,26 +12,26 @@
 		<Levels>
 			<px:PXGridLevel DataMember="WHTTran">
 			    <Columns>
-				<px:PXGridColumn DataField="BatchNbr" Width="120" CommitChanges="true" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="BranchID" Width="100" />
-				<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PaymDate" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PersonalID" Width="120" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="DocType" Width="70" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="RefNbr" Width="140" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PropertyID" Width="140" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="TypeOfIn" Width="160" DisplayMode="Hint" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="WHTFmtCode" Width="70" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="WHTFmtSub" Width="120" DisplayMode="Hint" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PayeeName" Width="140" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="PayeeAddr" Width="220" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="CountryID" Width="90" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="SecNHIPct" Width="100" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="SecNHICode" Width="70" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="SecNHIAmt" Width="100" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="WHTTaxPct" Width="100" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="WHTAmt" Width="100" ></px:PXGridColumn>
-				<px:PXGridColumn DataField="NetAmt" Width="100" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="BatchNbr" Width="120" CommitChanges="true" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="BranchID" Width="100" />
+					<px:PXGridColumn DataField="TranDate" Width="90" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="PaymDate" Width="90" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="PersonalID" Width="120" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="DocType" Width="70" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="RefNbr" Width="140" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="PropertyID" Width="140" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="TypeOfIn" Width="160" DisplayMode="Hint" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="WHTFmtCode" Width="70" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="WHTFmtSub" Width="120" DisplayMode="Hint" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="PayeeName" Width="140" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="PayeeAddr" Width="220" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="CountryID" Width="90" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="SecNHIPct" Width="100" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="SecNHICode" Width="70" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="ISecNHIAmt" Width="100" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="WHTTaxPct" Width="100" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="IWHTAmt" Width="100" ></px:PXGridColumn>
+					<px:PXGridColumn DataField="INetAmt" Width="100" ></px:PXGridColumn>
 			    </Columns>
 				<RowTemplate>
 					<px:PXSelector runat="server" ID="CstPXSelector1" DataField="RefNbr" AllowEdit="True" ></px:PXSelector>

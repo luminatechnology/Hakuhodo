@@ -8,6 +8,7 @@ using eGUICustomizations.Descriptor;
 using eGUICustomizations.Graph_Release;
 using PX.Objects.CR;
 using PX.Objects.CM;
+using System;
 
 namespace PX.Objects.AP
 {
@@ -27,6 +28,7 @@ namespace PX.Objects.AP
 
             APRegister doc = Base.APDocument.Current;
 
+            #region Insert into TWNGUITran
             // Check for document and released flag
             if (TWNGUIValidation.ActivateTWGUI(Base) == true &&
                 doc != null && 
@@ -109,7 +111,9 @@ namespace PX.Objects.AP
                 // Triggering after save events.
                 rp.ViewGUITrans.Cache.Persisted(false);
             }
+            #endregion
 
+            #region Insert into TWNWHTTran
             foreach (TWNWHT tWNWHT in SelectFrom<TWNWHT>.Where<TWNWHT.docType.IsEqual<@P.AsString>.And<TWNWHT.refNbr.IsEqual<@P.AsString>>>.View.Select(Base, doc.DocType, doc.RefNbr))
             {
                 if (doc != null && doc.Released == true && doc.DocType == APDocType.Invoice)
@@ -147,11 +151,14 @@ namespace PX.Objects.AP
                         wHTTran.WHTTaxPct  = string.IsNullOrEmpty(tWNWHT.WHTTaxPct) ? 0m : System.Convert.ToDecimal(tWNWHT.WHTTaxPct);
                         wHTTran.WHTAmt     = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.WHTTaxPct).Value);
                         wHTTran.WHTAmt     = wHTTran.WHTAmt == 0m ? 0m : wHTTran.WHTAmt / 100m;
+                        wHTTran.IWHTAmt    = wHTTran.WHTAmt;
                         wHTTran.NetAmt     = doc.CuryOrigDocAmt;
+                        wHTTran.INetAmt    = wHTTran.NetAmt;
                         wHTTran.SecNHIPct  = tWNWHT.SecNHIPct;
                         wHTTran.SecNHICode = tWNWHT.SecNHICode;
                         wHTTran.SecNHIAmt  = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * (wHTTran.SecNHIPct ?? 0m)).Value);
                         wHTTran.SecNHIAmt  = wHTTran.SecNHIAmt == 0m ? 0m : wHTTran.SecNHIAmt / 100m;
+                        wHTTran.ISecNHIAmt = wHTTran.SecNHIAmt;
 
                         WHTTranView.Update(wHTTran);
 
@@ -178,6 +185,7 @@ namespace PX.Objects.AP
                                                                                                                adjust.AdjdDocType, adjust.AdjdRefNbr);
                 }
             }
+            #endregion
         }
         #endregion
 

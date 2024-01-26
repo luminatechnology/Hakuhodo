@@ -17,9 +17,12 @@
   <col name="SecNHIPct" type="Decimal(15,3)" nullable="true" />
   <col name="SecNHICode" type="NChar(10)" nullable="true" />
   <col name="SecNHIAmt" type="Decimal(19,4)" nullable="true" />
+  <col name="ISecNHIAmt" type="Decimal(19,0)" nullable="true" />
   <col name="WHTTaxPct" type="Decimal(15,3)" nullable="true" />
   <col name="WHTAmt" type="Decimal(19,4)" nullable="true" />
+  <col name="IWHTAmt" type="Decimal(19,0)" nullable="true" />
   <col name="NetAmt" type="Decimal(19,4)" nullable="true" />
+  <col name="INetAmt" type="Decimal(19,0)" nullable="true" />
   <col name="BranchID" type="Int" nullable="true" />
   <col name="CountryID" type="NVarChar(2)" nullable="true" />
   <col name="CreatedByID" type="UniqueIdentifier" />

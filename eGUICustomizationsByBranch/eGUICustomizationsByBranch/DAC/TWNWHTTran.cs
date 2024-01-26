@@ -4,6 +4,8 @@ using PX.Objects.AP;
 using PX.Objects.GL;
 using eGUICustomizations.Graph;
 using eGUICustomizations.Descriptor;
+using PX.Objects.CM;
+using PX.Objects.CM.Extensions;
 
 namespace eGUICustomizations.DAC
 {
@@ -136,31 +138,52 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region SecNHIAmt
-        [TWNetAmount(0)]
-        [PXUIField(DisplayName = "2GNHI Amount")]
+        [TWNetAmount(4)]
+        [PXUIField(DisplayName = "2GNHI Amount (Decimal)")]
         public virtual decimal? SecNHIAmt { get; set; }
         public abstract class secNHIAmt : PX.Data.BQL.BqlDecimal.Field<secNHIAmt> { }
+        #endregion
+
+        #region ISecNHIAmt
+        [PXDBDecimal(0)]
+        [PXUIField(DisplayName = "2GNHI Amount")]
+        public virtual decimal? ISecNHIAmt { get; set; }
+        public abstract class iSecNHIAmt : PX.Data.BQL.BqlDecimal.Field<iSecNHIAmt> { }
         #endregion
 
         #region WHTTaxPct
         [PXDBDecimal()]
         [PXUIField(DisplayName = "WHT Tax %")]
-        public virtual decimal? WHTTaxPct { get; set; }
+        public virtual decimal? WHTTaxPct { get; set; } 
         public abstract class wHTTaxPct : PX.Data.BQL.BqlDecimal.Field<wHTTaxPct> { }
         #endregion
 
         #region WHTAmt
-        [TWNetAmount(0)]
-        [PXUIField(DisplayName = "WHT Amount")]
+        [TWNetAmount(4)]
+        [PXUIField(DisplayName = "WHT Amount (Decimal)")]
         public virtual decimal? WHTAmt { get; set; }
         public abstract class wHTAmt : PX.Data.BQL.BqlDecimal.Field<wHTAmt> { }
         #endregion
 
+        #region IWHTAmt
+        [PXDBDecimal(0)]
+        [PXUIField(DisplayName = "WHT Amount")]
+        public virtual decimal? IWHTAmt { get; set; }
+        public abstract class iWHTAmt : PX.Data.BQL.BqlDecimal.Field<iWHTAmt> { }
+        #endregion
+
         #region NetAmt
-        [TWNetAmount(0)]
-        [PXUIField(DisplayName = "Net Amount")]
+        [TWNetAmount(4)]
+        [PXUIField(DisplayName = "Net Amount (Decimal)")]
         public virtual decimal? NetAmt { get; set; }
         public abstract class netAmt : PX.Data.BQL.BqlDecimal.Field<netAmt> { }
+        #endregion
+
+        #region INetAmt
+        [PXDBDecimal(0)]
+        [PXUIField(DisplayName = "Net Amount")]
+        public virtual decimal? INetAmt { get; set; }
+        public abstract class iNetAmt : PX.Data.BQL.BqlDecimal.Field<iNetAmt> { }
         #endregion
 
         #region BranchID

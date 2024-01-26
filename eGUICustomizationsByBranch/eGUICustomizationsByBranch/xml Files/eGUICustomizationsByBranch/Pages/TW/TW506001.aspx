@@ -32,8 +32,8 @@
 					<px:PXGridColumn DataField="PaymDate" Width="140" />
 					<px:PXGridColumn DataField="PersonalID" Width="140" />
 					<px:PXGridColumn DataField="PayeeName" Width="140" />
-					<px:PXGridColumn DataField="NetAmt" Width="140" />
-					<px:PXGridColumn DataField="SecNHIAmt" Width="140" />
+					<px:PXGridColumn DataField="INetAmt" Width="140" />
+					<px:PXGridColumn DataField="ISecNHIAmt" Width="140" />
 			    </Columns>
 			</px:PXGridLevel>
 		</Levels>
