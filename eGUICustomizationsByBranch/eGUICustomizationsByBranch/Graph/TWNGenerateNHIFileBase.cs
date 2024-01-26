@@ -13,6 +13,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static eGUICustomizations.DAC.TWNWHT;
+using static eGUICustomizations.DAC.TWNWHTTran;
+using static PX.Objects.CA.CABankTran;
 
 namespace eGUICustomizationsByBranch.Graph
 {
@@ -54,18 +57,26 @@ namespace eGUICustomizationsByBranch.Graph
 
             using (MemoryStream stream = new MemoryStream())
             {
-                using (StreamWriter sw = new StreamWriter(stream, Encoding.UTF8))
+                using (StreamWriter sw = new StreamWriter(stream, Encoding.GetEncoding(950))) // 950 = Chinese(Big5)
                 {
                     BAccountExt bAcctExt = BAccountExt.GetTWGUIByBranch(WHTTran.Cache, filter.BranchID);
 
                     string fileName = $"DPR{bAcctExt.UsrOurTaxNbr}{graph.GetTWNDate(this.Accessinfo.BusinessDate.Value, true)}A{NHIGenType}.csv";
-                    string conditionKey = null;
 
-                    int totalCount = 0, rowCount = 1;
+                    int totalCount = 0;
                     decimal totalNetAmt = 0m, totalNHIAmt = 0m;
 
                     // Lines
-                    foreach (TWNWHTTran tran in trans.OrderBy(o => o.PersonalID).ThenBy(t => t.PaymDate).ToList())
+                    foreach (var tran in trans.GroupBy(g => new { g.PersonalID, g.PaymDate, g.PayeeName })
+                                              .Select(s => new 
+                                              {
+                                                  s.First().PaymDate,
+                                                  s.First().PersonalID,
+                                                  s.First().PayeeName,
+                                                  INetAmt = s.Sum(ss => ss.INetAmt),
+                                                  ISecNHIAmt = s.Sum(ss => ss.ISecNHIAmt)
+                                              })
+                                              .OrderBy(o => o.PersonalID).ThenBy(t => t.PaymDate).ToList())
                     {
                         // 資料識別碼
                         lines += $"2{Comma}";
@@ -78,25 +89,17 @@ namespace eGUICustomizationsByBranch.Graph
                         // 所得人姓名
                         lines += $"{tran.PayeeName}{Comma}";
                         // 單次給付金額
-                        decimal roundZero_NetAmt = Math.Round(tran.NetAmt.Value, 0, MidpointRounding.AwayFromZero);
-
-                        lines += $"{roundZero_NetAmt}{Comma}";
+                        lines += $"{tran.INetAmt}{Comma}";
                         // 扣繳補充保險費金額
-                        decimal roundZero_NHIAmt = Math.Round(tran.SecNHIAmt.Value, 0, MidpointRounding.AwayFromZero);
-
-                        lines += $"{roundZero_NHIAmt}{Comma}";
+                        lines += $"{tran.ISecNHIAmt}{Comma}";
                         // 每一筆預設編列『1』，惟當同一所得人同一給付日同一所得類別有2筆以上者(不論所得金額有無相同)，則第2筆的申報編號編列『2』，第3筆的申報編號編列『3』，依此類推
-                        if (conditionKey != $"{tran.PersonalID}-{tran.PaymDate.Value.Date}") { rowCount = 1; }
-                        lines += $"{rowCount}{Comma}";
+                        lines += $"1{Comma}";
                         // Blank
                         lines += new string(Convert.ToChar(Comma), 3) + "\r\n";
 
-                        rowCount++;
                         totalCount++;
-                        totalNetAmt += roundZero_NetAmt;
-                        totalNHIAmt += roundZero_NHIAmt;
-
-                        conditionKey = $"{tran.PersonalID}-{tran.PaymDate.Value.Date}";
+                        totalNetAmt += tran.INetAmt.Value;
+                        totalNHIAmt += tran.ISecNHIAmt.Value;
                     }
 
                     // Header
