@@ -119,11 +119,11 @@ namespace eGUICustomizations.Graph
                         // 證號別
                         lines += row.TypeOfIn + verticalBar;
                         // 扣繳憑單給付總額
-                        lines += Math.Round(row.NetAmt.Value, 0, MidpointRounding.AwayFromZero) + verticalBar;
+                        lines += row.INetAmt + verticalBar;
                         // 扣繳憑單扣繳稅額
-                        lines += Math.Round((row.SecNHIAmt + row.WHTAmt).Value, 0, MidpointRounding.AwayFromZero) + verticalBar;
+                        lines += row.IWHTAmt + verticalBar;
                         // 扣繳憑單給付淨額
-                        lines += Math.Round((row.NetAmt - row.SecNHIAmt - row.WHTAmt).Value, 0, MidpointRounding.AwayFromZero) + verticalBar;
+                        lines += (row.INetAmt - row.IWHTAmt) + verticalBar;
                         // 租賃房屋稅籍編號、執行業務者業別代號、所得人代號或帳號、外僑護照號碼
                         lines += GetFormatNbr(row) + verticalBar;
                         // Blank 1
