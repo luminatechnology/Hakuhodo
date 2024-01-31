@@ -18,15 +18,18 @@ namespace PX.Objects.AP
 
         #region Event
         #region APRegister
-        protected void _(Events.RowSelected<APRegister> e)
+        protected void _(Events.RowSelected<APRegister> e, PXRowSelected baseMethod)
         {
             var row = e.Row;
             if (row == null) return;
+            Base.releaseFromHold.SetEnabled(true);
+            baseMethod?.Invoke(e.Cache, e.Args);
             string docType = row.DocType;
             bool isShowReturnAmt = docType == APDocType.Invoice;
             PXUIFieldAttribute.SetVisible<APRegisterUCGExt.returnAmount>(e.Cache, row, isShowReturnAmt);
             PXUIFieldAttribute.SetVisible<APRegisterUCGExt.usrOpportunityID>(e.Cache, row, ProjectDefaultAttribute.IsNonProject(row.ProjectID));
             PXUIFieldAttribute.SetVisible<APTranUCGExt.returnAmt>(Base.Transactions.Cache, null, isShowReturnAmt);
+            if (e.Cache.GetStatus(e.Row) == PXEntryStatus.Inserted) Base.releaseFromHold.SetEnabled(false);
         }
 
         protected void _(Events.RowPersisting<APRegister> e)
