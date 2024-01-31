@@ -14,15 +14,15 @@ namespace UCG_Customization.Utils
         const string USR_APPROVE_WG = "UsrApproveWG{0:00}";
         const int TREE_SIZE = 10;
         /**User Defined */
-        const string UD_APPROVE1 = "AttributeAPPROVER1";
+        public const string UD_APPROVE1 = "AttributeAPPROVER1";
         /**User Defined */
-        const string UD_APPROVE2 = "AttributeAPPROVER2";
+        public const string UD_APPROVE2 = "AttributeAPPROVER2";
         /**User Defined */
-        const string UD_APPROVE3 = "AttributeAPPROVER3";
+        public const string UD_APPROVE3 = "AttributeAPPROVER3";
         /**User Defined */
-        const string UD_APPROVE4 = "AttributeAPPROVER4";
+        public const string UD_APPROVE4 = "AttributeAPPROVER4";
         /**User Defined */
-        const string UD_APPROVE5 = "AttributeAPPROVER5";
+        public const string UD_APPROVE5 = "AttributeAPPROVER5";
 
         /// <summary> 無簽核層級Project:INT001 </summary>
         const string NO_APPROVE_PROJECT_INT001 = "INT001";
