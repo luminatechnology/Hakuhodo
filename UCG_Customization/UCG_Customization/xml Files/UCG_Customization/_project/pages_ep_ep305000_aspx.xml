@@ -35,7 +35,7 @@
                     <Prop Key="Virtual:ApplyStylesheetSkin" />
                     <Prop Key="ID" Value="CstPXLayoutRule1" />
                     <Prop Key="StartColumn" Value="True" />
-                    <Prop Key="GroupCaption" Value="Summary" />
+                    <Prop Key="GroupCaption" Value="Daily Time Summary" />
                     <Prop Key="StartGroup" Value="True" />
                     <Prop Key="LabelsWidth" Value="XXS" />
                     <Prop Key="ControlSize" Value="XS" />
