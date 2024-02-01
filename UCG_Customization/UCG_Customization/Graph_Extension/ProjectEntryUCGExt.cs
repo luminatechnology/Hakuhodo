@@ -103,11 +103,11 @@ namespace PX.Objects.PM
             var approver = new string[] { ApproveWGUtil.UD_APPROVE1, ApproveWGUtil.UD_APPROVE2, ApproveWGUtil.UD_APPROVE3, ApproveWGUtil.UD_APPROVE4, ApproveWGUtil.UD_APPROVE5 };
             foreach (var field in approver)
             {
-                var val = (PXStringState)cache.GetValueExt(row, field);
+                string val = (PXStringState)cache.GetValueExt(row, field);
                 flag = flag || val != null;
             }
             if (!flag)
-                throw new PXRowPersistingException(ApproveWGUtil.UD_APPROVE5, null, $"Cannot be empty.");
+                throw new PXRowPersistingException(ApproveWGUtil.UD_APPROVE5, null, $"Approver cannot be empty.");
         }
 
         public virtual void SetLockProject(PMProject row, bool isLock)
