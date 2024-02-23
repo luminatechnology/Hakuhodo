@@ -1,0 +1,21 @@
+﻿<Page path="~/pages/gl/gl102000.aspx" ControlId="2" pageSource="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">
+    <PXTabItem Text="General" ParentId="phF_tab_Items#0" TypeFullName="PX.Web.UI.PXTabItem">
+        <Children Key="Template">
+            <AddItem>
+                <PXLayoutRule TypeFullName="PX.Web.UI.PXLayoutRule">
+                    <Prop Key="Virtual:ApplyStylesheetSkin" />
+                    <Prop Key="ID" Value="CstPXLayoutRule1" />
+                    <Prop Key="StartGroup" Value="True" />
+                    <Prop Key="GroupCaption" Value="Ledger Settlement" />
+                </PXLayoutRule>
+            </AddItem>
+            <AddItem>
+                <PXCheckBox TypeFullName="PX.Web.UI.PXCheckBox">
+                    <Prop Key="Virtual:ApplyStylesheetSkin" />
+                    <Prop Key="ID" Value="CstPXCheckBox2" />
+                    <Prop Key="DataField" Value="UsrEnblSettlingLedgerCmplProj" />
+                </PXCheckBox>
+            </AddItem>
+        </Children>
+    </PXTabItem>
+</Page>
