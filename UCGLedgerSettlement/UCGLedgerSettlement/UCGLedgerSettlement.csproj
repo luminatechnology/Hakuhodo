@@ -60,11 +60,15 @@
   <ItemGroup>
     <Compile Include="DAC\LSLedgerSettlement.cs" />
     <Compile Include="DAC\LSSettlementAccount.cs" />
+    <Compile Include="DAC_Extensions\GLSetupExtensions.cs" />
     <Compile Include="DAC_Extensions\GLTranExtensions.cs" />
+    <Compile Include="DAC_Extensions\LSLedgerSettlementExtensions.cs" />
+    <Compile Include="Descriptor\LSSettlementFeaturesHelper.cs" />
     <Compile Include="Descriptor\UtilFunctions.cs" />
     <Compile Include="Graph\LSLedgerStlmtEntry.cs" />
     <Compile Include="Graph\LSLedgerStlmtInq.cs" />
     <Compile Include="Graph\LSStlmtAccountMaint.cs" />
+    <Compile Include="Graph_Extensions\GLSetpMaint.cs" />
     <Compile Include="Graph_Extensions\JournalEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

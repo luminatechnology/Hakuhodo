@@ -5,7 +5,6 @@ using PX.Data.ReferentialIntegrity.Attributes;
 using PX.Objects.CM;
 using PX.Objects.CR;
 using PX.Objects.GL;
-using PX.Objects.GL.Attributes;
 using PX.Objects.IN;
 using PX.Objects.PM;
 
@@ -153,16 +152,15 @@ namespace UCGLedgerSettlement.DAC
 
         #region ProjectID
         [GLProjectDefault(typeof(GLTran.ledgerID), AccountType = typeof(GLTran.accountID), PersistingCheck = PXPersistingCheck.Nothing)]
-        //[ActiveProjectOrContractForGLAttribute(AccountFieldType = typeof(accountID))]
-        [Project()]
+        [ActiveProjectOrContractForGL(AccountFieldType = typeof(accountID))]
         [PXForeignReference(typeof(Field<projectID>.IsRelatedTo<PMProject.contractID>))]
         public virtual int? ProjectID { get; set; }
         public abstract class projectID : PX.Data.BQL.BqlInt.Field<projectID> { }
         #endregion
 
         #region TaskID
-        [ActiveProjectTask(typeof(LSLedgerSettlement.projectID), BatchModule.GL, DisplayName = "Project Task")]
-        //[PXForeignReference(typeof(Field<taskID>.IsRelatedTo<PMTask.taskID>))]
+        [ActiveProjectTask(typeof(projectID), BatchModule.GL, DisplayName = "Project Task")]
+        [PXForeignReference(typeof(Field<taskID>.IsRelatedTo<PMTask.taskID>))]
         public virtual int? TaskID { get; set; }
         public abstract class taskID : PX.Data.BQL.BqlInt.Field<taskID> { }
         #endregion
