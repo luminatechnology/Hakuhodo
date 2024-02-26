@@ -44,7 +44,7 @@ namespace UCGLedgerSettlement.Graph
         public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
                                                        .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
                                  .Where<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>
-                                        .And<GLTran.curyDebitAmt.IsGreater<decimal0>
+                                        .And<GLTran.curyDebitAmt.IsNotEqual<decimal0>
                                              .And<GLTran.posted.IsEqual<True>
                                                   .And<Where<GLTran.uOM.IsNotEqual<ZZUOM>
                                                              .Or<GLTran.uOM.IsNull>>>
@@ -57,7 +57,7 @@ namespace UCGLedgerSettlement.Graph
         public SelectFrom<GLTran>.InnerJoin<Ledger>.On<Ledger.ledgerID.IsEqual<GLTran.ledgerID>
                                                        .And<Ledger.balanceType.IsEqual<LedgerBalanceType.actual>>>
                                  .Where<GLTran.accountID.IsEqual<LedgerTranFilter.stlmtAcctID.FromCurrent>
-                                        .And<GLTran.curyCreditAmt.IsGreater<decimal0>
+                                        .And<GLTran.curyCreditAmt.IsNotEqual<decimal0>
                                              .And<GLTran.posted.IsEqual<True>
                                                   .And<Where<GLTran.uOM.IsNotEqual<ZZUOM>
                                                              .Or<GLTran.uOM.IsNull>>>
