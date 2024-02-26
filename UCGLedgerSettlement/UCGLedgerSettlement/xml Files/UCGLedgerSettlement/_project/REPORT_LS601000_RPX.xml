@@ -2298,7 +2298,7 @@
                         <ValueExpr>=$EndingBalance + IIf($Settlement_Cur &lt;&gt; $Settlement_Pre, ($Debit - $Credit) - $TotalSettledBalance, 0)</ValueExpr>
                     </ReportVariable>
                 </Variables>
-                <VisibleExpr>=$IsVisible And $Settlement_Cur &lt;&gt; $Settlement_Pre</VisibleExpr>
+                <VisibleExpr>=$IsVisible And $Settlement_Cur &lt;&gt; $Settlement_Pre And $SettledLineBalance &lt;&gt; 0</VisibleExpr>
                 <Items>
                     <TextBox Name="textBox10">
                         <Excel>
@@ -2720,7 +2720,7 @@
                         <Top>1px</Top>
                     </Padding>
                 </Style>
-                <VisibleExpr>=$Settlement_Display And $IsVisible</VisibleExpr>
+                <VisibleExpr>=$Settlement_Display And $IsVisible And $SettledLineBalance &lt;&gt; 0</VisibleExpr>
                 <Items>
                     <TextBox Name="textBox25">
                         <Excel>
