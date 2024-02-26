@@ -9,8 +9,8 @@ namespace PX.Objects.GL
         [PXOverride]
         public void Persist(PersistDelegate baseMethod)
         {
-            var orig = (bool)Base.GLSetupRecord.Cache.GetValueOriginal<GLSetupExt.usrEnblSettlingLedgerCmplProj>(Base.GLSetupRecord.Current);
-            var curr = (bool)Base.GLSetupRecord.Cache.GetValue<GLSetupExt.usrEnblSettlingLedgerCmplProj>(Base.GLSetupRecord.Current);
+            var orig = (bool)(Base.GLSetupRecord.Cache.GetValueOriginal<GLSetupExt.usrEnblSettlingLedgerCmplProj>(Base.GLSetupRecord.Current) ?? false);
+            var curr = (bool)(Base.GLSetupRecord.Cache.GetValue<GLSetupExt.usrEnblSettlingLedgerCmplProj>(Base.GLSetupRecord.Current) ?? false);
 
             baseMethod();
 

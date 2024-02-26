@@ -16,14 +16,14 @@ namespace UCGLedgerSettlement.DAC_Extensions
         #region ProjectID
         [PXRemoveBaseAttribute(typeof(ActiveProjectOrContractForGLAttribute))]
         [PXMergeAttributes(Method = MergeMethod.Append)]
-        [Project()]
+        [Project(ValidateValue = false)]
         public int? ProjectID { get; set; }
         #endregion
 
         #region TaskID
         [PXRemoveBaseAttribute(typeof(ActiveProjectTaskAttribute))]
         [PXMergeAttributes(Method = MergeMethod.Append)]
-        [ProjectTask(typeof(DAC.LSLedgerSettlement.projectID))]
+        [ProjectTask(typeof(DAC.LSLedgerSettlement.projectID), ValidateValue = false)]
         public int? TaskID { get; set; }
         #endregion
     }
