@@ -309,8 +309,8 @@ namespace UCGLedgerSettlement.Graph
             {
                 string stlmtNbr = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
 
-                HashSet<GLTran> hash_Debit  = trans.Where(w => w.DebitAmt  > 0m).OrderBy(o => o.FinPeriodID).ToHashSet();
-                HashSet<GLTran> hash_Credit = trans.Where(w => w.CreditAmt > 0m).OrderBy(o => o.FinPeriodID).ToHashSet();
+                HashSet<GLTran> hash_Debit  = trans.Where(w => w.DebitAmt  != 0m).OrderBy(o => o.FinPeriodID).ToHashSet();
+                HashSet<GLTran> hash_Credit = trans.Where(w => w.CreditAmt != 0m).OrderBy(o => o.FinPeriodID).ToHashSet();
 
                 for (int i = 0; i < trans.Count; i++)
                 {
@@ -338,7 +338,7 @@ namespace UCGLedgerSettlement.Graph
                     row.ProjectID        = tran.ProjectID;
                     row.TaskID           = tran.TaskID;
                     row.CostCodeID       = tran.CostCodeID;
-                    row.SettledPeriodID  = tran.DebitAmt > 0m ? hash_Credit.LastOrDefault().FinPeriodID : hash_Debit.LastOrDefault().FinPeriodID;
+                    row.SettledPeriodID  = tran.DebitAmt != 0m ? hash_Credit.LastOrDefault().FinPeriodID : hash_Debit.LastOrDefault().FinPeriodID;
 
                     row = graph.LedgerStlmt.Insert(row);
 
