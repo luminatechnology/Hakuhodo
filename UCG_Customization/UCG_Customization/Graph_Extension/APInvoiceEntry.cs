@@ -29,7 +29,7 @@ namespace PX.Objects.AP
             PXUIFieldAttribute.SetVisible<APRegisterUCGExt.returnAmount>(e.Cache, row, isShowReturnAmt);
             PXUIFieldAttribute.SetVisible<APRegisterUCGExt.usrOpportunityID>(e.Cache, row, ProjectDefaultAttribute.IsNonProject(row.ProjectID));
             PXUIFieldAttribute.SetVisible<APTranUCGExt.returnAmt>(Base.Transactions.Cache, null, isShowReturnAmt);
-            if (e.Cache.GetStatus(e.Row) == PXEntryStatus.Inserted) Base.releaseFromHold.SetEnabled(false);
+            if (Base.Accessinfo.ScreenID == "AP.30.10.00" && e.Cache.GetStatus(e.Row) == PXEntryStatus.Inserted) Base.releaseFromHold.SetEnabled(false);
         }
 
         protected void _(Events.RowPersisting<APRegister> e)
