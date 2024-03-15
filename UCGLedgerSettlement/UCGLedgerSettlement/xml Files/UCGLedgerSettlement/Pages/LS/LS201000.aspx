@@ -13,7 +13,6 @@
 			<px:PXGridLevel DataMember="StlmtAccount">
 			    <Columns>
 					<px:PXGridColumn DataField="AccountID" Width="70" ></px:PXGridColumn>
-					<px:PXGridColumn DataField="AccountCD" Width="70" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="Description" Width="220" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="Type" Width="70" ></px:PXGridColumn>
 					<px:PXGridColumn DataField="ChkReferenceOnMatch" Width="70" Type="CheckBox" ></px:PXGridColumn>
@@ -21,8 +20,7 @@
 			    </Columns>
 			</px:PXGridLevel>
 		</Levels>
-		<AutoSize Container="Window" Enabled="True" MinHeight="150" ></AutoSize>
-		<ActionBar >
-		</ActionBar>
+		<AutoSize Container="Window" Enabled="True" MinHeight="150" />
+		<Mode AllowUpload="True" />
 	</px:PXGrid>
 </asp:Content>

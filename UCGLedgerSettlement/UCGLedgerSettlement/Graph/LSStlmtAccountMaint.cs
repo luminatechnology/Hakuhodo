@@ -10,6 +10,7 @@ namespace UCGLedgerSettlement.Graph
         public PXCancel<LSSettlementAccount> Cancel;
   
         [PXFilterable()]
+        [PXImport(typeof(LSSettlementAccount))]
         public SelectFrom<LSSettlementAccount>.View StlmtAccount;
     }
 }
