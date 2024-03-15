@@ -24,6 +24,7 @@ namespace UCGLedgerSettlement.DAC
         //               DescriptionField = typeof(Account.description), 
         //               AvoidControlAccounts = true)]
         [PXDBInt(IsKey = true)]
+        [PXUIField(DisplayName = "Account ID")]
         [PXDimensionSelector(AccountAttribute.DimensionName, typeof(Account.accountID), typeof(Account.accountCD))]
 		public virtual int? AccountID { get; set; }
 		public abstract class accountID : PX.Data.BQL.BqlInt.Field<accountID> { }
@@ -31,7 +32,7 @@ namespace UCGLedgerSettlement.DAC
 
 		#region AccountCD
 		[PXDBString(10, IsUnicode = true)]
-		[PXUIField(DisplayName = "Account CD", IsReadOnly = true, Visible = false)]
+		[PXUIField(DisplayName = "Account CD", Enabled = false)]
 		[PXDefault(typeof(Search<Account.accountCD, Where<Account.accountID, Equal<Current<accountID>>>>), PersistingCheck = PXPersistingCheck.Nothing)]
 		[PXFormula(typeof(Default<accountID>))]
 		public virtual string AccountCD { get; set; }
