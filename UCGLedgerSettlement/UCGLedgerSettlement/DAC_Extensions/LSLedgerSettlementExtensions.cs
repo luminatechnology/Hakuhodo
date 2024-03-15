@@ -23,7 +23,7 @@ namespace UCGLedgerSettlement.DAC_Extensions
         #region TaskID
         [PXRemoveBaseAttribute(typeof(ActiveProjectTaskAttribute))]
         [PXMergeAttributes(Method = MergeMethod.Append)]
-        [ProjectTask(typeof(DAC.LSLedgerSettlement.projectID), ValidateValue = false)]
+        [ProjectTask(typeof(DAC.LSLedgerSettlement.projectID), DisplayName = "Project task", ValidateValue = false, AllowNull = true)]
         public int? TaskID { get; set; }
         #endregion
     }
